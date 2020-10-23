@@ -56,6 +56,19 @@ public:
 		return true;
 	}
 
+	// L02: TODO 2: Create new virtual methods to Load / Save
+	virtual bool Load(pugi::xml_node&)
+	{
+		return true;
+	}
+
+	virtual bool Save(pugi::xml_node&)
+	{
+		return true;
+	}
+
+
+
 public:
 
 	SString name;
