@@ -20,6 +20,12 @@ public:
 	// Called before render is available
 	bool Awake(pugi::xml_node&);
 
+	bool PreUpdate();
+
+	bool Update();
+
+	bool PostUpdate();
+
 	// Called before quitting
 	bool CleanUp();
 
@@ -32,10 +38,17 @@ public:
 	// Play a previously loaded WAV
 	bool PlayFx(unsigned int fx, int repeat = 0);
 
+	void Volume(int value);
+
+	//Audio Load/Save 
+	bool Load(pugi::xml_node&);
+	bool Save(pugi::xml_node&);
+
 private:
 
 	_Mix_Music* music;
 	List<Mix_Chunk *>	fx;
+	int volume = 0;
 };
 
 #endif // __AUDIO_H__

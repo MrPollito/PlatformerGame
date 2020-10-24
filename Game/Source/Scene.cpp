@@ -63,6 +63,12 @@ bool Scene::Update(float dt)
 	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
 
+	if (app->input->GetKey(SDL_SCANCODE_KP_PLUS) == KEY_DOWN)
+		app->audio->Volume(1);
+
+	if (app->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
+		app->audio->Volume(0);
+
 	app->render->DrawTexture(img, 380, 100);
 
 	return true;
