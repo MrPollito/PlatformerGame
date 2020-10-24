@@ -219,24 +219,22 @@ void Audio::Volume(int value)
 			LOG("Volume --> MIN");
 		}
 	}
-	else
-	{
-		LOG("Error trying to increase/decrease volume. check parameter value");
-	}
 
+	else LOG("Error increasing/decreasing volume");
+	
 }
 
-bool Audio::Load(pugi::xml_node& loadNode)
+bool Audio::Load(pugi::xml_node& node)
 {
-	volume = (float)loadNode.child("volume").attribute("value").as_int();
+	volume = node.child("volume").attribute("value").as_int();
 	return true;
 }
 
-bool Audio::Save(pugi::xml_node& saveNode)
+bool Audio::Save(pugi::xml_node& node)
 {
-
 	bool ret = true;
-	pugi::xml_node vol = saveNode.append_child("volume");
+	pugi::xml_node vol = node.append_child("volume");
+
 	if (vol == NULL)
 	{
 		LOG("Error on Save function of %s", name.GetString());
@@ -246,5 +244,6 @@ bool Audio::Save(pugi::xml_node& saveNode)
 	{
 		vol.append_attribute("value").set_value(volume);
 	}
+
 	return ret;
 }
