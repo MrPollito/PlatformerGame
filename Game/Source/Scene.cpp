@@ -31,7 +31,7 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	//img = app->tex->Load("Assets/textures/test.png");
-	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	//app->map->Load("hello2.xml");
 	app->map->Load(app->map->GetLoadingLevel().GetString());
 	return true;

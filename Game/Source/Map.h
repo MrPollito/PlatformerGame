@@ -14,7 +14,7 @@
 struct TileSet
 {
 	SString name;
-	int firstGid;
+	int firstgid;
 	int tileWidth;
 	int tileHeight;
 	int spacing;
@@ -28,6 +28,8 @@ struct TileSet
 	int	offsetX;
 	int	offsetY;
 
+	// L04: DONE 7: Create a method that receives a tile id and returns it's Rectfind the Rect associated with a specific tile id
+	SDL_Rect GetTileRect(int id) const;
 };
 
 
@@ -39,6 +41,30 @@ enum MapTypes
 	MAPTYPE_ORTHOGONAL,
 	MAPTYPE_ISOMETRIC,
 	MAPTYPE_STAGGERED
+};
+
+
+// L04: DONE 1: Create a struct for the map layer
+struct MapLayer
+{
+	SString	name;
+	int width;
+	int height;
+	uint* data;
+
+	MapLayer() : data(NULL)
+	{}
+
+	~MapLayer()
+	{
+		RELEASE(data);
+	}
+
+	// L04: DONE 6: Short function to get the value of x,y
+	inline uint Get(int x, int y) const
+	{
+		return data[(y * width) + x];
+	}
 };
 
 // L03: TODO 1: Create a struct needed to hold the information to Map node
@@ -54,7 +80,11 @@ struct MapData
 
 	List<TileSet*> tilesets;
 
+	// L04: DONE 2: Add a list/array of layers to the map
+	List<MapLayer*> layers;
+
 };
+;
 
 class Map : public Module
 {
@@ -77,6 +107,9 @@ public:
 	// Load new map
 	bool Load(const char* path);
 
+	// L04: DONE 8: Create a method that translates x,y coordinates from map positions to world positions
+	iPoint MapToWorld(int x, int y) const;
+
 	SString GetLoadingLevel()const
 	{
 		return loadingLevel;
@@ -90,7 +123,7 @@ private: // Private functions
 	bool LoadMap();
 	bool LoadTileSetDetails(pugi::xml_node& node, TileSet* set);
 	bool LoadTileSetImage(pugi::xml_node& node, TileSet* set);
-	
+	bool LoadLayer(pugi::xml_node& node, MapLayer* layer);
 
 private: 
 
