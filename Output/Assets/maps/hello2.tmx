@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
- <tileset firstgid="1" name="Desert" tilewidth="32" tileheight="32" spacing="1" margin="1">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="Desert" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
   <image source="tmw_desert_spacing.png" width="265" height="199"/>
   <terraintypes>
    <terrain name="Bricks" tile="9"/>
@@ -49,7 +49,8 @@
   <tile id="43" terrain="1,3,1,1"/>
   <tile id="44" terrain="3,1,1,1"/>
  </tileset>
- <layer name="Capa de Patrones 1" width="50" height="15">
+ <tileset firstgid="49" source="../../../../tilesets/mapas/Terrain (32x32).tsx"/>
+ <layer id="1" name="Capa de Patrones 1" width="50" height="15">
   <data>
    <tile gid="30"/>
    <tile gid="30"/>
@@ -99,8 +100,8 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="1"/>
    <tile gid="2"/>
@@ -149,8 +150,8 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -199,8 +200,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -249,8 +250,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -299,8 +300,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -349,8 +350,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -399,8 +400,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -449,8 +450,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -499,8 +500,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -549,8 +550,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -599,8 +600,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -649,8 +650,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -699,8 +700,8 @@
    <tile gid="39"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="17"/>
    <tile gid="18"/>
@@ -749,8 +750,8 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
@@ -799,8 +800,8 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile/>
+   <tile/>
   </data>
  </layer>
 </map>
