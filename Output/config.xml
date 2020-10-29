@@ -21,6 +21,6 @@
   </window>
   <map>
     <folder>Assets/maps/</folder>
-    <level>hello2.tmx</level>
+    <level>level_1.tmx</level>
   </map>
 </config>

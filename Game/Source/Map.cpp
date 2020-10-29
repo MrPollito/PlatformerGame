@@ -37,23 +37,28 @@ void Map::Draw()
 	if (mapLoaded == false) return;
 
 	// L04: TODO 5: Prepare the loop to draw all tilesets + DrawTexture()
-	MapLayer* layer = mapData.layers.start->data;
+	ListItem<MapLayer*>* layer = mapData.layers.start;
 
-	for (int y = 0; y < mapData.height; ++y)
+	while (layer != NULL)
 	{
-		for (int x = 0; x < mapData.width; ++x)
+		for (int y = 0; y < mapData.height; ++y)
 		{
-			
-			int tileId = layer->Get(x, y);
-			if (tileId > 0)
+			for (int x = 0; x < mapData.width; ++x)
 			{
-				// L04: TODO 9: Complete the draw function
-				SDL_Rect r = mapData.tilesets.start->data->GetTileRect(tileId);
-				iPoint pos = MapToWorld(x, y);
-				app->render->DrawTexture(mapData.tilesets.start->data->texture, pos.x, pos.y, &r);
+
+				int tileId = layer->data->Get(x, y);
+				if (tileId > 0)
+				{
+					// L04: TODO 9: Complete the draw function
+					SDL_Rect r = mapData.tilesets.start->data->GetTileRect(tileId);
+					iPoint pos = MapToWorld(x, y);
+					app->render->DrawTexture(mapData.tilesets.start->data->texture, pos.x, pos.y, &r);
+				}
 			}
 		}
+		layer = layer->next;
 	}
+
 }
 
 // L04: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
@@ -211,7 +216,6 @@ bool Map::LoadMap()
 	bool ret = false;
 	SString path = folder.GetString();
 	path += loadingLevel.GetString();
-	pugi::xml_node map = mapFile.child("map");
 	pugi::xml_parse_result result = mapFile.load_file(path.GetString());
 
 	if (result == NULL)
@@ -222,6 +226,7 @@ bool Map::LoadMap()
 	else
 	{
 		// L03: TODO: Load map general properties
+		pugi::xml_node map = mapFile.child("map");
 		mapData.height = map.attribute("height").as_int();
 		mapData.width = map.attribute("width").as_int();
 		mapData.orientation = map.attribute("orientation").as_string();

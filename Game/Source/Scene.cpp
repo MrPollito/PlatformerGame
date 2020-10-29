@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Map.h"
+#include "Player.h"
 
 #include "Log.h"
 
@@ -33,6 +34,9 @@ bool Scene::Start()
 	//img = app->tex->Load("Assets/textures/test.png");
 	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	app->map->Load(app->map->GetLoadingLevel().GetString());
+
+	
+
 	return true;
 }
 
@@ -49,7 +53,7 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
 		app->LoadRequest("savegame.xml");
 
-	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
 		app->SaveRequest("savegame.xml");
 
 	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)

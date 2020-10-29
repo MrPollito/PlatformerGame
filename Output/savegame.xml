@@ -4,11 +4,11 @@
 	<window />
 	<textures />
 	<audio>
-		<volume value="128" />
+		<volume value="32" />
 	</audio>
 	<scene />
 	<map />
 	<renderer>
-		<camera x="1025" y="510" />
+		<camera x="156" y="61" />
 	</renderer>
 </save_state>
