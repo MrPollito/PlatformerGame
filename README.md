@@ -2,24 +2,24 @@
 
 ## Description
 
-{Random Platformer Game is a platform game developed in Development (CITM 2nd Course) by RANDOM team.}
+Random Platformer Game is a platform game developed in Development (CITM 2nd Course) by RANDOM team.
 
 ## Key Features
 
- - {XML config file loading}
- - {Load/Save game state using XML file}
- - {Tiled TMX map loading and drawing (ortographic)}
- - {NO Map collisions}
- - {Map navigation}
+ - XML config file loading
+ - Load/Save game state using XML file
+ - Tiled TMX map loading and drawing (ortographic)
+ - NO Map collisions
+ - Map navigation
  
 ## Controls
 
- - {W/A/S/D Player Movement}
+ - W/A/S/D Player Movement
 
 ## Developers
 
- - {Juan Ortega} - {Programmer}
- - {Aram Galarza} - {Programmer}
+ - Juan Ortega - Programmer
+ - Aram Galarza - Programmer
 
 
 ## License
