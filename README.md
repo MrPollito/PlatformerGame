@@ -19,7 +19,7 @@
 ## Developers
 
  - {Juan Ortega} - {Programmer}
- - {ARam Galarza} - {Programmer}
+ - {Aram Galarza} - {Programmer}
 
 
 ## License
