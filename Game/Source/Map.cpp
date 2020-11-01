@@ -4,7 +4,6 @@
 #include "Textures.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Collider.h"
 
 #include "Defs.h"
 #include "Log.h"

@@ -51,3 +51,4 @@ private:
 };
 
 #endif // __MODULE_COLLISIONS_H__
+

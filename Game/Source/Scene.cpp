@@ -31,11 +31,8 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	//img = app->tex->Load("Assets/textures/test.png");
-	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	app->map->Load(app->map->GetLoadingLevel().GetString());
-
-
 
 	return true;
 }
@@ -50,10 +47,10 @@ bool Scene::PreUpdate()
 bool Scene::Update(float dt)
 {
 	// L02: TODO 3: Request Load / Save when pressing L/S
-	if (app->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadRequest("savegame.xml");
 
-	if (app->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		app->SaveRequest("savegame.xml");
 
 	if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)

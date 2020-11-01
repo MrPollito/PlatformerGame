@@ -3,9 +3,8 @@
 
 #include "Module.h"
 #include "Animation.h"
+#include "Physics.h"
 #include "Point.h"
-
-
 
 #include "SDL/include/SDL.h"
 
@@ -38,24 +37,32 @@ public:
 	bool Load(pugi::xml_node&);
 	bool Save(pugi::xml_node&);
 
+	void Jumping();
+
 
 	SDL_Rect player;
-	Collider* collider = nullptr;
 	SDL_Texture* playerTexture;
 
 
 
 private:
 	int playerSize = 78;
+	int gravityF = 1;
+
 	Animation idle;
 	Animation run;
 	Animation* currentAnimation = &idle;
 
+	Physics physics;
+	iPoint velocity;
+
+
+
 	bool invert;
 	bool keyPressed;
 	bool flipTexture;
-
-
+	bool godMode;
+	bool playerJumping;
 };
 
 #endif // __PLAYER_H__

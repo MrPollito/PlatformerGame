@@ -68,12 +68,11 @@ public:
 	}
 
 	//Called when two colliders are intersecting
-	//and the module is registered as the listener
+//and the module is registered as the listener
 	virtual void OnCollision(Collider* c1, Collider* c2)
 	{
 
 	}
-
 public:
 
 	SString name;

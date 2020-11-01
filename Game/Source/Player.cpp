@@ -7,7 +7,6 @@
 #include "Render.h"
 #include "Scene.h"
 #include "Map.h"
-#include "Collider.h"
 #include "Collisions.h"
 
 #include "Log.h" 
@@ -26,7 +25,8 @@ bool Player::Start()
 
 	keyPressed = false;
 	flipTexture = true;
-	speed = 0.4f;
+	godMode = false;
+	playerJumping = false;
 
 	player.x = 50.0f;
 	player.y = 1540.0f;
@@ -63,52 +63,126 @@ bool Player::PreUpdate()
 
 bool Player::Update(float dt)
 {
+	if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	{
+		LOG("GODMODE");
+		godMode = !godMode;
+	}
+
 	currentAnimation->Update();
 	keyPressed = false;
 
-	if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+	if (godMode)
 	{
-
-		player.x -= 1;
-		//collider = collider->SetPos(player.x, player.y);
-		currentAnimation = &run;
-		if (flipTexture == false)
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			flipTexture = true;
+
+			player.x -= 1;
+			//collider = collider->SetPos(player.x, player.y);
+			currentAnimation = &run;
+			if (flipTexture == false)
+			{
+				flipTexture = true;
+			}
+			keyPressed = true;
 		}
-		keyPressed = true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-	{
-		player.x += 1;
-		//collider->SetPos(player.x, player.y);
-		currentAnimation = &run;
-		if (flipTexture == true)
+		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-			flipTexture = false;
+			player.x += 1;
+			//collider->SetPos(player.x, player.y);
+			currentAnimation = &run;
+			if (flipTexture == true)
+			{
+				flipTexture = false;
+			}
+			keyPressed = true;
 		}
-		keyPressed = true;
+
+		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+		{
+			player.y -= 1;
+			//collider->SetPos(player.x, player.y);
+			keyPressed = true;
+		}
+		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+		{
+			player.y += 1;
+			//collider->SetPos(player.x, player.y);
+			keyPressed = true;
+		}
+
+		if (keyPressed == false)
+		{
+			run.Reset();
+			currentAnimation = &idle;
+		}
+	}
+	else
+	{
+		if (currentAnimation == &run || currentAnimation == &idle) {}
+		else { player.y += gravityF; }
+
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+
+			player.x -= 1;
+			//collider = collider->SetPos(player.x, player.y);
+			currentAnimation = &run;
+			if (flipTexture == false)
+			{
+				flipTexture = true;
+			}
+			keyPressed = true;
+		}
+		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			player.x += 1;
+			//collider->SetPos(player.x, player.y);
+			currentAnimation = &run;
+			if (flipTexture == true)
+			{
+				flipTexture = false;
+			}
+			keyPressed = true;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			velocity.y = 30;
+			playerJumping = true;
+		}
+
+		if (keyPressed == false)
+		{
+			run.Reset();
+			currentAnimation = &idle;
+		}
 	}
 
-	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+	if (playerJumping == true)
 	{
-		player.y -= 1;
-		//collider->SetPos(player.x, player.y);
-		keyPressed = true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-	{
-		player.y += 1;
-		//collider->SetPos(player.x, player.y);
-		keyPressed = true;
+		Jumping();
 	}
 
-	if (keyPressed == false)
+	//Start from level 1
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		run.Reset();
-		currentAnimation = &idle;
+		LOG("Starting from first level");
+		player.x = 50.0f;
+		player.y = 1540.0f;
+		app->render->camera.x = 50;
+		app->render->camera.y = -1050;
 	}
 
+	//Restart level
+	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		LOG("Restarting level");
+		player.x = 50.0f;
+		player.y = 1540.0f;
+		app->render->camera.x = 50;
+		app->render->camera.y = -1050;
+	}
 
 	return true;
 }
@@ -150,3 +224,11 @@ bool Player::Save(pugi::xml_node& playerNode)
 	return true;
 }
 
+void Player::Jumping()
+{
+	if (velocity.y > 0)
+	{
+		player.y -= velocity.y;
+		velocity.y -= 10;
+	}
+}
