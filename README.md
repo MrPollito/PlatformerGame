@@ -15,6 +15,15 @@ Random Platformer Game is a platform game developed in Development (CITM 2nd Cou
 ## Controls
 
  - W/A/S/D Player Movement
+ - KeyPad +/- Volume control
+ 
+ ## Debug Keys
+
+ - F1 Start from the first level
+ - F3 Start from the beginning of the current level
+ - F5 Save game
+ - F6 Load game
+ - F10 Godmode
 
 ## Developers
 
