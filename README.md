@@ -1,4 +1,4 @@
-# {RANDOM}
+# RANDOM
 
 ## Description
 
