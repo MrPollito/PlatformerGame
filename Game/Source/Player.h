@@ -47,7 +47,6 @@ public:
 
 private:
 	int playerSize = 78;
-	float speed;
 	Animation idle;
 	Animation run;
 	Animation* currentAnimation = &idle;

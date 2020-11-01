@@ -26,7 +26,7 @@ bool Player::Start()
 
 	keyPressed = false;
 	flipTexture = true;
-	speed = 0.5f;
+	speed = 0.4f;
 
 	player.x = 50.0f;
 	player.y = 1540.0f;
@@ -69,7 +69,7 @@ bool Player::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
 
-		player.x -= speed;
+		player.x -= 1;
 		//collider = collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == false)
@@ -80,7 +80,7 @@ bool Player::Update(float dt)
 	}
 	if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 	{
-		player.x += speed;
+		player.x += 1;
 		//collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == true)
@@ -92,13 +92,13 @@ bool Player::Update(float dt)
 
 	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 	{
-		player.y -= speed;
+		player.y -= 1;
 		//collider->SetPos(player.x, player.y);
 		keyPressed = true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 	{
-		player.y += speed;
+		player.y += 1;
 		//collider->SetPos(player.x, player.y);
 		keyPressed = true;
 	}
