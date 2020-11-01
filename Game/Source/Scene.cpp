@@ -97,6 +97,25 @@ bool Scene::PostUpdate()
 	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
+	//Player border
+	if ((app->render->camera.x + app->player->player.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 1; }
+
+	if ((app->player->player.w + app->render->camera.x + app->player->player.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 1; }
+
+	if ((app->render->camera.y + app->player->player.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 1; }
+
+	if ((app->player->player.h + app->render->camera.y + app->player->player.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 1; }
+
+	// Map movement
+	if (app->render->camera.x >= 0) { app->render->camera.x -= 1; }
+
+	if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 1; }
+
+	if (app->render->camera.y >= 0) { app->render->camera.y -= 1; }
+
+	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 1; }
+
+
 	return ret;
 }
 

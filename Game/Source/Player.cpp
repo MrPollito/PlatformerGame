@@ -12,7 +12,8 @@
 
 #include "Log.h" 
 
-Player::Player() {
+Player::Player() 
+{
 	name.Create("player");
 }
 
@@ -25,6 +26,11 @@ bool Player::Start()
 
 	keyPressed = false;
 	flipTexture = true;
+	speed = 0.5f;
+
+	player.x = 50.0f;
+	player.y = 1540.0f;
+
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 	return true;
 }
@@ -63,7 +69,7 @@ bool Player::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
 
-		player.x -= 1;
+		player.x -= speed;
 		//collider = collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == false)
@@ -74,7 +80,7 @@ bool Player::Update(float dt)
 	}
 	if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 	{
-		player.x += 1;
+		player.x += speed;
 		//collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == true)
@@ -86,13 +92,13 @@ bool Player::Update(float dt)
 
 	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 	{
-		player.y -= 1;
+		player.y -= speed;
 		//collider->SetPos(player.x, player.y);
 		keyPressed = true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 	{
-		player.y += 1;
+		player.y += speed;
 		//collider->SetPos(player.x, player.y);
 		keyPressed = true;
 	}
@@ -128,12 +134,19 @@ bool Player::CleanUp()
 	return true;
 }
 
-bool Player::Load(pugi::xml_node&)
+bool Player::Load(pugi::xml_node& playerNode)
 {
+	player.x = playerNode.child("position").attribute("position_x").as_float();
+	player.y = playerNode.child("position").attribute("position_y").as_float();
+
 	return true;
 }
 
-bool Player::Save(pugi::xml_node&)
+bool Player::Save(pugi::xml_node& playerNode)
 {
+	pugi::xml_node player_1 = playerNode.append_child("position");
+	player_1.append_attribute("position_x").set_value(player.x);
+	player_1.append_attribute("position_y").set_value(player.y);
 	return true;
 }
+

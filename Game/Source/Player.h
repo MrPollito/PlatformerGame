@@ -44,10 +44,10 @@ public:
 	SDL_Texture* playerTexture;
 
 
-	int speed = 1;
 
 private:
 	int playerSize = 78;
+	float speed;
 	Animation idle;
 	Animation run;
 	Animation* currentAnimation = &idle;
