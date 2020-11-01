@@ -3,6 +3,8 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Map.h"
+#include "Collisions.h"
+#include "Collider.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -53,9 +55,12 @@ void Map::Draw()
 					SDL_Rect r = mapData.tilesets.start->data->GetTileRect(tileId);
 					iPoint pos = MapToWorld(x, y);
 					app->render->DrawTexture(mapData.tilesets.start->data->texture, pos.x, pos.y, &r);
+
 				}
+
 			}
 		}
+
 		layer = layer->next;
 	}
 
@@ -81,7 +86,7 @@ SDL_Rect TileSet::GetTileRect(int id) const
 	int relativeId = id - firstgid;
 	rect.w = tileWidth;
 	rect.h = tileHeight;
-	rect.x = margin + ((rect.w + spacing) * (relativeId % (imageWitdth / tileWidth))); 
+	rect.x = margin + ((rect.w + spacing) * (relativeId % (imageWitdth / tileWidth)));
 	rect.y = margin + ((rect.h + spacing) * (relativeId / (imageWitdth / tileWidth)));
 
 	return rect;
@@ -275,10 +280,11 @@ bool Map::LoadTileSetImage(pugi::xml_node& node, TileSet* set)
 bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 {
 	bool ret = true;
-
+	layer->id = node.attribute("id").as_int();
 	layer->name = node.attribute("name").as_string();
 	layer->width = node.attribute("width").as_int();
 	layer->height = node.attribute("height").as_int();
+
 	layer->data = new uint[layer->width * layer->height * sizeof(uint)];
 	memset(layer->data, 0, layer->width * layer->height * sizeof(uint));
 
@@ -297,7 +303,38 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 			layer->data[i] = tile.attribute("gid").as_int();
 			i++;
 		}
+		if (layer->GetId() == 2)
+		{
+			LOG("Calling Assign Colliders");
+			AssignColliders(layer);
+		}
+
 	}
+
 
 	return ret;
 }
+
+bool Map::AssignColliders(MapLayer* lay)
+{
+	for (int y = 0; y < mapData.height; ++y)
+	{
+		for (int x = 0; x < mapData.width; ++x)
+		{
+			uint tileId = lay->Get(x, y);
+			if (tileId > 0)
+			{
+
+				SDL_Rect r = mapData.tilesets.start->data->GetTileRect(tileId);
+				iPoint pos = MapToWorld(x, y);
+				app->collisions->AddCollider(r, Collider::Type::WALL, this);
+
+			}
+		}
+	}
+
+
+
+	return true;
+}
+

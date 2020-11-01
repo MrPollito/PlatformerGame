@@ -2,7 +2,7 @@
 #define __MODULE_H__
 
 #include "SString.h"
-
+#include "Collider.h"
 #include "PugiXml/src/pugixml.hpp"
 
 class App;
@@ -67,20 +67,12 @@ public:
 		return true;
 	}
 
-	//virtual void Module::Enable() {
-	//	if (!active) {
-	//		active = true;
-	//		Start();
-	//	}
-	//}
+	//Called when two colliders are intersecting
+	//and the module is registered as the listener
+	virtual void OnCollision(Collider* c1, Collider* c2)
+	{
 
-	//virtual void Module::Disable() {
-	//	if (active) {
-	//		active = false;
-	//		CleanUp();
-	//	}
-	//}
-
+	}
 
 public:
 

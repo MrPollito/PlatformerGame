@@ -6,6 +6,7 @@
 #include "Point.h"
 
 
+
 #include "PugiXml\src\pugixml.hpp"
 
 // L03: TODO 2: Create a struct to hold information for a TileSet
@@ -31,6 +32,8 @@ struct TileSet
 	SDL_Rect GetTileRect(int id) const;
 };
 
+
+
 // L03: TODO 1: We create an enum for map type, just for convenience,
 // NOTE: Platformer game will be of type ORTHOGONAL
 enum MapTypes
@@ -41,6 +44,7 @@ enum MapTypes
 	MAPTYPE_STAGGERED
 };
 
+
 // L04: TODO 1: Create a struct for the map layer
 struct MapLayer
 {
@@ -48,6 +52,8 @@ struct MapLayer
 	int width;
 	int height;
 	uint* data;
+	int id;
+
 
 	MapLayer() : data(NULL)
 	{}
@@ -62,7 +68,14 @@ struct MapLayer
 	{
 		return data[y * width + x];
 	}
+	inline int GetId()
+	{
+		return id;
+	}
+
 };
+
+
 
 // L03: TODO 1: Create a struct needed to hold the information to Map node
 struct MapData
@@ -116,6 +129,7 @@ private:
 	bool LoadTileSetDetails(pugi::xml_node& node, TileSet* set);
 	bool LoadTileSetImage(pugi::xml_node& node, TileSet* set);
 	bool LoadLayer(pugi::xml_node& node, MapLayer* layer);
+	bool AssignColliders(MapLayer* layer);
 
 public:
 

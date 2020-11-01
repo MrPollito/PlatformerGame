@@ -14,7 +14,9 @@ class Textures;
 class Audio;
 class Scene;
 class Map;
+class Collisions;
 class Player;
+
 
 class App
 {
@@ -85,6 +87,7 @@ public:
 	Audio* audio;
 	Scene* scene;
 	Map* map;
+	Collisions* collisions;
 	Player* player;
 
 private:
@@ -94,7 +97,7 @@ private:
 	SString title;
 	SString organization;
 
-	List<Module *> modules;
+	List<Module*> modules;
 
 	// L01: TODO 2: Create two new variables from pugui namespace:
 	// a xml_document to store the config file and

@@ -7,6 +7,8 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Player.h"
+#include "Collider.h"
+#include "Collisions.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -26,6 +28,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audio = new Audio();
 	scene = new Scene();
 	map = new Map();
+	collisions = new Collisions();
 	player = new Player();
 
 	// Ordered for awake / Start / Update
@@ -36,7 +39,9 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audio);
 	AddModule(scene);
 	AddModule(map);
+	AddModule(collisions);
 	AddModule(player);
+
 
 	// render last to swap buffer
 	AddModule(render);
@@ -48,7 +53,7 @@ App::~App()
 	// release modules
 	ListItem<Module*>* item = modules.end;
 
-	while(item != NULL)
+	while (item != NULL)
 	{
 		RELEASE(item->data);
 		item = item->prev;
@@ -75,12 +80,12 @@ bool App::Awake()
 	title.Create(configApp.child("title").child_value());
 	win->SetTitle(title.GetString());
 
-	if(ret == true)
+	if (ret == true)
 	{
 		ListItem<Module*>* item;
 		item = modules.start;
 
-		while(item != NULL && ret == true)
+		while (item != NULL && ret == true)
 		{
 			// TODO 5: Add a new argument to the Awake method to receive a pointer to an xml node.
 			// If the section with the module name exists in config.xml, fill the pointer with the valid xml_node
@@ -101,7 +106,7 @@ bool App::Start()
 	ListItem<Module*>* item;
 	item = modules.start;
 
-	while(item != NULL && ret == true)
+	while (item != NULL && ret == true)
 	{
 		ret = item->data->Start();
 		item = item->next;
@@ -116,16 +121,16 @@ bool App::Update()
 	bool ret = true;
 	PrepareUpdate();
 
-	if(input->GetWindowEvent(WE_QUIT) == true)
+	if (input->GetWindowEvent(WE_QUIT) == true)
 		ret = false;
 
-	if(ret == true)
+	if (ret == true)
 		ret = PreUpdate();
 
-	if(ret == true)
+	if (ret == true)
 		ret = DoUpdate();
 
-	if(ret == true)
+	if (ret == true)
 		ret = PostUpdate();
 
 	FinishUpdate();
@@ -139,7 +144,7 @@ bool App::LoadConfig()
 
 	pugi::xml_parse_result result = configFile.load_file("config.xml");
 
-	if(result == NULL)
+	if (result == NULL)
 	{
 		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
 		ret = false;
@@ -174,11 +179,11 @@ bool App::PreUpdate()
 	item = modules.start;
 	Module* pModule = NULL;
 
-	for(item = modules.start; item != NULL && ret == true; item = item->next)
+	for (item = modules.start; item != NULL && ret == true; item = item->next)
 	{
 		pModule = item->data;
 
-		if(pModule->active == false) {
+		if (pModule->active == false) {
 			continue;
 		}
 
@@ -196,11 +201,11 @@ bool App::DoUpdate()
 	item = modules.start;
 	Module* pModule = NULL;
 
-	for(item = modules.start; item != NULL && ret == true; item = item->next)
+	for (item = modules.start; item != NULL && ret == true; item = item->next)
 	{
 		pModule = item->data;
 
-		if(pModule->active == false) {
+		if (pModule->active == false) {
 			continue;
 		}
 
@@ -217,11 +222,11 @@ bool App::PostUpdate()
 	ListItem<Module*>* item;
 	Module* pModule = NULL;
 
-	for(item = modules.start; item != NULL && ret == true; item = item->next)
+	for (item = modules.start; item != NULL && ret == true; item = item->next)
 	{
 		pModule = item->data;
 
-		if(pModule->active == false) {
+		if (pModule->active == false) {
 			continue;
 		}
 
@@ -238,7 +243,7 @@ bool App::CleanUp()
 	ListItem<Module*>* item;
 	item = modules.end;
 
-	while(item != NULL && ret == true)
+	while (item != NULL && ret == true)
 	{
 		ret = item->data->CleanUp();
 		item = item->prev;
@@ -256,7 +261,7 @@ int App::GetArgc() const
 // ---------------------------------------
 const char* App::GetArgv(int index) const
 {
-	if(index < argc)
+	if (index < argc)
 		return args[index];
 	else
 		return NULL;

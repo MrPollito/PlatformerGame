@@ -7,18 +7,24 @@
 #include "Render.h"
 #include "Scene.h"
 #include "Map.h"
+#include "Collider.h"
+#include "Collisions.h"
 
-#include "Log.h"
+#include "Log.h" 
 
-Player::Player() {}
+Player::Player() {
+	name.Create("player");
+}
 
 Player::~Player() {}
 
 bool Player::Start()
 {
+
+	//collider = app->collisions->AddCollider({ player.x, player.y, 32, 32 }, Collider::Type::PLAYER, this);
+
 	keyPressed = false;
 	flipTexture = true;
-
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 	return true;
 }
@@ -27,7 +33,7 @@ bool Player::Awake(pugi::xml_node&)
 {
 	for (int i = 0; i < 11; i++)
 	{
-		idle.PushBack({(playerSize * i),31,40,31 });
+		idle.PushBack({ (playerSize * i),31,40,31 });
 	}
 
 	idle.SetSpeed(0.01f);
@@ -35,7 +41,7 @@ bool Player::Awake(pugi::xml_node&)
 
 	for (int i = 0; i < 8; i++)
 	{
-		run.PushBack({(playerSize * i),0,40,31 });
+		run.PushBack({ (playerSize * i),0,40,31 });
 	}
 
 	run.SetSpeed(0.03f);
@@ -54,19 +60,11 @@ bool Player::Update(float dt)
 	currentAnimation->Update();
 	keyPressed = false;
 
-	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-	{
-		player.y -= 1;
-		keyPressed = true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-	{
-		player.y += 1;
-		keyPressed = true;
-	}
 	if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
+
 		player.x -= 1;
+		//collider = collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == false)
 		{
@@ -77,6 +75,7 @@ bool Player::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 	{
 		player.x += 1;
+		//collider->SetPos(player.x, player.y);
 		currentAnimation = &run;
 		if (flipTexture == true)
 		{
@@ -84,6 +83,20 @@ bool Player::Update(float dt)
 		}
 		keyPressed = true;
 	}
+
+	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+	{
+		player.y -= 1;
+		//collider->SetPos(player.x, player.y);
+		keyPressed = true;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+	{
+		player.y += 1;
+		//collider->SetPos(player.x, player.y);
+		keyPressed = true;
+	}
+
 	if (keyPressed == false)
 	{
 		run.Reset();

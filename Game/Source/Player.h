@@ -3,11 +3,15 @@
 
 #include "Module.h"
 #include "Animation.h"
+#include "Point.h"
+
 
 
 #include "SDL/include/SDL.h"
 
-class Player: public Module
+
+
+class Player : public Module
 {
 public:
 
@@ -34,8 +38,13 @@ public:
 	bool Load(pugi::xml_node&);
 	bool Save(pugi::xml_node&);
 
-	SDL_Rect player = { 0,0,42,58 };
+
+	SDL_Rect player;
+	Collider* collider = nullptr;
 	SDL_Texture* playerTexture;
+
+
+	int speed = 1;
 
 private:
 	int playerSize = 78;
