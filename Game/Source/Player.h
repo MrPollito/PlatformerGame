@@ -5,11 +5,16 @@
 #include "Animation.h"
 #include "Physics.h"
 #include "Point.h"
+#include "Collider.h"
+#include "Collisions.h"
+#include "Map.h"
+#include "Scene.h"
+
 
 #include "SDL/include/SDL.h"
 
 
-
+struct Collider;
 class Player : public Module
 {
 public:
@@ -40,8 +45,14 @@ public:
 	void Jumping();
 
 
+
 	SDL_Rect player;
+	SDL_Rect playerColl;
 	SDL_Texture* playerTexture;
+	
+	iPoint colPos;
+
+	Collider* playerCollider = nullptr;
 
 
 
@@ -56,7 +67,7 @@ private:
 	Physics physics;
 	iPoint velocity;
 
-
+	
 
 	bool invert;
 	bool keyPressed;

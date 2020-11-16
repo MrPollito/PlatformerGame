@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Player.h"
+#include "Collisions.h"
 
 #include "Log.h"
 
@@ -31,7 +32,7 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	app->map->Load(app->map->GetLoadingLevel().GetString());
 
 	return true;

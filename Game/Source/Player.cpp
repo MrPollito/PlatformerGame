@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Collisions.h"
+#include "Collider.h"
 
 #include "Log.h" 
 
@@ -30,6 +31,10 @@ bool Player::Start()
 
 	player.x = 50.0f;
 	player.y = 1540.0f;
+	
+
+	playerCollider = new Collider(player, Collider::Type::PLAYER, this);
+
 
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 	return true;
@@ -69,6 +74,11 @@ bool Player::Update(float dt)
 		godMode = !godMode;
 	}
 
+	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		LOG("Drawing Colliders");
+		app->collisions->debug = !app->collisions->debug;
+	}
 	currentAnimation->Update();
 	keyPressed = false;
 
@@ -76,9 +86,10 @@ bool Player::Update(float dt)
 	{
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-
-			player.x -= 1;
-			//collider = collider->SetPos(player.x, player.y);
+			
+			player.x -= 2;
+			playerCollider->rect.x -= 2;
+			
 			currentAnimation = &run;
 			if (flipTexture == false)
 			{
@@ -88,8 +99,10 @@ bool Player::Update(float dt)
 		}
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-			player.x += 1;
-			//collider->SetPos(player.x, player.y);
+		
+			player.x += 2;
+			
+			
 			currentAnimation = &run;
 			if (flipTexture == true)
 			{
@@ -100,14 +113,14 @@ bool Player::Update(float dt)
 
 		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
-			player.y -= 1;
-			//collider->SetPos(player.x, player.y);
+			player.y -= 2;
+			
 			keyPressed = true;
 		}
 		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 		{
-			player.y += 1;
-			//collider->SetPos(player.x, player.y);
+			player.y += 2;
+			
 			keyPressed = true;
 		}
 
@@ -124,9 +137,10 @@ bool Player::Update(float dt)
 
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-
+			//playerCollider->SetPos(player.x -= 1, player.y);
 			player.x -= 1;
-			//collider = collider->SetPos(player.x, player.y);
+			
+
 			currentAnimation = &run;
 			if (flipTexture == false)
 			{
@@ -136,8 +150,11 @@ bool Player::Update(float dt)
 		}
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
+			
 			player.x += 1;
-			//collider->SetPos(player.x, player.y);
+			
+		
+
 			currentAnimation = &run;
 			if (flipTexture == true)
 			{
@@ -204,6 +221,8 @@ bool Player::PostUpdate()
 
 bool Player::CleanUp()
 {
+	/*delete(playerCollider);
+	playerCollider = nullptr;*/
 	app->tex->UnLoad(playerTexture);
 	return true;
 }

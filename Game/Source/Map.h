@@ -11,6 +11,41 @@
 
 // L03: TODO 2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
+
+
+struct Properties
+{
+	struct Property
+	{
+		SString name;
+		int value;
+	};
+	~Properties()
+	{
+		ListItem<Property*>* item;
+		item = list.start;
+
+		while (item != NULL)
+		{
+			RELEASE(item->data);
+			item = item->next;
+		}
+		list.clear();
+	}
+
+	// L06: TODO 7: Method to ask for the value of a custom property
+	int GetProperty(const char* name, int default_value = 0) const;
+	void SetProperty(const char* name, int value);
+
+	List<Property*> list;
+};
+
+struct Tile
+{
+	int id;
+	Properties properties;
+};
+
 struct TileSet
 {
 	SString name;
@@ -27,6 +62,9 @@ struct TileSet
 	int numTilesHeight;
 	int offsetX;
 	int offsetY;
+
+	List<Tile*> tileSetPropList;
+	Tile* GetPropList(int id) const;
 
 	// L04: TODO 7: Create a method that receives a tile id and returns it's Rectfind the Rect associated with a specific tile id
 	SDL_Rect GetTileRect(int id) const;
@@ -45,6 +83,7 @@ enum MapTypes
 };
 
 
+
 // L04: TODO 1: Create a struct for the map layer
 struct MapLayer
 {
@@ -52,8 +91,9 @@ struct MapLayer
 	int width;
 	int height;
 	uint* data;
-	int id;
+	
 
+	Properties properties;
 
 	MapLayer() : data(NULL)
 	{}
@@ -66,13 +106,12 @@ struct MapLayer
 	// L04: TODO 6: Short function to get the value of x,y
 	inline uint Get(int x, int y) const
 	{
-		return data[y * width + x];
-	}
-	inline int GetId()
-	{
-		return id;
+		uint ret = data[y * width + x];
+		return ret;
 	}
 
+	ListItem<MapLayer*>* GetLayer(SString name);
+	
 };
 
 
@@ -129,7 +168,14 @@ private:
 	bool LoadTileSetDetails(pugi::xml_node& node, TileSet* set);
 	bool LoadTileSetImage(pugi::xml_node& node, TileSet* set);
 	bool LoadLayer(pugi::xml_node& node, MapLayer* layer);
-	bool AssignColliders(MapLayer* layer);
+	bool LoadTileSetProperties(pugi::xml_node& node, TileSet* set);
+	void AssignColliders(MapLayer* layer);
+
+	TileSet* GetTilesetFromTileId(int id) const;
+	bool LoadProperties(pugi::xml_node& node, Properties& properties);
+
+	
+
 
 public:
 
@@ -138,6 +184,7 @@ public:
 
 private:
 
+	void LogAll();
 	pugi::xml_document mapFile;
 	SString folder;
 	SString loadingLevel;

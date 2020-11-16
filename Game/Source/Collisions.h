@@ -1,7 +1,7 @@
 #ifndef __MODULE_COLLISIONS_H__
 #define __MODULE_COLLISIONS_H__
 
-#define MAX_COLLIDERS 50
+#define MAX_COLLIDERS 501
 
 #include "Module.h"
 #include "Collider.h"
@@ -38,6 +38,8 @@ public:
 	// Draws all existing colliders with some transparency
 	void DebugDraw();
 
+	bool debug = false;
+
 private:
 	// All existing colliders in the scene
 	Collider* colliders[MAX_COLLIDERS] = { nullptr };
@@ -47,7 +49,7 @@ private:
 	bool matrix[Collider::Type::MAX][Collider::Type::MAX];
 
 	// Simple debugging flag to draw all colliders
-	bool debug = false;
+	
 };
 
 #endif // __MODULE_COLLISIONS_H__
