@@ -4,15 +4,15 @@
 	<window />
 	<textures />
 	<audio>
-		<volume value="0" />
+		<volume value="32" />
 	</audio>
 	<scene />
 	<map />
 	<collisions />
 	<player>
-		<position position_x="679" position_y="1014" />
+		<position position_x="425" position_y="1240" />
 	</player>
 	<renderer>
-		<camera x="-27" y="-744" />
+		<camera x="50" y="-880" />
 	</renderer>
 </save_state>

@@ -15,10 +15,14 @@
 #include <iostream>
 #include <sstream>
 
+// L07: TODO 3: Measure the amount of ms that takes to execute:
+// App constructor, Awake, Start and CleanUp
+// LOG the result
+
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
-	frames = 0;
+	PERF_START(ptimer);
 
 	input = new Input();
 	win = new Window();
@@ -44,6 +48,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	// render last to swap buffer
 	AddModule(render);
+
+	PERF_PEEK(ptimer);
 }
 
 // Destructor
@@ -72,6 +78,8 @@ void App::AddModule(Module* module)
 // Called before render is available
 bool App::Awake()
 {
+	PERF_START(ptimer);
+
 	// TODO 3: Load config.xml file using load_file() method from the xml_document class.
 	bool ret = LoadConfig();
 
@@ -95,12 +103,16 @@ bool App::Awake()
 		}
 	}
 
+	PERF_PEEK(ptimer);
+
 	return ret;
 }
 
 // Called before the first frame
 bool App::Start()
 {
+	PERF_START(ptimer);
+
 	bool ret = true;
 	ListItem<Module*>* item;
 	item = modules.start;
@@ -110,6 +122,8 @@ bool App::Start()
 		ret = item->data->Start();
 		item = item->next;
 	}
+
+	PERF_PEEK(ptimer);
 
 	return ret;
 }
@@ -168,6 +182,24 @@ void App::FinishUpdate()
 	// L02: TODO 1: This is a good place to call Load / Save methods
 	if (loadRequest == true) LoadGame();
 	if (saveRequest == true) SaveGame();
+
+	// L07: TODO 4: Now calculate:
+	// Amount of frames since startup
+	// Amount of time since game start (use a low resolution timer)
+	// Average FPS for the whole game life
+	// Amount of ms took the last update
+	// Amount of frames during the last second
+
+	float averageFps = 0.0f;
+	float secondsSinceStartup = 0.0f;
+	uint32 lastFrameMs = 0;
+	uint32 framesOnLastUpdate = 0;
+
+	static char title[256];
+	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %I64u ",
+		averageFps, lastFrameMs, framesOnLastUpdate, dt, secondsSinceStartup, frameCount);
+
+	app->win->SetTitle(title);
 }
 
 // Call modules before each loop iteration

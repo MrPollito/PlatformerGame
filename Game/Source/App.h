@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include "List.h"
+#include "PerfTimer.h"
+#include "Timer.h"
 
 #include "PugiXml/src/pugixml.hpp"
 
@@ -113,8 +115,17 @@ private:
 	SString loadFileName;
 	mutable SString saveFileName;
 
-	uint frames;
-	float dt;
+	// L07: TODO 4: Calculate some timing measures
+	// required variables are provided:
+	PerfTimer ptimer;
+	uint64 frameCount = 0;
+
+	Timer startupTime;
+	Timer frameTime;
+	Timer lastSecFrameTime;
+	uint32 lastSecFrameCount = 0;
+	uint32 prevLastSecFrameCount = 0;
+	float dt = 0.0f;
 };
 
 extern App* app;
