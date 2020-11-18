@@ -54,27 +54,26 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		app->SaveRequest("savegame.xml");
 
-	if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= 1;
-
-	if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += 1;
-
-	if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x -= 1;
-
-	if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 1;
-
 	if (app->input->GetKey(SDL_SCANCODE_KP_PLUS) == KEY_DOWN)
 		app->audio->Volume(1);
 
 	if (app->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
 		app->audio->Volume(0);
 
-	//app->render->DrawTexture(img, 380, 100);
+	// L08: TODO 6: Make the camera movement independent of framerate
+	if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		app->render->camera.y -= 200.0f * dt;
 
-	app->map->Draw();
+	if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		app->render->camera.y += 200.0f * dt;
+
+	if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		app->render->camera.x -= 200.0f * dt;
+
+	if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		app->render->camera.x += 200.0f * dt;
+
+	//app->render->DrawTexture(img, 380, 100);
 
 	// L03: DONE 7: Set the window title with map/tileset info
 	/*SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d",
@@ -83,6 +82,8 @@ bool Scene::Update(float dt)
 		app->map->mapData.tilesets.count());*/
 
 	//app->win->SetTitle(title.GetString());
+
+	app->map->Draw();
 
 	return true;
 }
@@ -96,22 +97,22 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	//Player border
-	if ((app->render->camera.x + app->player->player.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 1; }
+	if ((app->render->camera.x + app->player->player.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
 
-	if ((app->player->player.w + app->render->camera.x + app->player->player.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 1; }
+	if ((app->player->player.w + app->render->camera.x + app->player->player.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
 
-	if ((app->render->camera.y + app->player->player.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 1; }
+	if ((app->render->camera.y + app->player->player.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
 
-	if ((app->player->player.h + app->render->camera.y + app->player->player.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 1; }
+	if ((app->player->player.h + app->render->camera.y + app->player->player.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
 
 	// Map movement
-	if (app->render->camera.x >= 0) { app->render->camera.x -= 1; }
+	if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
 
-	if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 1; }
+	if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 2; }
 
-	if (app->render->camera.y >= 0) { app->render->camera.y -= 1; }
+	if (app->render->camera.y >= 0) { app->render->camera.y -= 2; }
 
-	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 1; }
+	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
 
 
 	return ret;

@@ -83,9 +83,21 @@ bool App::Awake()
 	// TODO 3: Load config.xml file using load_file() method from the xml_document class.
 	bool ret = LoadConfig();
 
-	// TODO 4: Read the title from the config file
-	title.Create(configApp.child("title").child_value());
-	win->SetTitle(title.GetString());
+	if (config.empty() == false)
+	{
+		ret = true;
+		configApp = config.child("app");
+
+		// TODO 4: Read the title from the config file
+		title.Create(configApp.child("title").child_value());
+		win->SetTitle(title.GetString());
+		organization.Create(configApp.child("organization").child_value());
+
+		// L08: TODO 1: Read from config file your framerate cap
+		int cap = configApp.attribute("framerate_cap").as_int(-1);
+
+		if (cap > 0) cappedMs = 1000 / cap;
+	}
 
 	if (ret == true)
 	{
@@ -174,6 +186,12 @@ bool App::LoadConfig()
 // ---------------------------------------------
 void App::PrepareUpdate()
 {
+	frameCount++;
+	lastSecFrameCount++;
+
+	// L08: TODO 4: Calculate the dt: differential time since last frame
+	dt = frameTime.ReadSec();
+	frameTime.Start();
 }
 
 // ---------------------------------------------
@@ -194,12 +212,25 @@ void App::FinishUpdate()
 	float secondsSinceStartup = 0.0f;
 	uint32 lastFrameMs = 0;
 	uint32 framesOnLastUpdate = 0;
+	int cappedFrames = 60;
+
+	secondsSinceStartup = (float) SDL_GetTicks()/1000;
+	averageFps = 1 / dt;
+	lastFrameMs = frameTime.Read();
 
 	static char title[256];
-	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %I64u ",
-		averageFps, lastFrameMs, framesOnLastUpdate, dt, secondsSinceStartup, frameCount);
+	sprintf_s(title, 256, "Av.FPS: %.2f | Last Frame Ms: %02u | Last sec frames: %i | Last dt: %.3f | Time since startup: %.3f | Frame Count: %I64u | Fps cap: %i ",
+		averageFps, lastFrameMs, framesOnLastUpdate, dt, secondsSinceStartup, frameCount, cappedFrames);
 
 	app->win->SetTitle(title);
+
+	// L08: TODO 2: Use SDL_Delay to make sure you get your capped framerate
+	if (lastFrameMs < (1000 / cappedFrames))
+	{
+		// L08: TODO 3: Measure accurately the amount of time SDL_Delay() actually waits compared to what was expected
+		// Capped frames
+		SDL_Delay((1000 / cappedFrames) - lastFrameMs);
+	}
 }
 
 // Call modules before each loop iteration
@@ -240,6 +271,8 @@ bool App::DoUpdate()
 			continue;
 		}
 
+		// L08: TODO 5: Send dt as an argument to all updates, you need
+		// to update module parent class and all modules that use update
 		ret = item->data->Update(dt);
 	}
 

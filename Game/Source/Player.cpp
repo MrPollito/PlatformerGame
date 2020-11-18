@@ -87,7 +87,7 @@ bool Player::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			
-			player.x -= 2;
+			player.x -= 3;
 			playerCollider->rect.x -= 2;
 			
 			currentAnimation = &run;
@@ -100,7 +100,7 @@ bool Player::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 		
-			player.x += 2;
+			player.x += 3;
 			
 			
 			currentAnimation = &run;
@@ -138,7 +138,7 @@ bool Player::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			//playerCollider->SetPos(player.x -= 1, player.y);
-			player.x -= 1;
+			player.x -= 3;
 			
 
 			currentAnimation = &run;
@@ -151,7 +151,7 @@ bool Player::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			
-			player.x += 1;
+			player.x += 3;
 			
 		
 
