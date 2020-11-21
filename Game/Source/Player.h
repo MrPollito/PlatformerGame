@@ -47,7 +47,7 @@ public:
 
 
 	SDL_Rect player;
-	SDL_Rect playerColl;
+
 	SDL_Texture* playerTexture;
 	
 	iPoint colPos;

@@ -32,6 +32,8 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	Collider* randomColl = nullptr;
+
 private:
 	SDL_Texture* img;
 };

@@ -8,7 +8,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
-
+#include "Collider.h"
 #include "Log.h"
 
 Scene::Scene() : Module()
