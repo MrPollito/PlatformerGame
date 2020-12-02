@@ -1,80 +1,54 @@
 #ifndef __ANIMATION_H__
 #define __ANIMATION_H__
 
-#include "SDL/include/SDL_rect.h"
+#include "Render.h"
+#define MAX_FRAMES 25
+#define FRAMERATE_CORRECTION 30
 
-#define MAX_FRAMES 50
+
+struct SDL_Renderer;
+struct SDL_Texture;
 
 class Animation
 {
 public:
-	void PushBack(const SDL_Rect& rect)
-	{
-		frames[totalFrames++] = rect;
-	}
-	void Reset()
-	{
-		currentFrame = 0;
-		loopCount = 0;
-	}
-	bool HasFinished()
-	{
-		return !loop && loopCount > 0;
-	}
-	void Update()
-	{
-		currentFrame += speed;
-		if (currentFrame >= totalFrames)
-		{
-			if (loop)
-			{
-				currentFrame = 0.0f;
-			}
-			else
-			{
-				currentFrame = totalFrames - 1;
-			}
-			++loopCount;
-		}
-	}
-
-	SDL_Rect& GetCurrentFrame()
-	{
-		return frames[(int)currentFrame];
-	}
-
-	void SetLoop(bool _loop)
-	{
-		loop = _loop;
-	}
-
-	float GetSpeed() const
-	{
-		return speed;
-	}
-
-	void SetSpeed(float _speed)
-	{
-		speed = _speed;
-	}
-
-	int GetHeight()
-	{
-		return frames[(int)currentFrame].h;
-	}
-
-	int GetWidth()
-	{
-		return frames[(int)currentFrame].w;
-	}
-
-private:
-	float currentFrame = 0.0f;
-	int totalFrames = 0;
-	int loopCount = 0;
 	bool loop = true;
 	float speed = 1.0f;
 	SDL_Rect frames[MAX_FRAMES];
+
+private:
+	float currentFrame;
+	int lastFrame = 0;
+	int loops = 0;
+
+public:
+
+	void PushBack(const SDL_Rect& rect)
+	{
+		frames[lastFrame++] = rect;
+	}
+
+	SDL_Rect& GetCurrentFrame(float dt)
+	{
+		currentFrame += speed * dt * FRAMERATE_CORRECTION;
+		if (currentFrame >= lastFrame)
+		{
+			currentFrame = (loop) ? 0.0f : lastFrame - 1;
+			loops++;
+		}
+
+		return frames[(int)currentFrame];
+	}
+
+	bool Finished() const
+	{
+		return loops > 0;
+	}
+
+	void Reset()
+	{
+		currentFrame = 0;
+	}
 };
 
-#endif //__ANIMATION_H__
+#endif

@@ -5,7 +5,6 @@
 #include "Animation.h"
 #include "Physics.h"
 #include "Point.h"
-#include "Collider.h"
 #include "Collisions.h"
 #include "Map.h"
 #include "Scene.h"
@@ -13,8 +12,16 @@
 
 #include "SDL/include/SDL.h"
 
+enum PlayerAction
+{
+	PLAYER_IDLE,
+	PLAYER_FORWARD,
+	PLAYER_BACKWARD,
+	PLAYER_JUMP,
+	PLAYER_AIRBORNE,
+	PLAYER_DEATH
+};
 
-struct Collider;
 class Player : public Module
 {
 public:
@@ -42,38 +49,54 @@ public:
 	bool Load(pugi::xml_node&);
 	bool Save(pugi::xml_node&);
 
-	void Jumping();
+	// Collisions
+	bool OnCollision(Collider* c1, Collider* c2);
 
+	bool ResetPlayer();
 
+	bool Draw(float dt);
 
-	SDL_Rect player;
+	SDL_Rect rCollider;
+	SDL_Rect r;
 
 	SDL_Texture* playerTexture;
 	
-	iPoint colPos;
+	iPoint position;
 
 	Collider* playerCollider = nullptr;
-
+	Collider* colPlayerWalls;
 
 
 private:
 	int playerSize = 78;
-	int gravityF = 1;
+	float gravity;
+	float speed;
 
+	bool jumpEnable = true;
+	bool doubleJump = true;
+
+	Animation* currentAnimation = &idle;
 	Animation idle;
 	Animation run;
-	Animation* currentAnimation = &idle;
+	Animation jump;
+	Animation death;
 
-	Physics physics;
-	iPoint velocity;
+	PlayerAction action;
+
+	//Physics physics;
+	fPoint velocity;
+
 
 	
-
 	bool invert;
-	bool keyPressed;
 	bool flipTexture;
 	bool godMode;
 	bool playerJumping;
+
+	bool onGround;
+	bool leftColliding;
+	bool rightColliding;
+
 };
 
 #endif // __PLAYER_H__

@@ -8,7 +8,6 @@
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
-#include "Collider.h"
 #include "Log.h"
 
 Scene::Scene() : Module()
@@ -61,7 +60,7 @@ bool Scene::Update(float dt)
 		app->audio->Volume(0);
 
 	// L08: TODO 6: Make the camera movement independent of framerate
-	if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	/*if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		app->render->camera.y -= 200.0f * dt;
 
 	if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -71,7 +70,33 @@ bool Scene::Update(float dt)
 		app->render->camera.x -= 200.0f * dt;
 
 	if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 200.0f * dt;
+		app->render->camera.x += 200.0f * dt;*/
+
+	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		LOG("Drawing Colliders");
+		app->debug = !app->debug;
+	}
+
+	//Start from level 1
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
+		LOG("Starting from first level");
+		app->player->position.x = 50.0f;
+		app->player->position.y = 1540.0f;
+		app->render->camera.x = 50;
+		app->render->camera.y = -1050;
+	}
+
+	//Restart level
+	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		LOG("Restarting level");
+		app->player->position.x = 50.0f;
+		app->player->position.y = 1540.0f;
+		app->render->camera.x = 50;
+		app->render->camera.y = -1050;
+	}
 
 	//app->render->DrawTexture(img, 380, 100);
 
@@ -97,13 +122,13 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	//Player border
-	if ((app->render->camera.x + app->player->player.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
+	if ((app->render->camera.x + app->player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
 
-	if ((app->player->player.w + app->render->camera.x + app->player->player.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
+	if ((app->player->r.w + app->render->camera.x + app->player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
 
-	if ((app->render->camera.y + app->player->player.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
+	if ((app->render->camera.y + app->player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
 
-	if ((app->player->player.h + app->render->camera.y + app->player->player.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
+	if ((app->player->r.h + app->render->camera.y + app->player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
 
 	// Map movement
 	if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
@@ -114,6 +139,10 @@ bool Scene::PostUpdate()
 
 	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
 
+	//Player centered camera
+	//app->render->camera.x = -app->player->position.x+400;
+	//app->render->camera.y = -app->player->position.y+400;
+
 
 	return ret;
 }
@@ -123,5 +152,17 @@ bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
 
+	return true;
+}
+
+bool Scene::OnCollision(Collider* c1, Collider* c2)
+{
+	if (c1 == endCol && c2->type == COLLIDER_PLAYER)
+	{
+		if (!ended)
+		{
+			ended = true;
+		}
+	}
 	return true;
 }

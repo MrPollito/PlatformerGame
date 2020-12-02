@@ -41,7 +41,6 @@ void Map::Draw()
 		return;
 	}
 	
-
 	// L04: TODO 5: Prepare the loop to draw all tilesets + DrawTexture()
 	ListItem<MapLayer*>* layer = mapData.layers.start;
 	TileSet* tile;
@@ -75,7 +74,6 @@ void Map::Draw()
 
 		layer = layer->next;
 	}
-
 }
 
 // L04: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
@@ -219,9 +217,7 @@ bool Map::Load(const char* filename)
 		}
 		mapData.layers.add(set);
 	}
-
 	LogAll();
-
     }
 
 	mapLoaded = ret;
@@ -312,7 +308,7 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 			layer->data[i] = tile.attribute("gid").as_int();
 			i++;
 		}
-		if (strcmp(layer->name.GetString(), "Colliders") == 0)
+		if (strcmp(layer->name.GetString(), "collisions") == 0)
 		{
 			AssignColliders(layer);
 		}
@@ -339,7 +335,7 @@ void Map::AssignColliders(MapLayer* lay)
 				iPoint pos = MapToWorld(x, y);
 				r.x = pos.x;
 				r.y = pos.y;
-				app->collisions->AddCollider(r, Collider::Type::WALL,this);
+				app->collisions->AddCollider(r, ColliderType::COLLIDER_GROUND,this);
 
 			}
 		}

@@ -1,6 +1,4 @@
-#include "Player.h"
 #include "App.h"
-
 #include "Textures.h"
 #include "Input.h"
 #include "Audio.h"
@@ -8,9 +6,8 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Collider.h"
-
 #include "Log.h" 
+#include "Player.h"
 
 Player::Player() 
 {
@@ -19,23 +16,6 @@ Player::Player()
 
 Player::~Player() {}
 
-bool Player::Start()
-{
-	keyPressed = false;
-	flipTexture = true;
-	godMode = false;
-	playerJumping = false;
-
-	player.x = 50.0f;
-	player.y = 1540.0f;
-	
-
-	playerCollider = app->collisions->AddCollider({ player.x,player.y,32,32 }, Collider::Type::PLAYER, this);
-
-	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
-	return true;
-}
-
 bool Player::Awake(pugi::xml_node&)
 {
 	for (int i = 0; i < 11; i++)
@@ -43,16 +23,42 @@ bool Player::Awake(pugi::xml_node&)
 		idle.PushBack({ (playerSize * i),31,40,31 });
 	}
 
-	idle.SetSpeed(0.01f);
-	idle.SetLoop(true);
+	idle.speed=0.5f;
+
+	for (int i = 0; i < 11; i++)
+	{
+		jump.PushBack({ (playerSize * i),31,40,31 });
+	}
+
+	idle.speed = 0.5f;
 
 	for (int i = 0; i < 8; i++)
 	{
 		run.PushBack({ (playerSize * i),0,40,31 });
 	}
 
-	run.SetSpeed(0.03f);
-	run.SetLoop(true);
+	run.speed = 0.5f;
+
+	return true;
+}
+
+bool Player::Start()
+{
+	flipTexture = false;
+	godMode = false;
+	playerJumping = false;
+	gravity = 0.5f;
+	speed = 2.0f;
+
+	position.x = 200.0f;
+	position.y = 1540.0f;
+
+	LOG("Creating player colliders");
+	rCollider = { position.x, position.y, 18, 21 };
+	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, this);
+	colPlayerWalls = app->collisions->AddCollider({ position.x, position.y, 14, 25 }, COLLIDER_PLAYER, this);
+
+	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 
 	return true;
 }
@@ -64,167 +70,214 @@ bool Player::PreUpdate()
 
 bool Player::Update(float dt)
 {
+	bool ret = false;
+
 	if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 	{
 		LOG("GODMODE");
+		ResetPlayer();
 		godMode = !godMode;
 	}
 
-	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	if (!godMode)
 	{
-		LOG("Drawing Colliders");
-		app->collisions->debug = !app->collisions->debug;
-	}
-	currentAnimation->Update();
-	keyPressed = false;
+		if (onGround)
+		{
+			ResetPlayer();
 
-	if (godMode)
-	{
+			if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				action = PLAYER_JUMP;
+			}
+			else action = PLAYER_IDLE;
+		}
+
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			
-			player.x -= 3;
-			
-			currentAnimation = &run;
-			if (flipTexture == false)
+			if (!leftColliding) action = PLAYER_BACKWARD;
+			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
-				flipTexture = true;
+				action = PLAYER_JUMP;
+				doubleJump = true;
 			}
-			keyPressed = true;
 		}
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-		
-			player.x += 3;
-			
-			
-			currentAnimation = &run;
-			if (flipTexture == true)
+			if (!rightColliding) action = PLAYER_FORWARD;
+			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
-				flipTexture = false;
+				action = PLAYER_JUMP;
+				doubleJump = true;
 			}
-			keyPressed = true;
+		}
+		if (!onGround)
+		{
+			velocity.y += gravity;
+			if (doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				doubleJump = false;
+				jumpEnable = true;
+				action = PLAYER_JUMP;
+			}
+		}
+	}
+	else
+	{   //Godmode 
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+			position.x -= 4;
+		}
+		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			position.x += 4;
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
-			player.y -= 2;
-			
-			keyPressed = true;
+			position.y -= 4;
 		}
-		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+		else if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 		{
-			player.y += 2;
-			
-			keyPressed = true;
-		}
-
-		if (keyPressed == false)
-		{
-			run.Reset();
-			currentAnimation = &idle;
+			position.y += 4;
 		}
 	}
-	else
+
+	//Player Actions
+	switch (action)
 	{
-		if (currentAnimation == &run || currentAnimation == &idle) {}
-		else { player.y += gravityF; }
-
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+	case PLAYER_IDLE:
+		velocity.x = 0;
+		currentAnimation = &idle;
+		break;
+	case PLAYER_FORWARD:
+		velocity.x = speed;
+		flipTexture = false;
+		if (onGround)currentAnimation = &run;
+		else currentAnimation = &jump;
+		break;
+	case PLAYER_BACKWARD:
+		velocity.x = -speed;
+		flipTexture = true;
+		if (onGround)currentAnimation = &run;
+		else currentAnimation = &jump;
+		break;
+	case PLAYER_JUMP:
+		if (jumpEnable == true)
 		{
-			player.x -= 3;
-			playerCollider->rect.x -= 3;
-
-			currentAnimation = &run;
-			if (flipTexture == false)
-			{
-				flipTexture = true;
-			}
-			keyPressed = true;
+			jumpEnable = false;
+			currentAnimation = &jump;
+			velocity.y = -8;
+			jump.Reset();
 		}
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			
-			player.x += 3;
-			playerCollider->rect.x += 3;
-		
+		break;
 
-			currentAnimation = &run;
-			if (flipTexture == true)
-			{
-				flipTexture = false;
-			}
-			keyPressed = true;
-		}
-
-		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			velocity.y = 30;
-			playerJumping = true;
-		}
-
-		if (keyPressed == false)
-		{
-			run.Reset();
-			currentAnimation = &idle;
-		}
+	default:
+		break;
 	}
 
-	if (playerJumping == true)
-	{
-		Jumping();
-	}
+	//Change position from velocity
+	position.x += velocity.x;
+	position.y += velocity.y;
 
-	//Start from level 1
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		LOG("Starting from first level");
-		player.x = 50.0f;
-		player.y = 1540.0f;
-		app->render->camera.x = 50;
-		app->render->camera.y = -1050;
-	}
+	//Collider position
+	playerCollider->SetPos(position.x+20, position.y+39 );
+	colPlayerWalls->SetPos(position.x +22, position.y+38 );
 
-	//Restart level
-	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-	{
-		LOG("Restarting level");
-		player.x = 50.0f;
-		player.y = 1540.0f;
-		app->render->camera.x = 50;
-		app->render->camera.y = -1050;
-	}
+	//Function to draw the player
+	ret = Draw(dt);
+	onGround = false;
+	rightColliding = false;
+	leftColliding = false;
 
 	return true;
 }
+
+bool Player::Draw(float dt)
+{
+	bool ret = false;
+	r = currentAnimation->GetCurrentFrame(dt);
+	if (playerTexture != nullptr)
+	{
+		ret = app->render->DrawTexture(playerTexture, position.x, position.y, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+	}
+	else LOG("No available graphics to draw.");
+
+	r.x = position.x;
+	r.y = position.y;
+	return ret;
+
+}
+
 
 bool Player::PostUpdate()
 {
-	if (player.x <= 0)
-	{
-		player.x = 0;
-	}
-	if ((player.x + player.w) > (app->map->mapData.width * app->map->mapData.tileWidth))
-	{
-		--player.x;
-	}
-
-	app->render->DrawTexture(playerTexture, player.x, player.y, &currentAnimation->GetCurrentFrame(), flipTexture);
 	return true;
 }
 
-bool Player::CleanUp()
+bool Player::OnCollision(Collider* c1, Collider* c2)
 {
-	/*delete(playerCollider);
-	playerCollider = nullptr;*/
-	app->tex->UnLoad(playerTexture);
+	bool ret = false;
+	if (!godMode)
+	{
+		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
+		{
+			if (c2->rect.y > c1->rect.y + c1->rect.h - 5)
+			{
+				position.y = c2->rect.y - c2->rect.h * 2;
+				velocity.y = 0;
+				onGround = true;
+			}
+			else if (c2->rect.y + c2->rect.h < c1->rect.y + 5)
+			{
+				velocity.y = 0;
+				position.y = c2->rect.y;
+			}
+			ret = true;
+		}
+		if (c1 == colPlayerWalls && c2->type == COLLIDER_GROUND)
+		{
+			if (c2->rect.x > c1->rect.x + c1->rect.w - 5 && c2->rect.y < c1->rect.y + c1->rect.h)
+			{
+				//Collider in the right
+				position.x = c2->rect.x - c2->rect.w - 5;
+				velocity.x = 0;
+				rightColliding = true;
+			}
+			else if (c2->rect.x + c2->rect.w < c1->rect.x + 5 && c2->rect.y < c1->rect.y + c1->rect.h)
+			{
+				//Collider on the left
+				position.x = c2->rect.x + 5;
+				velocity.x = 0;
+				leftColliding = true;
+			}
+			else
+			{
+				leftColliding = false;
+				rightColliding = false;
+			}
+			ret = true;
+		}
+
+	}
+	else ret = true;
+	return ret;
+}
+
+//Resets player movement 
+bool Player::ResetPlayer() 
+{
+	velocity.x = 0;
+	velocity.y = 0;
+	jumpEnable = true;
+	doubleJump = true;
+
 	return true;
 }
 
 bool Player::Load(pugi::xml_node& playerNode)
 {
-	player.x = playerNode.child("position").attribute("position_x").as_float();
-	player.y = playerNode.child("position").attribute("position_y").as_float();
+	r.x = playerNode.child("position").attribute("position_x").as_float();
+	r.y = playerNode.child("position").attribute("position_y").as_float();
 
 	return true;
 }
@@ -232,16 +285,16 @@ bool Player::Load(pugi::xml_node& playerNode)
 bool Player::Save(pugi::xml_node& playerNode)
 {
 	pugi::xml_node player_1 = playerNode.append_child("position");
-	player_1.append_attribute("position_x").set_value(player.x);
-	player_1.append_attribute("position_y").set_value(player.y);
+	player_1.append_attribute("position_x").set_value(r.x);
+	player_1.append_attribute("position_y").set_value(r.y);
 	return true;
 }
 
-void Player::Jumping()
+// Unload assets
+bool Player::CleanUp()
 {
-	if (velocity.y > 0)
-	{
-		player.y -= velocity.y;
-		velocity.y -= 10;
-	}
+	bool ret = false;
+	LOG("Unloading player");
+	ret = app->tex->UnLoad(playerTexture);
+	return ret;
 }

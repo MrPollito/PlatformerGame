@@ -16035,7 +16035,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="4" name="Colliders" width="80" height="50" locked="1" opacity="0.44">
+ <layer id="4" name="collisions" width="80" height="50" locked="1" opacity="0.44">
   <properties>
    <property name="Draw" type="int" value="0"/>
    <property name="Navigation" type="int" value="0"/>

@@ -55,6 +55,8 @@ public:
 	void LoadRequest(const char* filename);
 	void SaveRequest(const char* filename);
 
+	bool debug = false;
+
 private:
 
 	// Load config file

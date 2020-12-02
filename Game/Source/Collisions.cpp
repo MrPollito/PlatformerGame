@@ -1,99 +1,87 @@
-#include "Collisions.h"
-
 #include "App.h"
-
-#include "Render.h"
 #include "Input.h"
-#include "SDL/include/SDL_Scancode.h"
+#include "Render.h"
+#include "Collisions.h"
+#include "Module.h"
 #include "Log.h"
+
 
 Collisions::Collisions()
 {
 	name.Create("collisions");
-
-
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 		colliders[i] = nullptr;
 
+	matrix[COLLIDER_GROUND][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_GROUND][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_END] = false;
 
-	matrix[Collider::Type::WALL][Collider::Type::WALL] = false;
-	matrix[Collider::Type::WALL][Collider::Type::PLAYER] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER] = false;
+	matrix[COLLIDER_PLAYER][COLLIDER_GROUND] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_END] = true;
 
-	matrix[Collider::Type::PLAYER][Collider::Type::WALL] = true;
-	matrix[Collider::Type::PLAYER][Collider::Type::PLAYER] = false;
-
-
+	matrix[COLLIDER_END][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_END][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_END][COLLIDER_END] = false;
 
 }
+
 // Destructor
 Collisions::~Collisions()
-{
-
-}
+{}
 
 bool Collisions::PreUpdate()
 {
 	// Remove all colliders scheduled for deletion
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
-		if (colliders[i] != nullptr && colliders[i]->pendingToDelete == true)
+		if (colliders[i] != nullptr && colliders[i]->toDelete == true)
 		{
 			delete colliders[i];
 			colliders[i] = nullptr;
 		}
 	}
 
+	// Calculate collisions
 	Collider* c1;
 	Collider* c2;
-
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
 		// skip empty colliders
 		if (colliders[i] == nullptr)
 			continue;
-
 		c1 = colliders[i];
-
 		// avoid checking collisions already checked
 		for (uint k = i + 1; k < MAX_COLLIDERS; ++k)
-        {
+		{
 			// skip empty colliders
 			if (colliders[k] == nullptr)
 				continue;
-
 			c2 = colliders[k];
-
-			if (matrix[c1->type][c2->type] && c1->Intersects(c2->rect))
+			if (c1->CheckCollision(c2->rect) == true)
 			{
-				for (uint i = 0; i < MAX_LISTENERS; ++i)
-					if (c1->listeners[i] != nullptr) c1->listeners[i]->OnCollision(c1, c2);
-
-				for (uint i = 0; i < MAX_LISTENERS; ++i)
-					if (c2->listeners[i] != nullptr) c2->listeners[i]->OnCollision(c2, c1);
+				if (matrix[c1->type][c2->type] && c1->callback)
+					c1->callback->OnCollision(c1, c2);
+				if (matrix[c2->type][c1->type] && c2->callback)
+					c2->callback->OnCollision(c2, c1);
 			}
 		}
 	}
-	return true;
-}
-
-bool Collisions::Update()
-{
-
 
 	return true;
 }
 
-bool Collisions::PostUpdate()
+// Called before render is available
+bool Collisions::Update(float dt)
 {
-	if (debug)
-		DebugDraw();
+
+	if (app->debug) DebugDraw();
 
 	return true;
 }
 
 void Collisions::DebugDraw()
 {
-	
 	Uint8 alpha = 80;
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
@@ -102,16 +90,18 @@ void Collisions::DebugDraw()
 
 		switch (colliders[i]->type)
 		{
-		case Collider::Type::NONE: // white
+		case COLLIDER_NONE: // white
 			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha);
 			break;
-		case Collider::Type::WALL: // green
+		case COLLIDER_PLAYER: // green
 			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha);
 			break;
-		case Collider::Type::PLAYER: // blue
-			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha);
+		case COLLIDER_GROUND: // red
+			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha);
 			break;
-
+		case COLLIDER_END: // orange
+			app->render->DrawRectangle(colliders[i]->rect, 255, 140, 0, alpha);
+			break;
 		}
 	}
 }
@@ -133,7 +123,7 @@ bool Collisions::CleanUp()
 	return true;
 }
 
-Collider* Collisions::AddCollider(SDL_Rect rect, Collider::Type type, Module* listener)
+Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Module* callback)
 {
 	Collider* ret = nullptr;
 
@@ -141,12 +131,21 @@ Collider* Collisions::AddCollider(SDL_Rect rect, Collider::Type type, Module* li
 	{
 		if (colliders[i] == nullptr)
 		{
-			LOG("Created collider %d", colliders[i]);
-			ret = colliders[i] = new Collider(rect, type, listener);
-			i++;
+			ret = colliders[i] = new Collider(rect, type, callback);
 			break;
 		}
 	}
+
+	return ret;
+}
+
+// -----------------------------------------------------
+
+bool Collider::CheckCollision(const SDL_Rect& r) const
+{
+	bool ret = true;
+
+	if (r.x + r.w < rect.x || rect.x + rect.w < r.x || r.y - r.h > rect.y || rect.y - rect.h > r.y) ret = false;
 
 	return ret;
 }

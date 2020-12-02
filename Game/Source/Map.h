@@ -181,6 +181,7 @@ public:
 
 	// L03: DONE 1: Add your struct for map info
 	MapData mapData;
+	List<Collider*> mapColliders;
 
 private:
 

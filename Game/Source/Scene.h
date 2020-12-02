@@ -32,7 +32,12 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	Collider* randomColl = nullptr;
+	// Detects collisions
+	bool OnCollision(Collider* c1, Collider* c2);
+
+	Collider* endCol = nullptr;
+	bool ended;
+
 
 private:
 	SDL_Texture* img;

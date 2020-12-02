@@ -72,36 +72,6 @@ bool Render::PreUpdate()
 
 bool Render::Update(float dt)
 {
-	//if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
-	//{
-	//	
-	//	ListItem<MapLayer*>* lay = app->map->mapData.layers.start;
-	//	while (lay != NULL)
-	//	{
-	//		if (lay->data->name == "Colliders")
-	//		{
-	//			ListItem<Properties::Property*>* prop = lay->data->properties.list.start;
-	//			while (prop != NULL)
-	//				if (prop->data->name == "Draw")
-	//				{
-	//					LOG("Debug Drawing Colliders");
-	//					if (prop->data->value == 0)
-	//					{
-	//						prop->data->value = 1;
-	//					}
-	//					else
-	//					{
-	//						prop->data->value = 0;
-	//					}
-	//					break;
-	//				}
-	//				else
-	//					prop = prop->next;
-	//			
-	//		}
-	//		lay = lay->next;
-	//	}
-	//}
 	return true;
 }
 

@@ -2,10 +2,11 @@
 #define __MODULE_H__
 
 #include "SString.h"
-#include "Collider.h"
+
 #include "PugiXml/src/pugixml.hpp"
 
 class App;
+struct Collider;
 
 class Module
 {
@@ -69,10 +70,11 @@ public:
 
 	//Called when two colliders are intersecting
 //and the module is registered as the listener
-	virtual void OnCollision(Collider* c1, Collider* c2)
+	virtual bool OnCollision(Collider* c1, Collider* c2)
 	{
-
+		return true;
 	}
+
 public:
 
 	SString name;
