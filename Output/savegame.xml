@@ -6,13 +6,14 @@
 	<audio>
 		<volume value="32" />
 	</audio>
+	<pathfinding />
 	<scene />
 	<map />
 	<collisions />
 	<player>
-		<position position_x="316" position_y="1373" />
+		<position position_x="198" position_y="1369" />
 	</player>
 	<renderer>
-		<camera x="-2" y="-926" />
+		<camera x="50" y="-930" />
 	</renderer>
 </save_state>
