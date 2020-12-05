@@ -227,7 +227,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 				velocity.y = 0;
 				onGround = true;
 			}
-			else if (c2->rect.y + c2->rect.h < c1->rect.y + 5)
+			else if (c2->rect.y + c2->rect.h < c1->rect.y - 5)
 			{
 				velocity.y = 0;
 				position.y = c2->rect.y;
@@ -243,10 +243,10 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 				velocity.x = 0;
 				rightColliding = true;
 			}
-			else if (c2->rect.x + c2->rect.w < c1->rect.x + 5 && c2->rect.y < c1->rect.y + c1->rect.h)
+			else if (c2->rect.x + c2->rect.w < c1->rect.x + 10 && c2->rect.y < c1->rect.y + c1->rect.h)
 			{
 				//Collider on the left
-				position.x = c2->rect.x + 5;
+				position.x = c2->rect.x + 10;
 				velocity.x = 0;
 				leftColliding = true;
 			}

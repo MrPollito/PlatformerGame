@@ -8019,7 +8019,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="2" name="Wall" width="80" height="50" locked="1">
+ <layer id="2" name="Wall" width="80" height="50">
   <properties>
    <property name="Draw" type="int" value="1"/>
    <property name="Navigation" type="int" value="0"/>
@@ -10776,28 +10776,28 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
    <tile/>
    <tile/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
    <tile/>
    <tile/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
-   <tile gid="342"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
    <tile/>
    <tile/>
    <tile/>
@@ -16035,7 +16035,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="4" name="collisions" width="80" height="50" locked="1" opacity="0.44">
+ <layer id="4" name="collisions" width="80" height="50" opacity="0.44">
   <properties>
    <property name="Draw" type="int" value="0"/>
    <property name="Navigation" type="int" value="0"/>
@@ -18792,28 +18792,28 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
    <tile/>
    <tile/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
    <tile/>
    <tile/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
-   <tile gid="26"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
    <tile/>
    <tile/>
    <tile/>
