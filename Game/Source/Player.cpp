@@ -20,24 +20,34 @@ bool Player::Awake(pugi::xml_node&)
 {
 	for (int i = 0; i < 11; i++)
 	{
-		idle.PushBack({ (playerSize * i),31,40,31 });
+		idleRight.PushBack({ (playerSize * i),31,40,31 });
 	}
 
-	idle.speed=0.5f;
+	idleRight.speed=0.5f;
 
 	for (int i = 0; i < 11; i++)
 	{
-		jump.PushBack({ (playerSize * i),31,40,31 });
+		idleLeft.PushBack({ (playerSize * i),148,48,27 });
 	}
 
-	idle.speed = 0.5f;
+	idleLeft.speed = 0.5f;
+
+	jumpRight.PushBack({0,105,40,30 });
+	jumpLeft.PushBack({78,105,50,30 });
+	
+	for (int i = 0; i < 8; i++)
+	{
+		runRight.PushBack({ (playerSize * i),0,40,31 });
+	}
+
+	runRight.speed = 0.5f;
 
 	for (int i = 0; i < 8; i++)
 	{
-		run.PushBack({ (playerSize * i),0,40,31 });
+		runLeft.PushBack({ (playerSize * i),70,48,31 });
 	}
 
-	run.speed = 0.5f;
+	runLeft.speed = 0.5f;
 
 	return true;
 }
@@ -49,9 +59,10 @@ bool Player::Start()
 	playerJumping = false;
 	gravity = 0.5f;
 	speed = 2.0f;
+	facingRight = true;
 
 	position.x = 200.0f;
-	position.y = 1540.0f;
+	position.y = 1500.0f;
 
 	LOG("Creating player colliders");
 	rCollider = { position.x, position.y, 18, 21 };
@@ -77,47 +88,71 @@ bool Player::Update(float dt)
 		LOG("GODMODE");
 		ResetPlayer();
 		godMode = !godMode;
+		action = PLAYER_IDLE_RIGHT;
 	}
 
 	if (!godMode)
 	{
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			facingRight = false;
+		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			facingRight = true;
+
 		if (onGround)
 		{
 			ResetPlayer();
 
 			if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
-				action = PLAYER_JUMP;
+				facingRight == true;
+				action = PLAYER_JUMP_RIGHT;
 			}
-			else action = PLAYER_IDLE;
+			else action = PLAYER_IDLE_RIGHT;
+
+			if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				facingRight == false;
+				action = PLAYER_JUMP_LEFT;
+			}
+			else action = PLAYER_IDLE_LEFT;
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			if (!leftColliding) action = PLAYER_BACKWARD;
+			if (!leftColliding) action = PLAYER_RUN_LEFT;
 			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
-				action = PLAYER_JUMP;
+				action = PLAYER_JUMP_LEFT;
 				doubleJump = true;
 			}
 		}
 		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-			if (!rightColliding) action = PLAYER_FORWARD;
+			if (!rightColliding) action = PLAYER_RUN_RIGHT;
 			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
-				action = PLAYER_JUMP;
+				action = PLAYER_JUMP_RIGHT;
 				doubleJump = true;
 			}
 		}
-		if (!onGround)
+		if (!onGround && facingRight==true)
 		{
 			velocity.y += gravity;
 			if (doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
 				doubleJump = false;
 				jumpEnable = true;
-				action = PLAYER_JUMP;
+				action = PLAYER_JUMP_RIGHT;
+			}
+		}
+		if (!onGround && facingRight == false)
+		{
+			velocity.y += gravity;
+			if (doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				doubleJump = false;
+				jumpEnable = true;
+				action = PLAYER_JUMP_LEFT;
 			}
 		}
 	}
@@ -145,29 +180,48 @@ bool Player::Update(float dt)
 	//Player Actions
 	switch (action)
 	{
-	case PLAYER_IDLE:
+	case PLAYER_IDLE_RIGHT:
+		facingRight = true;
 		velocity.x = 0;
-		currentAnimation = &idle;
+		currentAnimation = &idleRight;
 		break;
-	case PLAYER_FORWARD:
+	case PLAYER_IDLE_LEFT:
+		facingRight = false;
+		velocity.x = 0;
+		currentAnimation = &idleLeft;
+		break;
+	case PLAYER_RUN_RIGHT:
+		facingRight = true;
 		velocity.x = speed;
 		flipTexture = false;
-		if (onGround)currentAnimation = &run;
-		else currentAnimation = &jump;
+		if (onGround && facingRight == true) currentAnimation = &runRight;
+		else currentAnimation = &jumpRight;
 		break;
-	case PLAYER_BACKWARD:
+	case PLAYER_RUN_LEFT:
+		facingRight = false;
 		velocity.x = -speed;
-		flipTexture = true;
-		if (onGround)currentAnimation = &run;
-		else currentAnimation = &jump;
+		flipTexture = false;
+		if (onGround && facingRight==false) currentAnimation = &runLeft;
+		else currentAnimation = &jumpLeft;
 		break;
-	case PLAYER_JUMP:
-		if (jumpEnable == true)
+	case PLAYER_JUMP_RIGHT:
+		if (jumpEnable == true && facingRight == true)
 		{
+			facingRight = true;
 			jumpEnable = false;
-			currentAnimation = &jump;
+			currentAnimation = &jumpRight;
 			velocity.y = -8;
-			jump.Reset();
+			jumpRight.Reset();
+		}
+		break;
+	case PLAYER_JUMP_LEFT:
+		if (jumpEnable == true && facingRight == false)
+		{
+			facingRight = false;
+			jumpEnable = false;
+			currentAnimation = &jumpLeft;
+			velocity.y = -8;
+			jumpRight.Reset();
 		}
 		break;
 
@@ -198,7 +252,7 @@ bool Player::Draw(float dt)
 	r = currentAnimation->GetCurrentFrame(dt);
 	if (playerTexture != nullptr)
 	{
-		ret = app->render->DrawTexture(playerTexture, position.x, position.y, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+		ret = app->render->DrawTexture(playerTexture, position.x+3, position.y+35, &r, flipTexture, speed, 0, INT_MAX, INT_MAX);
 	}
 	else LOG("No available graphics to draw.");
 
@@ -276,8 +330,20 @@ bool Player::ResetPlayer()
 
 bool Player::Load(pugi::xml_node& playerNode)
 {
-	r.x = playerNode.child("position").attribute("position_x").as_float();
-	r.y = playerNode.child("position").attribute("position_y").as_float();
+	position.x = playerNode.child("position").attribute("position_x").as_float();
+	position.y = playerNode.child("position").attribute("position_y").as_float();
+
+	playerCollider->SetPos(position.x + 20, position.y + 39);
+	colPlayerWalls->SetPos(position.x + 22, position.y + 38);
+
+	rCollider.x = position.x + 20; rCollider.y = position.y + 39;
+
+	r.x = position.x;
+	r.y = position.y;
+
+	onGround = false;
+	rightColliding = false;
+	leftColliding = false;
 
 	return true;
 }

@@ -83,7 +83,7 @@ bool Scene::Update(float dt)
 	{
 		LOG("Starting from first level");
 		app->player->position.x = 50.0f;
-		app->player->position.y = 1540.0f;
+		app->player->position.y = 1500.0f;
 		app->render->camera.x = 50;
 		app->render->camera.y = -1050;
 	}
@@ -93,7 +93,7 @@ bool Scene::Update(float dt)
 	{
 		LOG("Restarting level");
 		app->player->position.x = 50.0f;
-		app->player->position.y = 1540.0f;
+		app->player->position.y = 1500.0f;
 		app->render->camera.x = 50;
 		app->render->camera.y = -1050;
 	}

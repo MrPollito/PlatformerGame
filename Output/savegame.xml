@@ -10,9 +10,9 @@
 	<map />
 	<collisions />
 	<player>
-		<position position_x="399" position_y="1056" />
+		<position position_x="316" position_y="1373" />
 	</player>
 	<renderer>
-		<camera x="-2" y="-624" />
+		<camera x="-2" y="-926" />
 	</renderer>
 </save_state>

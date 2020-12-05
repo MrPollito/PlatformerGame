@@ -14,10 +14,12 @@
 
 enum PlayerAction
 {
-	PLAYER_IDLE,
-	PLAYER_FORWARD,
-	PLAYER_BACKWARD,
-	PLAYER_JUMP,
+	PLAYER_IDLE_RIGHT,
+	PLAYER_IDLE_LEFT,
+	PLAYER_RUN_RIGHT,
+	PLAYER_RUN_LEFT,
+	PLAYER_JUMP_RIGHT,
+	PLAYER_JUMP_LEFT,
 	PLAYER_AIRBORNE,
 	PLAYER_DEATH
 };
@@ -75,10 +77,13 @@ private:
 	bool jumpEnable = true;
 	bool doubleJump = true;
 
-	Animation* currentAnimation = &idle;
-	Animation idle;
-	Animation run;
-	Animation jump;
+	Animation* currentAnimation;
+	Animation idleRight;
+	Animation idleLeft;
+	Animation runRight;
+	Animation runLeft;
+	Animation jumpRight;
+	Animation jumpLeft;
 	Animation death;
 
 	PlayerAction action;
@@ -92,6 +97,7 @@ private:
 	bool flipTexture;
 	bool godMode;
 	bool playerJumping;
+	bool facingRight;
 
 	bool onGround;
 	bool leftColliding;
