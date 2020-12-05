@@ -18,7 +18,7 @@ class Scene;
 class Map;
 class Collisions;
 class Player;
-
+class PathFinding;
 
 class App
 {
@@ -90,6 +90,7 @@ public:
 	Textures* tex;
 	Audio* audio;
 	Scene* scene;
+	PathFinding* pathfinding;
 	Map* map;
 	Collisions* collisions;
 	Player* player;

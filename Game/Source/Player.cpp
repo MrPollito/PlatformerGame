@@ -198,7 +198,7 @@ bool Player::Draw(float dt)
 	r = currentAnimation->GetCurrentFrame(dt);
 	if (playerTexture != nullptr)
 	{
-		ret = app->render->DrawTexture(playerTexture, position.x, position.y, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+		ret = app->render->DrawTexture(playerTexture, position.x+5, position.y+35, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
 	}
 	else LOG("No available graphics to draw.");
 
