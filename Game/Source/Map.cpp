@@ -101,6 +101,16 @@ iPoint Map::MapToWorld(int x, int y) const
 	return ret;
 }
 
+iPoint Map::WorldToMap(int x, int y) const
+{
+	iPoint ret;
+
+	ret.x = x / mapData.tileWidth;
+	ret.y = y / mapData.tileHeight;
+
+	return ret;
+}
+
 TileSet* Map::GetTilesetFromTileId(int id) const
 {
 	ListItem<TileSet*>* item = mapData.tilesets.end;
@@ -495,4 +505,39 @@ ListItem<MapLayer*>* MapLayer::GetLayer(SString name)
 			return a;
 		}
 	}
+}
+
+bool Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
+{
+	bool ret = false;
+	ListItem<MapLayer*>* item = mapData.layers.start;
+
+	for (item = mapData.layers.start; item != NULL || ret == false; item = item->next)
+	{
+		MapLayer* layer = item->data;
+
+		if (layer->properties.GetProperty("Navigation", 0) == 1)
+		{
+			uchar* map = new uchar[layer->width * layer->height];
+			memset(map, 1, layer->width * layer->height);
+
+			for (int y = 0; y < mapData.height; ++y)
+			{
+				for (int x = 0; x < mapData.width; ++x)
+				{
+					int i = (y * layer->width) + x;
+
+					int tile_id = layer->Get(x, y);
+					map[i] = (layer->data[tile_id] == 24) == true ? 1 : 0;
+				}
+			}
+
+			*buffer = map;
+			width = mapData.width;
+			height = mapData.height;
+			ret = true;
+		}
+	}
+
+	return ret;
 }

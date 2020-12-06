@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "Pathfinding.h"
+#include "PigEnemy.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -32,9 +33,11 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audio = new Audio();
 	scene = new Scene();
 	map = new Map();
-	collisions = new Collisions();
 	player = new Player();
+	pigEnemy = new PigEnemy();
 	pathfinding = new PathFinding();
+	collisions = new Collisions();
+	
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -45,8 +48,9 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);
-	AddModule(collisions);
 	AddModule(player);
+	AddModule(pigEnemy);
+	AddModule(collisions);
 
 	// render last to swap buffer
 	AddModule(render);

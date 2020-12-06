@@ -8,6 +8,7 @@
 #include "Collisions.h"
 #include "Map.h"
 #include "Scene.h"
+#include "Animation.h"
 
 
 #include "SDL/include/SDL.h"
@@ -21,6 +22,8 @@ enum PlayerAction
 	PLAYER_JUMP_RIGHT,
 	PLAYER_JUMP_LEFT,
 	PLAYER_AIRBORNE,
+	PLAYER_HIT_RIGHT,
+	PLAYER_HIT_LEFT,
 	PLAYER_DEATH
 };
 
@@ -58,21 +61,28 @@ public:
 
 	bool Draw(float dt);
 
+	void Hit(int damage);
+
 	SDL_Rect rCollider;
 	SDL_Rect r;
 
 	SDL_Texture* playerTexture;
 	
-	iPoint position;
+	fPoint position;
+	iPoint positionPixelPerfect;
 
 	Collider* playerCollider = nullptr;
 	Collider* colPlayerWalls;
 
+	bool godMode;
+	float gravity;
+	int life;
 
 private:
 	int playerSize = 78;
-	float gravity;
 	float speed;
+	bool dead = false;
+	float deathTimer;
 
 	bool jumpEnable = true;
 	bool doubleJump = true;
@@ -84,6 +94,8 @@ private:
 	Animation runLeft;
 	Animation jumpRight;
 	Animation jumpLeft;
+	Animation hitRight;
+	Animation hitLeft;
 	Animation death;
 
 	PlayerAction action;
@@ -91,11 +103,9 @@ private:
 	//Physics physics;
 	fPoint velocity;
 
-
 	
 	bool invert;
 	bool flipTexture;
-	bool godMode;
 	bool playerJumping;
 	bool facingRight;
 

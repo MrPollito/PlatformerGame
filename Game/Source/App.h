@@ -19,6 +19,7 @@ class Map;
 class Collisions;
 class Player;
 class PathFinding;
+class PigEnemy;
 
 class App
 {
@@ -94,6 +95,7 @@ public:
 	Map* map;
 	Collisions* collisions;
 	Player* player;
+	PigEnemy* pigEnemy;
 
 private:
 

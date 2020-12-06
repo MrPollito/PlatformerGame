@@ -20,14 +20,14 @@ bool Player::Awake(pugi::xml_node&)
 {
 	for (int i = 0; i < 11; i++)
 	{
-		idleRight.PushBack({ (playerSize * i),31,40,31 });
+		idleRight.PushBack({ (playerSize * i),30,40,31 });
 	}
 
 	idleRight.speed=0.5f;
 
 	for (int i = 0; i < 11; i++)
 	{
-		idleLeft.PushBack({ (playerSize * i),148,48,27 });
+		idleLeft.PushBack({ (playerSize * i),147,48,31 });
 	}
 
 	idleLeft.speed = 0.5f;
@@ -37,17 +37,25 @@ bool Player::Awake(pugi::xml_node&)
 
 	for (int i = 0; i < 8; i++)
 	{
-		runRight.PushBack({ (playerSize * i),0,40,31 });
+		runRight.PushBack({ (playerSize * i),0,48,31 });
 	}
 
 	runRight.speed = 0.5f;
 
 	for (int i = 0; i < 8; i++)
 	{
-		runLeft.PushBack({ (playerSize * i),71,40,31 });
+		runLeft.PushBack({ (playerSize * i),69,48,31 });
 	}
 
 	runLeft.speed = 0.5f;
+
+	hitRight.PushBack({ 0,182,40,37 });
+	hitRight.PushBack({ 79,182,40,37 });
+	hitRight.speed = 0.5f;
+
+	hitLeft.PushBack({ 0,217,40,37 });
+	hitLeft.PushBack({ 79,217,40,37 });
+	hitLeft.speed = 0.5f;
 
 	return true;
 }
@@ -59,14 +67,21 @@ bool Player::Start()
 	playerJumping = false;
 	gravity = 0.5f;
 	speed = 2.0f;
+	life = 3;
 
 	position.x = 200.0f;
-	position.y = 1540.0f;
+	position.y = 1500.0f;
+
+	positionPixelPerfect.x = round(position.x);
+	positionPixelPerfect.y = round(position.y);
+
+	r.x = positionPixelPerfect.x;
+	r.y = positionPixelPerfect.y;
 
 	LOG("Creating player colliders");
-	rCollider = { position.x, position.y, 18, 21 };
+	rCollider = { positionPixelPerfect.x, positionPixelPerfect.y, 18, 22 };
 	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, this);
-	colPlayerWalls = app->collisions->AddCollider({ position.x, position.y, 14, 25 }, COLLIDER_PLAYER, this);
+	colPlayerWalls = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 14, 26 }, COLLIDER_PLAYER, this);
 
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 
@@ -81,11 +96,25 @@ bool Player::PreUpdate()
 bool Player::Update(float dt)
 {
 	bool ret = false;
+	if (positionPixelPerfect.y > 5000 || life <= 0)
+	{
+		if (!dead)
+		{
+			ResetPlayer();
+			velocity.x = 0;
+			death.Reset();
+			deathTimer = 2.0f;
+			action = PLAYER_DEATH;
+
+			dead = true;
+		}
+	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 	{
 		LOG("GODMODE");
 		ResetPlayer();
+		action = PLAYER_IDLE_RIGHT;
 		godMode = !godMode;
 	}
 
@@ -116,6 +145,7 @@ bool Player::Update(float dt)
 				action = PLAYER_JUMP_LEFT;
 				doubleJump = true;
 			}
+			else currentAnimation = &idleLeft;
 		}
 		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
@@ -125,6 +155,7 @@ bool Player::Update(float dt)
 				action = PLAYER_JUMP_RIGHT;
 				doubleJump = true;
 			}
+			else currentAnimation = &idleRight;
 		}
 		if (!onGround)
 		{
@@ -142,6 +173,9 @@ bool Player::Update(float dt)
 				action = PLAYER_JUMP_LEFT;
 			}
 		}
+		if (currentAnimation == &hitRight) action = PLAYER_HIT_RIGHT;
+		if (currentAnimation == &hitLeft) action = PLAYER_HIT_LEFT;
+
 	}
 	else
 	{   //Godmode 
@@ -168,28 +202,31 @@ bool Player::Update(float dt)
 	switch (action)
 	{
 	case PLAYER_IDLE_RIGHT:
+		facingRight = true;
 		velocity.x = 0;
 		currentAnimation = &idleRight;
 		break;
 	case PLAYER_IDLE_LEFT:
+		facingRight = false;
 		velocity.x = 0;
 		currentAnimation = &idleLeft;
 		break;
 	case PLAYER_RUN_RIGHT:
+		facingRight = true;
 		velocity.x = speed;
-		flipTexture = false;
 		if (onGround)currentAnimation = &runRight;
 		else currentAnimation = &jumpRight;
 		break;
 	case PLAYER_RUN_LEFT:
+		facingRight = false;
 		velocity.x = -speed;
-		flipTexture = true;
 		if (onGround)currentAnimation = &runLeft;
 		else currentAnimation = &jumpLeft;
 		break;
 	case PLAYER_JUMP_RIGHT:
 		if (jumpEnable == true)
 		{
+			facingRight = true;
 			jumpEnable = false;
 			currentAnimation = &jumpRight;
 			velocity.y = -8;
@@ -199,10 +236,27 @@ bool Player::Update(float dt)
 	case PLAYER_JUMP_LEFT:
 		if (jumpEnable == true)
 		{
+			facingRight = false;
 			jumpEnable = false;
 			currentAnimation = &jumpLeft;
 			velocity.y = -8;
 			jumpLeft.Reset();
+		}
+		break;
+	case PLAYER_HIT_RIGHT:
+		currentAnimation = &hitRight;
+		if (hitRight.Finished())
+		{
+			action = PLAYER_IDLE_RIGHT;
+			currentAnimation = &jumpRight;
+		}
+		break;
+	case PLAYER_HIT_LEFT:
+		currentAnimation = &hitLeft;
+		if (hitLeft.Finished())
+		{
+			action = PLAYER_IDLE_LEFT;
+			currentAnimation = &jumpLeft;
 		}
 		break;
 
@@ -214,9 +268,12 @@ bool Player::Update(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
+	positionPixelPerfect.x = round(position.x);
+	positionPixelPerfect.y = round(position.y);
+
 	//Collider position
-	playerCollider->SetPos(position.x+20, position.y+39 );
-	colPlayerWalls->SetPos(position.x +22, position.y+38 );
+	playerCollider->SetPos(positionPixelPerfect.x+20, positionPixelPerfect.y+39 );
+	colPlayerWalls->SetPos(positionPixelPerfect.x +22, positionPixelPerfect.y+38 );
 
 	//Function to draw the player
 	ret = Draw(dt);
@@ -233,7 +290,7 @@ bool Player::Draw(float dt)
 	r = currentAnimation->GetCurrentFrame(dt);
 	if (playerTexture != nullptr)
 	{
-		ret = app->render->DrawTexture(playerTexture, position.x+5, position.y+35, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+		ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x+5, positionPixelPerfect.y+35, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
 	}
 	else LOG("No available graphics to draw.");
 
@@ -242,7 +299,6 @@ bool Player::Draw(float dt)
 	return ret;
 
 }
-
 
 bool Player::PostUpdate()
 {
@@ -256,13 +312,13 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	{
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
-			if (c2->rect.y > c1->rect.y + c1->rect.h - 5)
+			if (c2->rect.y > c1->rect.y + c1->rect.h)
 			{
-				position.y = c2->rect.y - c2->rect.h * 2;
+				position.y = c2->rect.y - c2->rect.h *2;
 				velocity.y = 0;
 				onGround = true;
 			}
-			else if (c2->rect.y + c2->rect.h < c1->rect.y - 5)
+			else if (c2->rect.y + c2->rect.h < c1->rect.y+15)
 			{
 				velocity.y = 0;
 				position.y = c2->rect.y;
@@ -307,6 +363,24 @@ bool Player::ResetPlayer()
 	doubleJump = true;
 
 	return true;
+}
+
+void Player::Hit(int damage)
+{
+	if (facingRight == true)
+	{
+		hitRight.Reset();
+		life -= damage;
+		action = PLAYER_HIT_RIGHT;
+		currentAnimation = &hitRight;
+	}
+	else
+	{
+		hitLeft.Reset();
+		life -= damage;
+		action = PLAYER_HIT_LEFT;
+		currentAnimation = &hitLeft;
+	}
 }
 
 bool Player::Load(pugi::xml_node& playerNode)

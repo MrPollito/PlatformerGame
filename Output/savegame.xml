@@ -9,11 +9,12 @@
 	<pathfinding />
 	<scene />
 	<map />
-	<collisions />
 	<player>
-		<position position_x="198" position_y="1369" />
+		<position position_x="236" position_y="1444" />
 	</player>
+	<pigEnemy />
+	<collisions />
 	<renderer>
-		<camera x="50" y="-930" />
+		<camera x="50" y="-970" />
 	</renderer>
 </save_state>

@@ -9,6 +9,8 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "Log.h"
+#include "PigEnemy.h"
+#include "Pathfinding.h"
 
 Scene::Scene() : Module()
 {
@@ -32,7 +34,17 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
-	app->map->Load(app->map->GetLoadingLevel().GetString());
+	if (app->map->Load(app->map->GetLoadingLevel().GetString())==true);
+	{
+		int w, h;
+		uchar* data = NULL;
+		if (app->map->CreateWalkabilityMap(w, h, &data))
+			app->pathfinding->SetMap(w, h, data);
+
+		RELEASE_ARRAY(data);
+	}
+
+	app->pigEnemy->EnablePigEnemy();
 
 	return true;
 }
@@ -143,7 +155,6 @@ bool Scene::PostUpdate()
 	//app->render->camera.x = -app->player->position.x+400;
 	//app->render->camera.y = -app->player->position.y+400;
 
-
 	return ret;
 }
 
@@ -164,5 +175,14 @@ bool Scene::OnCollision(Collider* c1, Collider* c2)
 			ended = true;
 		}
 	}
+	return true;
+}
+
+bool Scene::MovePlayer(iPoint pos)
+{
+	fPoint newPos;
+	newPos.x = pos.x;
+	newPos.y = pos.y;
+	app->player->position = newPos;
 	return true;
 }

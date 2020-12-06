@@ -55,7 +55,6 @@ private:
 	// all map walkability values [0..255]
 	uchar* map;
 
-public:
 	// we store the created path here
 	DynArray<iPoint> lastPath;
 };
@@ -92,7 +91,7 @@ struct PathNode
 struct PathList
 {
 	// Looks for a node in this list and returns it's list node or NULL
-	const ListItem<PathNode>* Find(const iPoint& point) const;
+	ListItem<PathNode>* Find(const iPoint& point) const;
 
 	// Returns the Pathnode with lowest score in this list or NULL if empty
 	ListItem<PathNode>* GetNodeLowestScore() const;

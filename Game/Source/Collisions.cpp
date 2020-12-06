@@ -15,14 +15,23 @@ Collisions::Collisions()
 	matrix[COLLIDER_GROUND][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_GROUND][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_GROUND][COLLIDER_END] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_ENEMY] = true;
 
 	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER] = false;
 	matrix[COLLIDER_PLAYER][COLLIDER_GROUND] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_END] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_ENEMY] = true;
 
 	matrix[COLLIDER_END][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_END][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_END][COLLIDER_END] = false;
+	matrix[COLLIDER_END][COLLIDER_ENEMY] = false;
+
+	matrix[COLLIDER_ENEMY][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_ENEMY][COLLIDER_ENEMY] = false;
+	matrix[COLLIDER_ENEMY][COLLIDER_GROUND] = true;
+	matrix[COLLIDER_ENEMY][COLLIDER_END] = false;
+
 
 }
 
@@ -98,6 +107,9 @@ void Collisions::DebugDraw()
 			break;
 		case COLLIDER_GROUND: // red
 			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha);
+			break;
+		case COLLIDER_ENEMY: // yellow
+			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 0, alpha);
 			break;
 		case COLLIDER_END: // orange
 			app->render->DrawRectangle(colliders[i]->rect, 255, 140, 0, alpha);

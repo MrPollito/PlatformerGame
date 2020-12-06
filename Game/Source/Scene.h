@@ -3,7 +3,10 @@
 
 #include "Module.h"
 
+#include <map>
+
 struct SDL_Texture;
+struct SDL_Rect;
 
 class Scene : public Module
 {
@@ -35,8 +38,14 @@ public:
 	// Detects collisions
 	bool OnCollision(Collider* c1, Collider* c2);
 
+	bool MovePlayer(iPoint pos);
+
 	Collider* endCol = nullptr;
 	bool ended;
+
+	int w, h;
+	uchar* data = NULL;
+
 
 
 private:
