@@ -11,7 +11,6 @@
 // L03: TODO 2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 
-
 struct Properties
 {
 	struct Property
@@ -69,8 +68,6 @@ struct TileSet
 	SDL_Rect GetTileRect(int id) const;
 };
 
-
-
 // L03: TODO 1: We create an enum for map type, just for convenience,
 // NOTE: Platformer game will be of type ORTHOGONAL
 enum MapTypes
@@ -80,8 +77,6 @@ enum MapTypes
 	MAPTYPE_ISOMETRIC,
 	MAPTYPE_STAGGERED
 };
-
-
 
 // L04: TODO 1: Create a struct for the map layer
 struct MapLayer
@@ -112,8 +107,6 @@ struct MapLayer
 	ListItem<MapLayer*>* GetLayer(SString name);
 	
 };
-
-
 
 // L03: TODO 1: Create a struct needed to hold the information to Map node
 struct MapData
@@ -175,9 +168,6 @@ private:
 
 	TileSet* GetTilesetFromTileId(int id) const;
 	bool LoadProperties(pugi::xml_node& node, Properties& properties);
-
-	
-
 
 public:
 

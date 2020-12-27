@@ -48,7 +48,7 @@ bool PathFinding::CheckBoundaries(const iPoint& pos) const
 bool PathFinding::IsWalkable(const iPoint& pos) const
 {
 	uchar t = GetTileAt(pos);
-	return t != INVALID_WALK_CODE && t > 0;
+	return t != INVALID_WALK_CODE;
 }
 
 // Utility: return the walkability value of a tile

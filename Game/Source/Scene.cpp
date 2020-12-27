@@ -86,7 +86,7 @@ bool Scene::Update(float dt)
 
 	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
-		LOG("Drawing Colliders");
+		LOG("Debug Mode");
 		app->debug = !app->debug;
 	}
 

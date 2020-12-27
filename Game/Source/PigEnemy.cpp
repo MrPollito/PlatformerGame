@@ -149,29 +149,29 @@ bool PigEnemy::Update(float dt)
 	case PIGENEMY_MOVE:
 	{
 		currentAnimation = &idle;
-		static iPoint origin;
+		iPoint origin = positionPixelPerfect;
 		// Target is player position
 		iPoint playerPos = app->player->positionPixelPerfect;
 
 		// Convert World position to map position
-		origin = app->map->WorldToMap(positionPixelPerfect.x+20, positionPixelPerfect.y);
-		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
+		origin = app->map->WorldToMap(positionPixelPerfect.x+20, positionPixelPerfect.y); // ----- 10 / 30
+		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);             // ----- 0  / 30
 
 		// Create new path
 		app->pathfinding->CreatePath(origin, playerPos);
 		const DynArray<iPoint>* path = app->pathfinding->GetLastPath();
 
-		if (path->At(1) != NULL)
+		if (path->At(1) != NULL) // ------------------------------------------------------------------ SKIPED THIS
 		{
 			// Move Enemy to Player
-			if (path->At(1)->x < origin.x)
+			if (playerPos.x < origin.x)//path->At(1)->x < origin.x)
 			{
-				velocity.x = -speed;
+				position.x -= speed;
 				flip = false;
 			}
-			else if (path->At(1)->x > origin.x)
+			else if (playerPos.x > origin.x)//path->At(1)->x > origin.x)
 			{
-				velocity.x = speed;
+				position.x += speed;
 				flip = true;
 			}
 			if (path->At(1)->y < origin.y)

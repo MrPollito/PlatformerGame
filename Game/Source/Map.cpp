@@ -81,23 +81,9 @@ iPoint Map::MapToWorld(int x, int y) const
 {
 	iPoint ret;
 
-	// L05: DONE 1: Add isometric map to world coordinates
-	/*if (mapData.type == MAPTYPE_ORTHOGONAL)
-	{*/
 		ret.x = x * mapData.tileWidth;
 		ret.y = y * mapData.tileHeight;
-	//}
-	//else if (mapData.type == MAPTYPE_ISOMETRIC)
-	//{
-	//	ret.x = (x - y) * (mapData.tileWidth / 2);
-	//	ret.y = (x + y) * (mapData.tileHeight / 2);
-	//}
-	//else
-	//{
-	//	LOG("Unknown map type");
-	//	ret.x = x; ret.y = y;
-	//}
-
+	
 	return ret;
 }
 
@@ -105,9 +91,9 @@ iPoint Map::WorldToMap(int x, int y) const
 {
 	iPoint ret;
 
-	ret.x = x / mapData.tileWidth;
-	ret.y = y / mapData.tileHeight;
-
+		ret.x = x / mapData.tileWidth;
+		ret.y = y / mapData.tileHeight;
+	
 	return ret;
 }
 
