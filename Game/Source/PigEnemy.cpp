@@ -13,15 +13,66 @@ PigEnemy::PigEnemy() : Module()
 {
 	name.Create("pigEnemy");
 
-	
-	idle.PushBack({ 7,9,24,19 });
-	idle.PushBack({ 41,9,24,19 });
-	idle.PushBack({ 76,9,23,19 });
-	idle.PushBack({ 111,9,24,19 });
-	idle.PushBack({ 145,9,24,19 });
-	idle.PushBack({ 178,9,24,19 });
+	// Animations
+	// IDLE ----------------------------------------------
+	for (int i = 0; i < 11; i++)
+	{
+		idleLeft.PushBack({ (34 * i),168,34,28 });
+	}
+	idleLeft.speed = 0.25f;
 
-	idle.speed = 0.3f;
+	for (int i = 0; i < 11; i++)
+	{
+		idleRight.PushBack({ (34 * i),196,34,28 });
+	}
+	idleRight.speed = 0.25f;
+
+	// MOVEMENT --------------------------------------------
+	for (int i = 0; i < 6; i++)
+	{
+		moveLeft.PushBack({ (34*i),0,34,28 });
+	}
+	moveLeft.speed = 0.2f;
+
+	for (int i = 0; i < 6; i++)
+	{
+		moveRight.PushBack({ (34 * i),28,34,28 });
+	}
+	moveRight.speed = 0.2f;
+
+	// DEATH ----------------------------------------------
+	for (int i = 0; i < 4; i++)
+	{
+		deathLeft.PushBack({ (34 * i),56,34,28 });
+	}
+	deathLeft.speed = 0.03f;
+	deathLeft.loop = false;
+
+	for (int i = 3; i >= 0; i--)
+	{
+		deathRight.PushBack({ (34 * i),84,34,28 });
+	}
+	deathRight.speed = 0.03f;
+	deathRight.loop = false;
+
+	// HIT ------------------------------------------------
+	for (int i = 0; i < 2; i++)
+	{
+		hitLeft.PushBack({ (34 * i),224,34,28 });
+	}
+	hitLeft.speed = 0.1f;
+
+	for (int i = 3; i < 5; i++)
+	{
+		hitRight.PushBack({ (34 * i),224,34,28 });
+	}
+	hitRight.speed = 0.1f;
+
+	// JUMPING ------------------------------------------------
+	upRight.PushBack({ 34,140,34,28 });
+	upLeft.PushBack({ 0,140,34,28 });
+	upRight.speed = 0.1f;
+	upLeft.speed = 0.1f;
 }
 
 // Destructor
@@ -34,10 +85,14 @@ bool PigEnemy::Awake(pugi::xml_node& config)
 	LOG("Loading pig enemy from configfile");
 
 	damage = 1;
-	attackTimerConfig = 2.0f;
 	speed = 1.0f;
-	gravity = app->player->gravity;
+	gravity = 1;
 	active = false;
+	isHit = false;
+	dedRight = false;
+	dedLeft = false;
+	isDying = false;
+
 	return ret;
 }
 
@@ -49,28 +104,33 @@ bool PigEnemy::Start()
 	//Loading assets and properties from config file
 	position.x = 500.0f;
 	position.y = 1550.0f;
+    life = 20;
+	dead = false;
 
 	positionPixelPerfect.x = position.x;
 	positionPixelPerfect.y = position.y;
 
 	velocity.SetToZero();
 	onGround = true;
+	jumping = false;
 
-	enemyTexture = app->tex->Load("Assets/textures/Enemy_run.png");
-	flip = false;
+	enemyTexture = app->tex->Load("Assets/textures/Enemy_animations.png");
 
 	r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
 	if (pigEnemyCol == nullptr) pigEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, this);
 
-	idle.Reset();
-	move.Reset();
-	death.Reset();
+	idleRight.Reset();
+	idleLeft.Reset();
+	moveRight.Reset();
+	moveLeft.Reset();
+	deathRight.Reset();
+	deathLeft.Reset();
+	hitRight.Reset();
+	hitLeft.Reset();
+	upRight.Reset();
+	upLeft.Reset();
 
 	action = PIGENEMY_IDLE;
-	currentAnimation = &idle;
-
-	life = 10;
-	dead = false;
 
 	return ret;
 }
@@ -99,85 +159,92 @@ bool PigEnemy::Update(float dt)
 
 	if (!dead)
 	{
-		// Input
 		if (onGround)
 		{
-			if ((position.DistanceTo(app->player->position) < 200) && (app->player->godMode == false) && (app->player->life > 0) && (action != PIGENEMY_ATTACK))
+			if ((position.DistanceTo(app->player->position) < 200) && (app->player->godMode == false) && (app->player->life > 0))
 			{
-				if (canAttack && attackTimer <= 0)
-				{
-					action = PIGENEMY_ATTACK;
-				}
-				else
-				{
 					action = PIGENEMY_MOVE;
-					attackTimer -= dt;
-				}
 			}
 			else
 			{
 				action = PIGENEMY_IDLE;
-				attackTimer = 0;
 			}
 		}
 		else
 		{
-			velocity.y += gravity * dt;
+			velocity.y = gravity;
 			action = PIGENEMY_IDLE;
-		}
-
-		if (app->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
-		{
-			life = 0;
 		}
 
 		if (life <= 0)
 		{
 			velocity.x = 0;
+			isDying = true;
 			action = PIGENEMY_DEATH;
 		}
+		if (isHit == true)
+		{
+			action = PIGENEMY_HIT;
+		}
 	}
+	
 	else action = PIGENEMY_IDLE;
 
 	//Status
 	switch (action)
 	{
 	case PIGENEMY_IDLE:
-		velocity.x = 0;
-		currentAnimation = &idle;
+	{
+		if (isDying == false)
+		{
+			velocity.x = 0;
+			if (app->player->position.x < position.x)
+			{
+				currentAnimation = &idleLeft;
+			}
+			else
+			{
+				currentAnimation = &idleRight;
+			}
+			break;
+		}
+		else
 		break;
+	}
 	case PIGENEMY_MOVE:
 	{
-		currentAnimation = &idle;
 		iPoint origin = positionPixelPerfect;
 		// Target is player position
 		iPoint playerPos = app->player->positionPixelPerfect;
 
 		// Convert World position to map position
-		origin = app->map->WorldToMap(positionPixelPerfect.x+20, positionPixelPerfect.y); // ----- 10 / 30
-		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);             // ----- 0  / 30
+		origin = app->map->WorldToMap(positionPixelPerfect.x+20, positionPixelPerfect.y);
+		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
 
 		// Create new path
 		app->pathfinding->CreatePath(origin, playerPos);
 		const DynArray<iPoint>* path = app->pathfinding->GetLastPath();
 
-		if (path->At(1) != NULL) // ------------------------------------------------------------------ SKIPED THIS
+		if (path->At(1) != NULL)
 		{
 			// Move Enemy to Player
-			if (playerPos.x < origin.x)//path->At(1)->x < origin.x)
+			if (path->At(1)->x < origin.x) 
 			{
-				position.x -= speed;
-				flip = false;
+				currentAnimation = &moveLeft;
+				velocity.x = -speed;
 			}
-			else if (playerPos.x > origin.x)//path->At(1)->x > origin.x)
+			else if (path->At(1)->x > origin.x) 
 			{
-				position.x += speed;
-				flip = true;
+				currentAnimation = &moveRight;
+				velocity.x = +speed;
 			}
-			if (path->At(1)->y < origin.y)
+			if ((path->At(1)->y < origin.y) && (playerPos.x > (origin.x - 2)) && (playerPos.x <= (origin.x + 2)))
 			{
-				velocity.x = 0;
-				currentAnimation = &idle;
+				jumping = true;
+				if (jumping == true && onGround == true)
+				{
+					jumping = PigJump();
+				}
 			}
 		}
 
@@ -193,19 +260,46 @@ bool PigEnemy::Update(float dt)
 		}
 		break;
 	}
-	case PIGENEMY_ATTACK:
-		currentAnimation = &idle;
-		app->player->Hit(damage);
-		attackTimer = attackTimerConfig;
-		action = PIGENEMY_IDLE;
-		break;
+	
 	case PIGENEMY_DEATH:
-		currentAnimation = &death;
-		if (death.Finished())
+		if (app->player->position.x < position.x && dedRight == false)
+		{
+			dedLeft = true;
+			currentAnimation = &deathLeft;
+		}
+		else if(app->player->position.x > position.x && dedLeft == false)
+		{
+			dedRight = true;
+			currentAnimation = &deathRight;
+		}
+		if (deathRight.Finished() || deathLeft.Finished())
 		{
 			dead = true;
 			DisablePigEnemy();
 		}
+		break;
+
+	case PIGENEMY_HIT:
+		if (isDying == false)
+		{
+			velocity.x = 0;
+			if (app->player->position.x < position.x)
+			{
+				currentAnimation = &hitLeft;
+			}
+			else
+			{
+				currentAnimation = &hitRight;
+			}
+		}
+		if (hitLeft.Finished() || hitRight.Finished())
+		{
+			isHit = false;
+			hitLeft.Reset();
+			hitRight.Reset();
+			break;
+		}
+		else
 		break;
 	default:
 		break;
@@ -213,11 +307,20 @@ bool PigEnemy::Update(float dt)
 
 	if (!dead)
 	{
-		if (velocity.x != 0) idle.Reset();
+		if (velocity.x != 0)
+		{
+			idleLeft.Reset();
+			idleRight.Reset();
+		}
+		else if (velocity.x == 0)
+		{
+			moveLeft.Reset();
+			moveRight.Reset();
+		}
 
 		//Change position from velocity
-		position.x += (velocity.x * dt);
-		position.y += (velocity.y * dt);
+		position.x += (velocity.x * dt * 60);
+		position.y += (velocity.y * dt * 60);
 
 		positionPixelPerfect.x = round(position.x);
 		positionPixelPerfect.y = round(position.y);
@@ -229,7 +332,6 @@ bool PigEnemy::Update(float dt)
 		//Function to draw the player
 		ret = Draw(dt);
 		onGround = false;
-		canAttack = false;
 	}
 	else ret = true;
 
@@ -242,7 +344,7 @@ bool PigEnemy::Draw(float dt)
 	r = currentAnimation->GetCurrentFrame(dt);
 	if (enemyTexture != nullptr)
 	{
-		ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, flip, 1.0f, 0.0f, INT_MAX, INT_MAX);
+		ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
 	}
 	else LOG("No available graphics to draw.");
 
@@ -254,19 +356,22 @@ bool PigEnemy::Draw(float dt)
 bool PigEnemy::OnCollision(Collider* c1, Collider* c2)
 {
 	bool ret = false;
-
-	if (c1 == pigEnemyCol && c2->type == COLLIDER_GROUND)
+	if (app->player->godMode == false)
 	{
-		if (velocity.y != 0) position.y = c2->rect.y - c1->rect.h;
-		velocity.y = 0;
-		onGround = true;
-		ret = true;
-	}
-
-	if (!app->player->godMode && (c1 == pigEnemyCol && c2->type == COLLIDER_PLAYER))
-	{
-		velocity.x = 0;
-		canAttack = true;
+		if (c1 == pigEnemyCol && c2->type == COLLIDER_GROUND)
+		{
+			if (velocity.y != 0)
+			{
+				position.y = c2->rect.y - c1->rect.h+2;
+			}
+			velocity.y = 0;
+			onGround = true;
+			ret = true;
+		}
+		else
+		{
+			onGround = false;
+		}
 	}
 	return ret;
 }
@@ -343,4 +448,20 @@ bool PigEnemy::LoadState(pugi::xml_node& data)
 	}
 
 	return true;
+}
+
+bool PigEnemy::PigJump()
+{
+	int cas = gravity;
+	gravity = 0;
+	if (jumping == true)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			position.y -= 8;
+		}
+	}
+	gravity = cas;
+	onGround = false;
+	return false;
 }

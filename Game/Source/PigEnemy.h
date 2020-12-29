@@ -15,7 +15,9 @@ enum PigEnemyStatus
 	PIGENEMY_IDLE,
 	PIGENEMY_MOVE,
 	PIGENEMY_ATTACK,
-	PIGENEMY_DEATH
+	PIGENEMY_DEATH,
+	PIGENEMY_HIT,
+	PIGENEMY_UP
 };
 
 
@@ -58,30 +60,38 @@ public:
 	fPoint position;
 	iPoint positionPixelPerfect;
 
+	int life;
+
+	//Public functions
+	bool PigJump();
+
 private:
 
 	bool ResetStates();
 
-	int life;
 	int lifeConfig;
-	float speed;
 	int gravity;
 	int deathLimit;
 	int damageFx;
 	int damage;
-
-	bool canAttack = false;
-	float attackTimerConfig;
+	float speed;
 	float attackTimer;
+	bool isHit;
+	bool dedRight;
+	bool dedLeft;
+	bool isDying = false;
+
 
 	// Pathfinding variables
 	int pathSteps = 0;
 	iPoint nextPos;
 
-	bool flip = true;
 	bool dead = false;
 
 	bool onGround;
+	bool leftColliding;
+	bool rightColliding;
+	bool jumping;
 
 	SString texPath;
 	SDL_Texture* enemyTexture;
@@ -89,13 +99,23 @@ private:
 	fPoint velocity;
 	iPoint initialPos;
 
-	Animation* currentAnimation = &idle;
-	Animation idle;
-	Animation move;
-	Animation death;
+	Animation* currentAnimation = &idleLeft;
+	Animation idleLeft;
+	Animation idleRight;
+	Animation deathRight;
+	Animation deathLeft;
+	Animation moveRight;
+	Animation moveLeft;
+	Animation upRight;
+	Animation upLeft;
+	Animation hitRight;
+	Animation hitLeft;
+	
 
 	PigEnemyStatus action = PIGENEMY_IDLE;
 
 	SDL_Rect r;
+
+	friend class Player;
 };
 #endif //__PIGENEMY_H__

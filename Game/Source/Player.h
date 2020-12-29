@@ -17,6 +17,7 @@ enum PlayerAction
 {
 	PLAYER_IDLE_RIGHT,
 	PLAYER_IDLE_LEFT,
+	PLAYER_IDLE,
 	PLAYER_RUN_RIGHT,
 	PLAYER_RUN_LEFT,
 	PLAYER_JUMP_RIGHT,
@@ -24,6 +25,8 @@ enum PlayerAction
 	PLAYER_AIRBORNE,
 	PLAYER_HIT_RIGHT,
 	PLAYER_HIT_LEFT,
+	PLAYER_ATTACK_RIGHT,
+	PLAYER_ATTACK_LEFT,
 	PLAYER_DEATH
 };
 
@@ -58,6 +61,7 @@ public:
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool ResetPlayer();
+	void AttackCollider(bool facing);
 
 	bool Draw(float dt);
 
@@ -65,6 +69,7 @@ public:
 
 	SDL_Rect rCollider;
 	SDL_Rect r;
+	SDL_Rect attCollider;
 
 	SDL_Texture* playerTexture;
 	
@@ -73,10 +78,14 @@ public:
 
 	Collider* playerCollider = nullptr;
 	Collider* colPlayerWalls;
+	Collider* attackCollider = nullptr;
 
 	bool godMode;
 	float gravity;
 	int life;
+	bool attColliderActive = false;
+	int attColliderTimer;
+	int lives;
 
 private:
 	int playerSize = 78;
@@ -86,6 +95,8 @@ private:
 
 	bool jumpEnable = true;
 	bool doubleJump = true;
+	bool attacking = false;
+	int attackCounter = 0;
 
 	Animation* currentAnimation;
 	Animation idleRight;
@@ -96,7 +107,11 @@ private:
 	Animation jumpLeft;
 	Animation hitRight;
 	Animation hitLeft;
+	Animation attackRight;
+	Animation attackLeft;
 	Animation death;
+	Animation deathLeft;
+	Animation deathRight;
 
 	PlayerAction action;
 
