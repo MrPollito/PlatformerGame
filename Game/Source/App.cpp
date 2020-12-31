@@ -34,11 +34,12 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
+	map = new Map();
 	pigEnemy = new PigEnemy();
 	pathfinding = new PathFinding();
 	collisions = new Collisions();
 	entityManager = new EntityManager();
-	
+
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -48,6 +49,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audio);
 	AddModule(pathfinding);
 	AddModule(scene);
+	AddModule(map);
 	AddModule(pigEnemy);
 	AddModule(collisions);
 	AddModule(entityManager);
@@ -220,7 +222,7 @@ void App::FinishUpdate()
 	uint32 framesOnLastUpdate = 0;
 	int cappedFrames = 60;
 
-	secondsSinceStartup = (float) SDL_GetTicks()/1000;
+	secondsSinceStartup = (float)SDL_GetTicks() / 1000;
 	averageFps = 1 / dt;
 	lastFrameMs = frameTime.Read();
 

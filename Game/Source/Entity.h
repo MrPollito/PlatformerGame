@@ -3,6 +3,7 @@
 
 #include "Point.h"
 #include "SString.h"
+#include "Collisions.h"
 
 enum class EntityType
 {
@@ -13,18 +14,11 @@ enum class EntityType
     UNKNOWN
 };
 
-struct Collider;
-
 class Entity
 {
 public:
 
     Entity(EntityType type) : type(type), active(true) {}
-
-    virtual bool Awake(pugi::xml_node&)
-    {
-        return true;
-    }
 
     virtual bool Update(float dt)
     {
@@ -36,19 +30,16 @@ public:
         return true;
     }
 
+    virtual bool CleanUp()
+    {
+        return true;
+    }
+
 public:
 
     EntityType type;
     bool active = true;
     SString name;
-    //SString name;         // Entity name identifier?
-    //uint32 id;            // Entity identifier?
-
-    // Possible properties, it depends on how generic we
-    // want our Entity class, maybe it's not renderable...
-    iPoint position;        // Use a float instead?
-    bool renderable = false;
-    //SDL_Texture* texture;
 };
 
 #endif // __ENTITY_H__

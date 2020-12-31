@@ -10,6 +10,7 @@
 #include "Point.h"
 #include "Collisions.h"
 #include "Textures.h"
+#include "Map.h"
 
 #include "Point.h"
 #include "SString.h"
@@ -33,7 +34,8 @@ enum PlayerAction
 	PLAYER_ATTACK_LEFT,
 	PLAYER_DEATH
 };
-
+struct Collider;
+class Module;
 class Player : public Entity
 {
 public:

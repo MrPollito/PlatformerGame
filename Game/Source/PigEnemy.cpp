@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "PigEnemy.h"
 #include "EntityManager.h" 
+#include "Entity.h"
 
 PigEnemy::PigEnemy() : Module()
 {
@@ -31,7 +32,7 @@ PigEnemy::PigEnemy() : Module()
 	// MOVEMENT --------------------------------------------
 	for (int i = 0; i < 6; i++)
 	{
-		moveLeft.PushBack({ (34*i),0,34,28 });
+		moveLeft.PushBack({ (34 * i),0,34,28 });
 	}
 	moveLeft.speed = 0.2f;
 
@@ -105,7 +106,7 @@ bool PigEnemy::Start()
 	//Loading assets and properties from config file
 	position.x = 500.0f;
 	position.y = 1550.0f;
-    life = 20;
+	life = 20;
 	dead = false;
 
 	positionPixelPerfect.x = position.x;
@@ -118,7 +119,7 @@ bool PigEnemy::Start()
 	enemyTexture = app->tex->Load("Assets/textures/Enemy_animations.png");
 
 	r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
-	if (pigEnemyCol == nullptr) pigEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, (Entity*)this);
+	if (pigEnemyCol == nullptr) pigEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, this, nullptr);
 
 	idleRight.Reset();
 	idleLeft.Reset();
@@ -164,8 +165,8 @@ bool PigEnemy::Update(float dt)
 		{
 			if ((position.DistanceTo(app->scene->player->position) < 200) && (app->scene->player->godMode == false) && (app->scene->player->life > 0))
 			{
-			
-					action = PIGENEMY_MOVE;
+
+				action = PIGENEMY_MOVE;
 			}
 			else
 			{
@@ -189,7 +190,7 @@ bool PigEnemy::Update(float dt)
 			action = PIGENEMY_HIT;
 		}
 	}
-	
+
 	else action = PIGENEMY_IDLE;
 
 	//Status
@@ -211,18 +212,18 @@ bool PigEnemy::Update(float dt)
 			break;
 		}
 		else
-		break;
+			break;
 	}
 	case PIGENEMY_MOVE:
 	{
 		iPoint origin = positionPixelPerfect;
 		// Target is player position
 		iPoint playerPos = app->scene->player->positionPixelPerfect;
-		
+
 
 		// Convert World position to map position
-		origin = app->scene->map->WorldToMap(positionPixelPerfect.x+20, positionPixelPerfect.y);
-		playerPos = app->scene->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
+		origin = app->map->WorldToMap(positionPixelPerfect.x + 20, positionPixelPerfect.y);
+		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
 
 		// Create new path
 		app->pathfinding->CreatePath(origin, playerPos);
@@ -231,12 +232,12 @@ bool PigEnemy::Update(float dt)
 		if (path->At(1) != NULL)
 		{
 			// Move Enemy to Player
-			if (path->At(1)->x < origin.x) 
+			if (path->At(1)->x < origin.x)
 			{
 				currentAnimation = &moveLeft;
 				velocity.x = -speed;
 			}
-			else if (path->At(1)->x > origin.x) 
+			else if (path->At(1)->x > origin.x)
 			{
 				currentAnimation = &moveRight;
 				velocity.x = +speed;
@@ -256,21 +257,21 @@ bool PigEnemy::Update(float dt)
 		{
 			for (uint i = 0; i < path->Count(); ++i)
 			{
-				iPoint nextPoint = app->scene->map->MapToWorld(path->At(i)->x, path->At(i)->y);
+				iPoint nextPoint = app->map->MapToWorld(path->At(i)->x, path->At(i)->y);
 				SDL_Rect pathRect = { nextPoint.x, nextPoint.y, 32, 32 };
 				app->render->DrawRectangle(pathRect, 255, 0, 0, 100);
 			}
 		}
 		break;
 	}
-	
+
 	case PIGENEMY_DEATH:
 		if (app->scene->player->position.x < position.x && dedRight == false)
 		{
 			dedLeft = true;
 			currentAnimation = &deathLeft;
 		}
-		else if(app->scene->player->position.x > position.x && dedLeft == false)
+		else if (app->scene->player->position.x > position.x && dedLeft == false)
 		{
 			dedRight = true;
 			currentAnimation = &deathRight;
@@ -303,7 +304,7 @@ bool PigEnemy::Update(float dt)
 			break;
 		}
 		else
-		break;
+			break;
 	default:
 		break;
 	}
@@ -365,7 +366,7 @@ bool PigEnemy::OnCollision(Collider* c1, Collider* c2)
 		{
 			if (velocity.y != 0)
 			{
-				position.y = c2->rect.y - c1->rect.h+2;
+				position.y = c2->rect.y - c1->rect.h + 2;
 			}
 			velocity.y = 0;
 			onGround = true;

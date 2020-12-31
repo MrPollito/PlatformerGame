@@ -2,7 +2,6 @@
 #define __MAP_H__
 
 #include "Module.h"
-#include "Entity.h"
 #include "List.h"
 #include "Point.h"
 #include "Collisions.h"
@@ -86,7 +85,7 @@ struct MapLayer
 	int width;
 	int height;
 	uint* data;
-	
+
 
 	Properties properties;
 
@@ -106,7 +105,7 @@ struct MapLayer
 	}
 
 	ListItem<MapLayer*>* GetLayer(SString name);
-	
+
 };
 
 // L03: TODO 1: Create a struct needed to hold the information to Map node
@@ -126,7 +125,7 @@ struct MapData
 	List<MapLayer*> layers;
 };
 
-class Map : public Entity
+class Map : public Module
 {
 public:
 
@@ -175,6 +174,9 @@ public:
 	// L03: DONE 1: Add your struct for map info
 	MapData mapData;
 	List<Collider*> mapColliders;
+
+private:
+
 	void LogAll();
 	pugi::xml_document mapFile;
 	SString folder;

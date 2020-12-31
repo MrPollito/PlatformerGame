@@ -90,45 +90,40 @@ bool Collisions::PreUpdate()
 
 			c2 = colliders[k];
 
-			if (c1->CheckCollision(c2->rect) && matrix[c1->type][c2->type])
+			if (c1->CheckCollision(c2->rect) == true)
 			{
-				if (c1->listener)
+				if (c1->callbackEn == nullptr && c2->callbackEn == nullptr)
 				{
-					c1->listener->OnCollision(c1, c2);
+					if (matrix[c1->type][c2->type] && c1->callback)
+						c1->callback->OnCollision(c1, c2);
+					if (matrix[c2->type][c1->type] && c2->callback)
+						c2->callback->OnCollision(c2, c1);
 				}
-				if (c2->listener)
+				else if (c1->callbackEn != nullptr && c2->callbackEn == nullptr)
 				{
-					c2->listener->OnCollision(c2, c1);
+					if (matrix[c1->type][c2->type] && c1->callbackEn)
+						c1->callbackEn->OnCollision(c1, c2);
+					if (matrix[c2->type][c1->type] && c2->callback)
+						c2->callback->OnCollision(c2, c1);
+				}
+				else if (c1->callbackEn == nullptr && c2->callbackEn != nullptr)
+				{
+					if (matrix[c1->type][c2->type] && c1->callback)
+						c1->callback->OnCollision(c1, c2);
+					if (matrix[c2->type][c1->type] && c2->callbackEn)
+						c2->callbackEn->OnCollision(c2, c1);
+				}
+				else
+				{
+					if (matrix[c1->type][c2->type] && c1->callbackEn)
+						c1->callbackEn->OnCollision(c1, c2);
+					if (matrix[c2->type][c1->type] && c2->callbackEn)
+						c2->callbackEn->OnCollision(c2, c1);
 				}
 			}
+
 		}
 	}
-
-	//// Calculate collisions
-	//Collider* c1;
-	//Collider* c2;
-	//for (uint i = 0; i < MAX_COLLIDERS; ++i)
-	//{
-	//	// skip empty colliders
-	//	if (colliders[i] == nullptr)
-	//		continue;
-	//	c1 = colliders[i];
-	//	// avoid checking collisions already checked
-	//	for (uint k = i + 1; k < MAX_COLLIDERS; ++k)
-	//	{
-	//		// skip empty colliders
-	//		if (colliders[k] == nullptr)
-	//			continue;
-	//		c2 = colliders[k];
-	//		if (c1->CheckCollision(c2->rect) == true)
-	//		{
-	//			if (matrix[c1->type][c2->type] && c1->callback)
-	//				c1->callback->OnCollision(c1, c2);
-	//			if (matrix[c2->type][c1->type] && c2->callback)
-	//				c2->callback->OnCollision(c2, c1);
-	//		}
-	//	}
-	//}
 
 	return true;
 }
@@ -191,15 +186,16 @@ bool Collisions::CleanUp()
 	return true;
 }
 
-Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Entity* listener)
+Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Module* callback, Entity* callbackEn)
 {
 	Collider* ret = nullptr;
+
 
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
 		if (colliders[i] == nullptr)
 		{
-			ret = colliders[i] = new Collider(rect, type, listener);
+			ret = colliders[i] = new Collider(rect, type, callback, callbackEn);
 			break;
 		}
 	}

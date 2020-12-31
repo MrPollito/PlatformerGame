@@ -4,7 +4,7 @@
 #define MAX_COLLIDERS 500
 
 #include "Module.h"
-#include "Entity.h"
+
 #include "SDL\include\SDL_rect.h"
 
 enum ColliderType
@@ -18,17 +18,20 @@ enum ColliderType
 	COLLIDER_MAX
 };
 
+class Entity;
 struct Collider
 {
 	SDL_Rect rect;
 	bool toDelete = false;
 	ColliderType type;
-	Entity* listener = nullptr;
+	Module* callback = nullptr;
+	Entity* callbackEn = nullptr;
 
-	Collider(SDL_Rect rectangle, ColliderType type, Entity* listener = nullptr) :
+	Collider(SDL_Rect rectangle, ColliderType type, Module* callback = nullptr, Entity* callbackEn = nullptr) :
 		rect(rectangle),
 		type(type),
-		listener(listener)
+		callback(callback),
+		callbackEn(callbackEn)
 	{}
 
 	void SetPos(int x, int y)
@@ -38,7 +41,6 @@ struct Collider
 	}
 
 	bool CheckCollision(const SDL_Rect& r) const;
-
 };
 
 class Collisions : public Module
@@ -52,7 +54,7 @@ public:
 	bool Update(float dt) override;
 	bool CleanUp() override;
 
-	Collider* AddCollider(SDL_Rect rect, ColliderType type, Entity* listener = nullptr);
+	Collider* AddCollider(SDL_Rect rect, ColliderType type, Module* callback = nullptr, Entity* callbackEn = nullptr);
 	void DebugDraw();
 	SDL_Rect rect;
 

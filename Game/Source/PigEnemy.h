@@ -110,7 +110,7 @@ private:
 	Animation upLeft;
 	Animation hitRight;
 	Animation hitLeft;
-	
+
 
 	PigEnemyStatus action = PIGENEMY_IDLE;
 

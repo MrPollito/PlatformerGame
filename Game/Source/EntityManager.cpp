@@ -5,7 +5,7 @@
 #include "Enemy.h"
 #include "Item.h"
 #include "Scene.h"
-#include "Map.h"
+#include "Collisions.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -25,13 +25,19 @@ bool EntityManager::Awake(pugi::xml_node& config)
 	LOG("Loading Entity Manager");
 	bool ret = true;
 
+
 	return ret;
 }
 
 // Called before quitting
 bool EntityManager::CleanUp()
 {
-	if (!active) return true;
+	ListItem<Entity*>* enti = entities.start;
+	while (enti != NULL)
+	{
+		enti->data->CleanUp();
+		enti = enti->next;
+	}
 
 	return true;
 }
@@ -43,8 +49,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	switch (type)
 	{
 		// L13: Create the corresponding type entity
-	    case EntityType::PLAYER: ret = new Player();  break;
-		case EntityType::MAP: ret = new Player();  break;
+	case EntityType::PLAYER: ret = new Player();  break;
 		//case EntityType::ENEMY: ret = new Enemy();  break;
 		//case EntityType::ITEM: ret = new Item();  break;
 	default: break;

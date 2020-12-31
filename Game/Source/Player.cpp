@@ -1,7 +1,18 @@
+#include "App.h"
+#include "Textures.h"
+#include "Input.h"
+#include "Audio.h"
+#include "Render.h"
+#include "Scene.h"
+#include "Map.h"
+#include "Collisions.h"
+#include "Log.h" 
 #include "Player.h"
+#include "PigEnemy.h"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
+	name.Create("player");
 	flipTexture = false;
 	godMode = false;
 	playerJumping = false;
@@ -26,8 +37,8 @@ Player::Player() : Entity(EntityType::PLAYER)
 
 	LOG("Creating player colliders");
 	rCollider = { positionPixelPerfect.x, positionPixelPerfect.y, 18, 22 };
-	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, this);
-	colPlayerWalls = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 14, 26 }, COLLIDER_PLAYER, this);
+	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, nullptr, this);
+	colPlayerWalls = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 14, 26 }, COLLIDER_PLAYER, nullptr, this);
 
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 
@@ -390,15 +401,15 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	{
 		if (c1 == attackCollider && c2->type == COLLIDER_ENEMY)
 		{
-			/*app->pigEnemy->isHit = true;
-			app->pigEnemy->life--;*/
+			app->pigEnemy->isHit = true;
+			app->pigEnemy->life--;
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
-			/*if (app->pigEnemy->isDying == false)
+			if (app->pigEnemy->isDying == false)
 			{
 				Hit(app->pigEnemy->damage);
-			}*/
+			}
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
@@ -469,7 +480,7 @@ void Player::AttackCollider(bool facing)
 			attColliderActive = true;
 			if (attackCollider == nullptr)
 			{
-				attackCollider = app->collisions->AddCollider(attCollider, COLLIDER_PLAYER_ATTACK, this);
+				attackCollider = app->collisions->AddCollider(attCollider, COLLIDER_PLAYER_ATTACK, nullptr, this);
 			}
 		}
 	}
@@ -484,7 +495,7 @@ void Player::AttackCollider(bool facing)
 			attColliderActive = true;
 			if (attackCollider == nullptr)
 			{
-				attackCollider = app->collisions->AddCollider(attCollider, COLLIDER_PLAYER_ATTACK, this);
+				attackCollider = app->collisions->AddCollider(attCollider, COLLIDER_PLAYER_ATTACK, nullptr, this);
 			}
 		}
 	}
@@ -513,6 +524,16 @@ bool Player::CleanUp()
 	bool ret = false;
 	LOG("Unloading player");
 	ret = app->tex->UnLoad(playerTexture);
+	if (playerCollider != nullptr)
+	{
+		playerCollider->toDelete = true;
+		playerCollider = nullptr;
+	}
+	if (colPlayerWalls != nullptr)
+	{
+		colPlayerWalls->toDelete = true;
+		colPlayerWalls = nullptr;
+	}
 	return ret;
 }
 

@@ -6,14 +6,12 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Map.h"
+#include "Player.h"
 #include "Collisions.h"
 #include "Log.h"
 #include "PigEnemy.h"
 #include "Pathfinding.h"
 #include "EntityManager.h"
-#include "Entity.h"
-
-#include "SString.h"
 
 Scene::Scene() : Module()
 {
@@ -38,21 +36,16 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	// Load game entities
-	
-	
-	player = new Player();
-	Player* player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER);
 
-	map = new Map();
-	Map* map = (Map*)app->entityManager->CreateEntity(EntityType::MAP);
+	player = new Player();
+	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER);
 
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
-
-	if (map->Load(map->GetLoadingLevel().GetString()) == true);
+	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
 	{
 		int w, h;
 		uchar* data = NULL;
-		if (app->scene->map->CreateWalkabilityMap(w, h, &data))
+		if (app->map->CreateWalkabilityMap(w, h, &data))
 			app->pathfinding->SetMap(w, h, data);
 
 		RELEASE_ARRAY(data);
@@ -133,9 +126,9 @@ bool Scene::Update(float dt)
 		app->map->mapData.tileWidth, app->map->mapData.tileHeight,
 		app->map->mapData.tilesets.count());*/
 
-	//app->win->SetTitle(title.GetString());
+		//app->win->SetTitle(title.GetString());
 
-	app->scene->map->Draw();
+	app->map->Draw();
 	return true;
 }
 
@@ -147,22 +140,22 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	//Player border
-	if ((app->render->camera.x + player->r.x) < (app->scene->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
+	if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
 
-	if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->scene->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
+	if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
 
-	if ((app->render->camera.y + player->r.y) < (app->scene->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
+	if ((app->render->camera.y + player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
 
-	if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->scene->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
+	if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
 
 	// Map movement
 	if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
 
-	if ((app->render->camera.w - app->render->camera.x) > (app->scene->map->mapData.width * app->scene->map->mapData.tileWidth)) { app->render->camera.x += 2; }
+	if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 2; }
 
 	if (app->render->camera.y >= 0) { app->render->camera.y -= 2; }
 
-	if ((app->render->camera.h - app->render->camera.y) > (app->scene->map->mapData.height * app->scene->map->mapData.tileHeight)) { app->render->camera.y += 2; }
+	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
 
 	//Player centered camera
 	//app->render->camera.x = -app->player->position.x+400;

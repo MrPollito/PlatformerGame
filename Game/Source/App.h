@@ -15,6 +15,7 @@ class Render;
 class Textures;
 class Audio;
 class Scene;
+class Map;
 class Collisions;
 class PathFinding;
 class PigEnemy;
@@ -91,6 +92,7 @@ public:
 	Audio* audio;
 	Scene* scene;
 	PathFinding* pathfinding;
+	Map* map;
 	Collisions* collisions;
 	PigEnemy* pigEnemy;
 	EntityManager* entityManager;

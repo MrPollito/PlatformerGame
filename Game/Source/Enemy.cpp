@@ -6,7 +6,7 @@
 
 Enemy::Enemy() : Entity(EntityType::ENEMY)
 {
-  //  path = PathFinding::GetInstance()->CreatePath(iPoint(0, 0), iPoint(0, 0));
+	//  path = PathFinding::GetInstance()->CreatePath(iPoint(0, 0), iPoint(0, 0));
 }
 
 Enemy::~Enemy()

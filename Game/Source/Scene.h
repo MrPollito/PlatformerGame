@@ -3,7 +3,6 @@
 
 #include "Module.h"
 #include "Player.h"
-#include "Map.h"
 
 #include <map>
 
@@ -50,7 +49,6 @@ public:
 	uchar* data = NULL;
 
 	Player* player;
-	Map* map;
 
 private:
 	SDL_Texture* img;
