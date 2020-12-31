@@ -1,82 +1,6 @@
-#include "App.h"
-#include "Textures.h"
-#include "Input.h"
-#include "Audio.h"
-#include "Render.h"
-#include "Scene.h"
-#include "Map.h"
-#include "Collisions.h"
-#include "Log.h" 
 #include "Player.h"
-#include "PigEnemy.h"
 
-Player::Player() 
-{
-	name.Create("player");
-}
-
-Player::~Player() {}
-
-bool Player::Awake(pugi::xml_node&)
-{
-	for (int i = 0; i < 11; i++)
-	{
-		idleRight.PushBack({ (playerSize * i),30,40,31 }); // playerSize = 78
-	}
-
-	idleRight.speed = 0.5f;
-
-	for (int i = 0; i < 11; i++)
-	{
-		idleLeft.PushBack({ (playerSize * i),147,48,31 });
-	}
-
-	idleLeft.speed = 0.5f;
-
-	jumpRight.PushBack({ 0,105,40,30 });
-	jumpLeft.PushBack({78,105,48,30 });
-
-	for (int i = 0; i < 8; i++)
-	{
-		runRight.PushBack({ (playerSize * i),0,48,31 });
-	}
-
-	runRight.speed = 0.5f;
-
-	for (int i = 0; i < 8; i++)
-	{
-		runLeft.PushBack({ (playerSize * i),69,48,31 });
-	}
-
-	runLeft.speed = 0.5f;
-
-	hitRight.PushBack({ 0,182,40,37 });
-	hitRight.PushBack({ 79,182,40,37 });
-	hitRight.speed = 0.5f;
-
-	hitLeft.PushBack({ 0,217,40,37 });
-	hitLeft.PushBack({ 79,217,40,37 });
-	hitLeft.speed = 0.5f;
-
-
-	for (int i = 0; i < 3; i++)
-	{
-		attackRight.PushBack({ (70 * i),275,70,75 });
-	}
-	attackRight.speed = 0.3f;
-	attackRight.loop = false;
-
-	for (int i = 3; i < 6; i++)
-	{
-		attackLeft.PushBack({ (70 * i),275,70,75 });
-	}
-	attackLeft.speed = 0.3f;
-	attackLeft.loop = false;
-	
-	return true;
-}
-
-bool Player::Start()
+Player::Player() : Entity(EntityType::PLAYER)
 {
 	flipTexture = false;
 	godMode = false;
@@ -119,11 +43,67 @@ bool Player::Start()
 	attackLeft.Reset();
 	death.Reset();
 
-	return true;
+	// Define Player animations
+	for (int i = 0; i < 11; i++)
+	{
+		idleRight.PushBack({ (playerSize * i),30,40,31 }); // playerSize = 78
+	}
+
+	idleRight.speed = 0.5f;
+
+	for (int i = 0; i < 11; i++)
+	{
+		idleLeft.PushBack({ (playerSize * i),147,48,31 });
+	}
+
+	idleLeft.speed = 0.5f;
+
+	jumpRight.PushBack({ 0,105,40,30 });
+	jumpLeft.PushBack({ 78,105,48,30 });
+
+	for (int i = 0; i < 8; i++)
+	{
+		runRight.PushBack({ (playerSize * i),0,48,31 });
+	}
+
+	runRight.speed = 0.5f;
+
+	for (int i = 0; i < 8; i++)
+	{
+		runLeft.PushBack({ (playerSize * i),69,48,31 });
+	}
+
+	runLeft.speed = 0.5f;
+
+	hitRight.PushBack({ 0,182,40,37 });
+	hitRight.PushBack({ 79,182,40,37 });
+	hitRight.speed = 0.5f;
+
+	hitLeft.PushBack({ 0,217,40,37 });
+	hitLeft.PushBack({ 79,217,40,37 });
+	hitLeft.speed = 0.5f;
+
+
+	for (int i = 0; i < 3; i++)
+	{
+		attackRight.PushBack({ (70 * i),275,70,75 });
+	}
+	attackRight.speed = 0.3f;
+	attackRight.loop = false;
+
+	for (int i = 3; i < 6; i++)
+	{
+		attackLeft.PushBack({ (70 * i),275,70,75 });
+	}
+	attackLeft.speed = 0.3f;
+	attackLeft.loop = false;
+
 }
 
-bool Player::PreUpdate()
+bool Player::Update(float dt)
 {
+	bool ret = false;
+
 	if (attColliderActive == true)
 	{
 		attColliderTimer++;
@@ -135,12 +115,6 @@ bool Player::PreUpdate()
 		attColliderActive = false;
 		attColliderTimer = 0;
 	}
-	return true;
-}
-
-bool Player::Update(float dt)
-{
-	bool ret = false;
 
 	if (positionPixelPerfect.y > 5000 || life <= 0)
 	{
@@ -178,7 +152,7 @@ bool Player::Update(float dt)
 			{
 				action = PLAYER_IDLE_RIGHT;
 			}
-		
+
 			if (facingRight == false && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
 				action = PLAYER_JUMP_LEFT;
@@ -187,7 +161,7 @@ bool Player::Update(float dt)
 			{
 				action = PLAYER_IDLE_LEFT;
 			}
-		
+
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
@@ -235,7 +209,7 @@ bool Player::Update(float dt)
 		if (!onGround)
 		{
 			velocity.y += gravity;
-			if (facingRight==true && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			if (facingRight == true && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 			{
 				doubleJump = false;
 				jumpEnable = true;
@@ -291,12 +265,12 @@ bool Player::Update(float dt)
 	switch (action)
 	{
 	case PLAYER_IDLE_RIGHT:
-		
+
 		velocity.x = 0;
 		currentAnimation = &idleRight;
 		break;
 	case PLAYER_IDLE_LEFT:
-		
+
 		velocity.x = 0;
 		currentAnimation = &idleLeft;
 		break;
@@ -368,8 +342,8 @@ bool Player::Update(float dt)
 	positionPixelPerfect.y = round(position.y);
 
 	//Collider position
-	playerCollider->SetPos(positionPixelPerfect.x+20, positionPixelPerfect.y+39 );
-	colPlayerWalls->SetPos(positionPixelPerfect.x +22, positionPixelPerfect.y+38 );
+	playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
+	colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
 
 	//Function to draw the player
 	ret = Draw(dt);
@@ -377,6 +351,13 @@ bool Player::Update(float dt)
 	rightColliding = false;
 	leftColliding = false;
 
+	attackCounter++;
+	if (attackCounter >= 30)
+	{
+		attackRight.Reset();
+		attackLeft.Reset();
+		attackCounter = 0;
+	}
 	return true;
 }
 
@@ -400,19 +381,6 @@ bool Player::Draw(float dt)
 	r.x = position.x;
 	r.y = position.y;
 	return ret;
-
-}
-
-bool Player::PostUpdate()
-{
-	attackCounter++;
-	if (attackCounter >= 30)
-	{
-		attackRight.Reset();
-		attackLeft.Reset();
-		attackCounter = 0;
-	}
-	return true;
 }
 
 bool Player::OnCollision(Collider* c1, Collider* c2)
@@ -422,15 +390,15 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	{
 		if (c1 == attackCollider && c2->type == COLLIDER_ENEMY)
 		{
-			app->pigEnemy->isHit = true;
-			app->pigEnemy->life--;
+			/*app->pigEnemy->isHit = true;
+			app->pigEnemy->life--;*/
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
-			if (app->pigEnemy->isDying == false)
+			/*if (app->pigEnemy->isDying == false)
 			{
 				Hit(app->pigEnemy->damage);
-			}
+			}*/
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
@@ -440,7 +408,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 				velocity.y = 0;
 				onGround = true;
 			}
-			else if (c2->rect.y + c2->rect.h < c1->rect.y+15)
+			else if (c2->rect.y + c2->rect.h < c1->rect.y + 15)
 			{
 				velocity.y = 0;
 				position.y = c2->rect.y;
@@ -477,7 +445,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 }
 
 //Resets player movement 
-bool Player::ResetPlayer() 
+bool Player::ResetPlayer()
 {
 	velocity.x = 0;
 	velocity.y = 0;
@@ -539,33 +507,6 @@ void Player::Hit(int damage)
 		currentAnimation = &hitLeft;
 	}
 }
-
-bool Player::Load(pugi::xml_node& playerNode)
-{
-	position.x = playerNode.child("position").attribute("position_x").as_float();
-	position.y = playerNode.child("position").attribute("position_y").as_float();
-
-	playerCollider->SetPos(position.x + 20, position.y + 39);
-	colPlayerWalls->SetPos(position.x + 22, position.y + 38);
-
-	r.x = position.x;
-	r.y = position.y;
-
-	onGround = false;
-	rightColliding = false;
-	leftColliding = false;
-
-	return true;
-}
-
-bool Player::Save(pugi::xml_node& playerNode)
-{
-	pugi::xml_node player_1 = playerNode.append_child("position");
-	player_1.append_attribute("position_x").set_value(r.x);
-	player_1.append_attribute("position_y").set_value(r.y);
-	return true;
-}
-
 // Unload assets
 bool Player::CleanUp()
 {
@@ -573,4 +514,9 @@ bool Player::CleanUp()
 	LOG("Unloading player");
 	ret = app->tex->UnLoad(playerTexture);
 	return ret;
+}
+
+void Player::SetTexture(SDL_Texture* tex)
+{
+	playerTexture = tex;
 }

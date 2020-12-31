@@ -1,8 +1,13 @@
+#include "Collisions.h"
+
 #include "App.h"
 #include "Input.h"
 #include "Render.h"
-#include "Collisions.h"
 #include "Module.h"
+#include "EntityManager.h"
+#include "Player.h"
+#include "Scene.h"
+
 #include "Log.h"
 
 
@@ -61,31 +66,69 @@ bool Collisions::PreUpdate()
 		}
 	}
 
-	// Calculate collisions
 	Collider* c1;
 	Collider* c2;
+
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
 		// skip empty colliders
 		if (colliders[i] == nullptr)
+		{
 			continue;
+		}
+
 		c1 = colliders[i];
+
 		// avoid checking collisions already checked
 		for (uint k = i + 1; k < MAX_COLLIDERS; ++k)
 		{
 			// skip empty colliders
 			if (colliders[k] == nullptr)
-				continue;
-			c2 = colliders[k];
-			if (c1->CheckCollision(c2->rect) == true)
 			{
-				if (matrix[c1->type][c2->type] && c1->callback)
-					c1->callback->OnCollision(c1, c2);
-				if (matrix[c2->type][c1->type] && c2->callback)
-					c2->callback->OnCollision(c2, c1);
+				continue;
+			}
+
+			c2 = colliders[k];
+
+			if (c1->CheckCollision(c2->rect) && matrix[c1->type][c2->type])
+			{
+				if (c1->listener)
+				{
+					c1->listener->OnCollision(c1, c2);
+				}
+				if (c2->listener)
+				{
+					c2->listener->OnCollision(c2, c1);
+				}
 			}
 		}
 	}
+
+	//// Calculate collisions
+	//Collider* c1;
+	//Collider* c2;
+	//for (uint i = 0; i < MAX_COLLIDERS; ++i)
+	//{
+	//	// skip empty colliders
+	//	if (colliders[i] == nullptr)
+	//		continue;
+	//	c1 = colliders[i];
+	//	// avoid checking collisions already checked
+	//	for (uint k = i + 1; k < MAX_COLLIDERS; ++k)
+	//	{
+	//		// skip empty colliders
+	//		if (colliders[k] == nullptr)
+	//			continue;
+	//		c2 = colliders[k];
+	//		if (c1->CheckCollision(c2->rect) == true)
+	//		{
+	//			if (matrix[c1->type][c2->type] && c1->callback)
+	//				c1->callback->OnCollision(c1, c2);
+	//			if (matrix[c2->type][c1->type] && c2->callback)
+	//				c2->callback->OnCollision(c2, c1);
+	//		}
+	//	}
+	//}
 
 	return true;
 }
@@ -148,7 +191,7 @@ bool Collisions::CleanUp()
 	return true;
 }
 
-Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Module* callback)
+Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Entity* listener)
 {
 	Collider* ret = nullptr;
 
@@ -156,7 +199,7 @@ Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Module* call
 	{
 		if (colliders[i] == nullptr)
 		{
-			ret = colliders[i] = new Collider(rect, type, callback);
+			ret = colliders[i] = new Collider(rect, type, listener);
 			break;
 		}
 	}

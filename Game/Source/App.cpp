@@ -1,4 +1,5 @@
 #include "App.h"
+
 #include "Window.h"
 #include "Input.h"
 #include "Render.h"
@@ -10,6 +11,7 @@
 #include "Collisions.h"
 #include "Pathfinding.h"
 #include "PigEnemy.h"
+#include "EntityManager.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -32,11 +34,10 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
-	map = new Map();
-	player = new Player();
 	pigEnemy = new PigEnemy();
 	pathfinding = new PathFinding();
 	collisions = new Collisions();
+	entityManager = new EntityManager();
 	
 
 	// Ordered for awake / Start / Update
@@ -47,10 +48,9 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audio);
 	AddModule(pathfinding);
 	AddModule(scene);
-	AddModule(map);
-	AddModule(player);
 	AddModule(pigEnemy);
 	AddModule(collisions);
+	AddModule(entityManager);
 
 	// render last to swap buffer
 	AddModule(render);

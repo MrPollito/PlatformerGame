@@ -15,11 +15,10 @@ class Render;
 class Textures;
 class Audio;
 class Scene;
-class Map;
 class Collisions;
-class Player;
 class PathFinding;
 class PigEnemy;
+class EntityManager;
 
 class App
 {
@@ -92,10 +91,9 @@ public:
 	Audio* audio;
 	Scene* scene;
 	PathFinding* pathfinding;
-	Map* map;
 	Collisions* collisions;
-	Player* player;
 	PigEnemy* pigEnemy;
+	EntityManager* entityManager;
 
 private:
 

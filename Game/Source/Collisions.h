@@ -1,9 +1,10 @@
 #ifndef __COLLISIONS_H__
 #define __COLLISIONS_H__
 
-#define MAX_COLLIDERS 1000
+#define MAX_COLLIDERS 500
 
 #include "Module.h"
+#include "Entity.h"
 #include "SDL\include\SDL_rect.h"
 
 enum ColliderType
@@ -22,12 +23,12 @@ struct Collider
 	SDL_Rect rect;
 	bool toDelete = false;
 	ColliderType type;
-	Module* callback = nullptr;
+	Entity* listener = nullptr;
 
-	Collider(SDL_Rect rectangle, ColliderType type, Module* callback = nullptr) :
+	Collider(SDL_Rect rectangle, ColliderType type, Entity* listener = nullptr) :
 		rect(rectangle),
 		type(type),
-		callback(callback)
+		listener(listener)
 	{}
 
 	void SetPos(int x, int y)
@@ -37,6 +38,7 @@ struct Collider
 	}
 
 	bool CheckCollision(const SDL_Rect& r) const;
+
 };
 
 class Collisions : public Module
@@ -50,7 +52,7 @@ public:
 	bool Update(float dt) override;
 	bool CleanUp() override;
 
-	Collider* AddCollider(SDL_Rect rect, ColliderType type, Module* callback = nullptr);
+	Collider* AddCollider(SDL_Rect rect, ColliderType type, Entity* listener = nullptr);
 	void DebugDraw();
 	SDL_Rect rect;
 

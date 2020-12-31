@@ -1,15 +1,19 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include "Module.h"
+#include "Entity.h"
+#include "App.h"
+#include "Input.h"
+#include "Render.h"
 #include "Animation.h"
 #include "Physics.h"
 #include "Point.h"
 #include "Collisions.h"
-#include "Map.h"
-#include "Scene.h"
-#include "Animation.h"
+#include "Textures.h"
 
+#include "Point.h"
+#include "SString.h"
+#include "Log.h"
 
 #include "SDL/include/SDL.h"
 
@@ -30,32 +34,17 @@ enum PlayerAction
 	PLAYER_DEATH
 };
 
-class Player : public Module
+class Player : public Entity
 {
 public:
 
 	Player();
 
-	// Destructor
-	virtual ~Player();
-
-	// Called before render is available
-	bool Awake(pugi::xml_node&);
-
-	// Called at the begining
-	bool Start();
-
 	// Called each loop iteration
-	bool PreUpdate();
 	bool Update(float dt);
-	bool PostUpdate();
 
 	// Called before quitting
 	bool CleanUp();
-
-	// Load new map
-	bool Load(pugi::xml_node&);
-	bool Save(pugi::xml_node&);
 
 	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
@@ -66,13 +55,14 @@ public:
 	bool Draw(float dt);
 
 	void Hit(int damage);
+	void SetTexture(SDL_Texture* tex);
 
 	SDL_Rect rCollider;
 	SDL_Rect r;
 	SDL_Rect attCollider;
 
 	SDL_Texture* playerTexture;
-	
+
 	fPoint position;
 	iPoint positionPixelPerfect;
 
@@ -87,7 +77,6 @@ public:
 	int attColliderTimer;
 	int lives;
 
-private:
 	int playerSize = 78;
 	float speed;
 	bool dead = false;
@@ -118,7 +107,7 @@ private:
 	//Physics physics;
 	fPoint velocity;
 
-	
+
 	bool invert;
 	bool flipTexture;
 	bool playerJumping;
@@ -127,6 +116,8 @@ private:
 	bool onGround;
 	bool leftColliding;
 	bool rightColliding;
+
+	friend class PigEnemy;
 
 };
 

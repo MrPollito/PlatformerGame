@@ -2,6 +2,7 @@
 #define __MAP_H__
 
 #include "Module.h"
+#include "Entity.h"
 #include "List.h"
 #include "Point.h"
 #include "Collisions.h"
@@ -125,7 +126,7 @@ struct MapData
 	List<MapLayer*> layers;
 };
 
-class Map : public Module
+class Map : public Entity
 {
 public:
 
@@ -174,9 +175,6 @@ public:
 	// L03: DONE 1: Add your struct for map info
 	MapData mapData;
 	List<Collider*> mapColliders;
-
-private:
-
 	void LogAll();
 	pugi::xml_document mapFile;
 	SString folder;

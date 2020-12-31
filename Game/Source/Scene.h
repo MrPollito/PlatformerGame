@@ -2,11 +2,14 @@
 #define __SCENE_H__
 
 #include "Module.h"
+#include "Player.h"
+#include "Map.h"
 
 #include <map>
 
 struct SDL_Texture;
 struct SDL_Rect;
+class Entity;
 
 class Scene : public Module
 {
@@ -46,7 +49,8 @@ public:
 	int w, h;
 	uchar* data = NULL;
 
-
+	Player* player;
+	Map* map;
 
 private:
 	SDL_Texture* img;

@@ -11,17 +11,20 @@
 
 #include <math.h>
 
-Map::Map() : Module(), mapLoaded(false)
+Map::Map() : Entity(EntityType::MAP)
 {
 	name.Create("map");
+	mapLoaded = false;
+	LOG("Loading Map Parser");
+	bool ret = true;
+	folder.Create("Assets/Maps/");
+	loadingLevel = "random_level_1.tmx";
 
 }
-
 // Destructor
 Map::~Map()
 {}
 
-// Called before render is available
 bool Map::Awake(pugi::xml_node& config)
 {
 	LOG("Loading Map Parser");
@@ -427,7 +430,7 @@ void Map::LogAll()
 {
 	
 		// L03: TODO 5: LOG all the data loaded iterate all tilesets and LOG everything
-		LOG("Successfully parsed map XML file : %s", app->map->folder);
+		LOG("Successfully parsed map XML file : %s",app->scene->map->folder);
 		LOG(" width : %d height : %d", mapData.width, mapData.height);
 		LOG(" tile_width : %d tile_height : %d", mapData.tileWidth, mapData.tileHeight);
 
@@ -483,7 +486,7 @@ void Map::LogAll()
 ListItem<MapLayer*>* MapLayer::GetLayer(SString name)
 {
 	ListItem<MapLayer*>* a;
-	a = app->map->mapData.layers.start;
+	a = app->scene->map->mapData.layers.start;
 	while (a != NULL)
 	{
 		if (a->data->name == name)
