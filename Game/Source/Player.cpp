@@ -27,6 +27,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 	attacking = false;
 	attackCounter = 0;
 	lives = 3;
+	money = 0;
 
 	position.x = 200.0f;
 	position.y = 1500.0f;
@@ -272,7 +273,8 @@ bool Player::Update(float dt)
 		{
 			position.y += 4;
 		}
-	}
+		
+}
 
 	//Player Actions
 	switch (action)

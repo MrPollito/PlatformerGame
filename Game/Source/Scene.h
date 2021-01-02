@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Item.h"
 
 #include <map>
 
@@ -52,6 +53,8 @@ public:
 	Player* player;
 	PigEnemy* pig1;
 	PigEnemy* pig2;
+	Item* heart;
+	Item* coin;
 
 	ListItem<Entity*>* enemies;
 

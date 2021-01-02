@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Entity.h"
+#include "Item.h"
 
 #include "List.h"
 
@@ -24,7 +25,7 @@ public:
 	bool CleanUp();
 
 	// Additional methods
-	Entity* CreateEntity(EntityType type);
+	Entity* CreateEntity(EntityType type, int x, int y, ItemType itemType);
 	void DestroyEntity(Entity* entity);
 
 	void AddEntity(Entity* entity);

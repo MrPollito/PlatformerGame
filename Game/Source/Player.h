@@ -81,6 +81,7 @@ public:
 	bool attColliderActive = false;
 	int attColliderTimer;
 	int lives;
+	int money;
 
 	int playerSize = 78;
 	float speed;

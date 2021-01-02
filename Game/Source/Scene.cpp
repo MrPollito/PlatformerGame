@@ -29,6 +29,8 @@ bool Scene::Awake()
 	player = nullptr;
 	pig1 = nullptr;
 	pig2 = nullptr;
+	coin = nullptr;
+	heart = nullptr;
 
 	return ret;
 }
@@ -38,10 +40,12 @@ bool Scene::Start()
 {
 	// Load game entities
 
-	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER);
-	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY);
-	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY);
+	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER, 0, 0, NOTYPE);
+	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
+	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
 	pig2->position.x = pig1->position.x - 20;
+	coin = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 200, 1400, COIN);
+	heart = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 230, 1400, HEART);
 
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);

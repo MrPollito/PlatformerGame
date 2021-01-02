@@ -42,20 +42,18 @@ bool EntityManager::CleanUp()
 	return true;
 }
 
-Entity* EntityManager::CreateEntity(EntityType type)
+Entity* EntityManager::CreateEntity(EntityType type, int x, int y, ItemType itemType)
 {
 	Entity* ret = nullptr;
 
 	switch (type)
 	{
-		// L13: Create the corresponding type entity
 	case EntityType::PLAYER: ret = new Player();  break;
 	case EntityType::PIG_ENEMY: ret = new PigEnemy();  break;
-		//case EntityType::ITEM: ret = new Item();  break;
+	case EntityType::ITEM: ret = new Item(x,y,itemType);  break;
 	default: break;
 	}
 
-	// Created entities are added to the list
 	if (ret != nullptr) entities.Add(ret);
 
 	return ret;

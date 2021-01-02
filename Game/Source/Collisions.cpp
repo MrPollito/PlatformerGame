@@ -22,31 +22,42 @@ Collisions::Collisions()
 	matrix[COLLIDER_GROUND][COLLIDER_END] = false;
 	matrix[COLLIDER_GROUND][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_GROUND][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_ITEM] = false;
 
 	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER] = false;
 	matrix[COLLIDER_PLAYER][COLLIDER_GROUND] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_END] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_PLAYER][COLLIDER_ITEM] = true;
 
 	matrix[COLLIDER_END][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_END][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_END][COLLIDER_END] = false;
 	matrix[COLLIDER_END][COLLIDER_ENEMY] = false;
 	matrix[COLLIDER_END][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_END][COLLIDER_ITEM] = false;
 
 	matrix[COLLIDER_ENEMY][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_ENEMY][COLLIDER_ENEMY] = false;
 	matrix[COLLIDER_ENEMY][COLLIDER_GROUND] = true;
 	matrix[COLLIDER_ENEMY][COLLIDER_END] = false;
 	matrix[COLLIDER_ENEMY][COLLIDER_PLAYER_ATTACK] = true;
+	matrix[COLLIDER_ENEMY][COLLIDER_ITEM] = false;
 
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_PLAYER] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_PLAYER_ATTACK] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_END] = false;
+	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_ITEM] = false;
 
+	matrix[COLLIDER_ITEM][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_ITEM][COLLIDER_ENEMY] = false;
+	matrix[COLLIDER_ITEM][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_ITEM][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_ITEM][COLLIDER_END] = false;
+	matrix[COLLIDER_ITEM][COLLIDER_ITEM] = false;
 
 }
 
@@ -164,6 +175,9 @@ void Collisions::DebugDraw()
 			break;
 		case COLLIDER_PLAYER_ATTACK: // black
 			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 0, alpha);
+			break;
+		case COLLIDER_ITEM: // cyan
+			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 255, alpha);
 			break;
 		}
 	}
