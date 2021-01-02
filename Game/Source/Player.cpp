@@ -29,8 +29,11 @@ Player::Player() : Entity(EntityType::PLAYER)
 	lives = 3;
 	money = 0;
 
-	position.x = 200.0f;
-	position.y = 1500.0f;
+	startingPosition.x = 56.0f;
+	startingPosition.y = 1485.0f;
+
+	position.x = startingPosition.x;
+	position.y = startingPosition.y;
 
 	positionPixelPerfect.x = round(position.x);
 	positionPixelPerfect.y = round(position.y);
@@ -388,10 +391,17 @@ bool Player::Draw(float dt)
 		}
 		else
 		{
-			ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+			if (currentAnimation == &attackLeft)
+			{
+				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x-13, positionPixelPerfect.y+4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+			}
+			else
+			{
+				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x + 4, positionPixelPerfect.y+4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+			}
 		}
 	}
-	else LOG("No available graphics to draw.");
+	else LOG("Player.h: No available graphics to draw.");
 
 	r.x = position.x;
 	r.y = position.y;
@@ -403,11 +413,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	bool ret = false;
 	if (!godMode)
 	{
-		if (c1 == attackCollider && c2->type == COLLIDER_ENEMY)
-		{
-			app->scene->pig1->isHit = true;
-			app->scene->pig1->life--;
-		}
+	
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
 			if (app->scene->pig1->isDying == false)
@@ -476,8 +482,8 @@ void Player::AttackCollider(bool facing)
 	if (facing == true)
 	{
 		attCollider.x = playerCollider->rect.x + playerCollider->rect.w + 10;
-		attCollider.y = playerCollider->rect.y;
-		attCollider.h = playerCollider->rect.h;
+		attCollider.y = playerCollider->rect.y - 10;
+		attCollider.h = playerCollider->rect.h + 20;
 		attCollider.w = 25;
 		if (attColliderActive == false)
 		{
@@ -490,9 +496,9 @@ void Player::AttackCollider(bool facing)
 	}
 	else if (facing == false)
 	{
-		attCollider.x = playerCollider->rect.x - 27;
-		attCollider.y = playerCollider->rect.y;
-		attCollider.h = playerCollider->rect.h;
+		attCollider.x = playerCollider->rect.x - 34;
+		attCollider.y = playerCollider->rect.y - 10;
+		attCollider.h = playerCollider->rect.h + 20;
 		attCollider.w = 25;
 		if (attColliderActive == false)
 		{

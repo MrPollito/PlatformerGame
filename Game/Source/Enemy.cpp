@@ -16,6 +16,7 @@
 
 #define DEFAULT_PATH_LENGTH 50
 
+// PIG ENEMY FUNCTIONS ------------------------------------------------------------------------------
 PigEnemy::PigEnemy() : Entity(EntityType::PIG_ENEMY)
 {
 	LOG("Creating pigEnemy");
@@ -319,6 +320,11 @@ bool PigEnemy::Draw(float dt)
 bool PigEnemy::OnCollision(Collider* c1, Collider* c2)
 {
 	bool ret = false;
+	if (c1 == pigEnemyCol && c2->type == COLLIDER_PLAYER_ATTACK)
+	{
+		isHit = true;
+		life--;
+	}
 	if (app->scene->player->godMode == false)
 	{
 		if (c1 == pigEnemyCol && c2->type == COLLIDER_GROUND)
@@ -406,4 +412,319 @@ bool PigEnemy::PigJump()
 	gravity = cas;
 	onGround = false;
 	return false;
+}
+
+
+// BAT ENEMY FUNCTIONS ------------------------------------------------------------------------------
+BatEnemy::BatEnemy() : Entity(EntityType::BAT_ENEMY)
+{
+	LOG("Creating batEnemy");
+	name.Create("batEnemy");
+
+	position.x = 400.0f;
+	position.y = 1400.0f;
+	life = 20;
+	dead = false;
+	chaseDistance = 200;
+
+	damage = 1;
+	speed = 1.0f;
+	gravity = 1;
+	active = false;
+	isHit = false;
+	dedRight = false;
+	dedLeft = false;
+	isDying = false;
+
+	positionPixelPerfect.x = position.x;
+	positionPixelPerfect.y = position.y;
+
+	velocity.SetToZero();
+
+	enemyTexture = app->tex->Load("Assets/textures/Bat_animations.png");
+
+	r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
+	if (batEnemyCol == nullptr) batEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, nullptr, this);
+
+
+	action = BATENEMY_IDLE;
+
+
+	// Animations
+	// IDLE ----------------------------------------------
+	for (int i = 0; i < 5; i++)
+	{
+		idleLeft.PushBack({ (17 * i),34,17,17 });
+	}
+	idleLeft.speed = 0.25f;
+
+	for (int i = 0; i < 5; i++)
+	{
+		idleRight.PushBack({ (17 * i),0,17,17 });
+	}
+	idleRight.speed = 0.25f;
+
+	// MOVEMENT --------------------------------------------
+	for (int i = 0; i < 5; i++)
+	{
+		moveLeft.PushBack({ (17 * i),34,17,17 });
+	}
+	moveLeft.speed = 0.25f;
+
+	for (int i = 0; i < 5; i++)
+	{
+		moveRight.PushBack({ (17 * i),0,17,17 });
+	}
+	moveRight.speed = 0.25f;
+
+	// DEATH ----------------------------------------------
+	for (int i = 0; i < 5; i++)
+	{
+		deathLeft.PushBack({ (17 * i),17,17,17 });
+	}
+	deathLeft.speed = 0.25f;
+
+	for (int i = 0; i < 5; i++)
+	{
+		deathRight.PushBack({ (17 * i),51,17,17 });
+	}
+	deathRight.speed = 0.25f;
+}
+
+bool BatEnemy::Update(float dt)
+{
+	bool ret = false;
+
+	if (!dead)
+	{
+		
+		if ((position.DistanceTo(app->scene->player->position) < chaseDistance) && (app->scene->player->godMode == false) && (app->scene->player->life > 0))
+		{
+			chaseDistance += 200;
+			action = BATENEMY_MOVE;
+		}
+		else
+		{
+			action = BATENEMY_IDLE;
+		}
+		
+		if (life <= 0)
+		{
+			velocity.x = 0;
+			position.y++;
+			isDying = true;
+			action = BATENEMY_DEATH;
+		}
+	}
+
+	else action = BATENEMY_IDLE;
+
+	//Status
+	switch (action)
+	{
+	case BATENEMY_IDLE:
+	{
+		if (isDying == false)
+		{
+			velocity.x = 0;
+			if (app->scene->player->position.x < position.x)
+			{
+				currentAnimation = &idleLeft;
+			}
+			else
+			{
+				currentAnimation = &idleRight;
+			}
+			break;
+		}
+		else
+			break;
+	}
+	case BATENEMY_MOVE:
+	{
+		iPoint origin = positionPixelPerfect;
+		// Target is player position
+		iPoint playerPos = app->scene->player->positionPixelPerfect;
+
+		// Convert World position to map position
+		origin = app->map->WorldToMap(positionPixelPerfect.x + 20, positionPixelPerfect.y);
+		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
+
+		// Create new path
+		app->pathfinding->CreatePath(origin, playerPos);
+		const DynArray<iPoint>* path = app->pathfinding->GetLastPath();
+
+		if (path->At(1) != NULL)
+		{
+			// Move Enemy to Player
+			if (path->At(1)->x < origin.x)
+			{
+				currentAnimation = &moveLeft;
+				velocity.x = -speed;
+			}
+			else if (path->At(1)->x > origin.x)
+			{
+				currentAnimation = &moveRight;
+				velocity.x = +speed;
+			}
+			else if (path->At(1)->y < origin.y)
+			{
+				currentAnimation = &moveRight;
+				velocity.y = -speed;
+			}
+			else if (path->At(1)->y > origin.y)
+			{
+				currentAnimation = &moveRight;
+				velocity.y = +speed;
+			}
+		}
+
+		// Draw path
+		if (app->debug)
+		{
+			for (uint i = 0; i < path->Count(); ++i)
+			{
+				iPoint nextPoint = app->map->MapToWorld(path->At(i)->x, path->At(i)->y);
+				SDL_Rect pathRect = { nextPoint.x, nextPoint.y, 32, 32 };
+				app->render->DrawRectangle(pathRect, 255, 0, 0, 100);
+			}
+		}
+		break;
+	}
+
+	case PIGENEMY_DEATH:
+		if (app->scene->player->position.x < position.x && dedRight == false)
+		{
+			dedLeft = true;
+			currentAnimation = &deathLeft;
+		}
+		else if (app->scene->player->position.x > position.x && dedLeft == false)
+		{
+			dedRight = true;
+			currentAnimation = &deathRight;
+		}
+		if (deathRight.Finished() || deathLeft.Finished())
+		{
+			dead = true;
+			DisableBatEnemy();
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (!dead)
+	{
+		if (velocity.x != 0)
+		{
+			idleLeft.Reset();
+			idleRight.Reset();
+		}
+		else if (velocity.x == 0)
+		{
+			moveLeft.Reset();
+			moveRight.Reset();
+		}
+
+		//Change position from velocity
+		position.x += (velocity.x * dt * 60);
+		position.y += (velocity.y * dt * 60);
+
+		positionPixelPerfect.x = round(position.x);
+		positionPixelPerfect.y = round(position.y);
+
+		//Collider position
+		batEnemyCol->SetPos(positionPixelPerfect.x, positionPixelPerfect.y);
+		r.x = positionPixelPerfect.x; r.y = positionPixelPerfect.y;
+
+		//Function to draw the player
+		ret = Draw(dt);
+		onGround = false;
+	}
+	else ret = true;
+
+	return ret;
+}
+
+bool BatEnemy::Draw(float dt)
+{
+	bool ret = false;
+	r = currentAnimation->GetCurrentFrame(dt);
+	if (enemyTexture != nullptr)
+	{
+		ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
+	}
+	else LOG("No available graphics to draw.");
+
+	r.x = positionPixelPerfect.x;
+	r.y = positionPixelPerfect.y;
+	return ret;
+}
+
+bool BatEnemy::OnCollision(Collider* c1, Collider* c2)
+{
+	bool ret = false;
+	if (app->scene->player->godMode == false)
+	{
+		if (c1 == batEnemyCol && c2->type == COLLIDER_GROUND)
+		{
+			if (velocity.y != 0)
+			{
+				position.y = c2->rect.y - c1->rect.h + 2;
+			}
+			velocity.y = 0;
+
+			ret = true;
+		}
+	}
+	if (c1 == batEnemyCol && c2->type == COLLIDER_PLAYER_ATTACK)
+	{
+		isHit = true;
+		life--;
+	}
+	return ret;
+}
+
+bool BatEnemy::ResetStates() //Reset all states before checking input
+{
+	velocity.SetToZero();
+
+	return true;
+}
+
+bool BatEnemy::DisableBatEnemy() //Disable function for changing scene
+{
+	LOG("Disabling batEnemy");
+	active = false;
+	if (batEnemyCol != nullptr)
+	{
+		batEnemyCol->toDelete = true;
+		batEnemyCol = nullptr;
+	}
+	return true;
+}
+
+bool BatEnemy::CleanUp()
+{
+
+	idleRight.Reset();
+	idleLeft.Reset();
+	moveRight.Reset();
+	moveLeft.Reset();
+	deathRight.Reset();
+	deathLeft.Reset();
+	
+	bool ret = true;
+	LOG("Unloading ground enemy");
+	if (batEnemyCol != nullptr)
+	{
+		batEnemyCol->toDelete = true;
+		batEnemyCol = nullptr;
+	}
+	if (enemyTexture != nullptr)
+	{
+		ret = app->tex->UnLoad(enemyTexture);
+		enemyTexture = nullptr;
+	}
+	return ret;
 }

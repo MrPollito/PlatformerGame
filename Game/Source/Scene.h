@@ -53,6 +53,7 @@ public:
 	Player* player;
 	PigEnemy* pig1;
 	PigEnemy* pig2;
+	BatEnemy* bat1;
 	Item* heart;
 	Item* coin;
 

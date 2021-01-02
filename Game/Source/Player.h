@@ -69,6 +69,7 @@ public:
 	SDL_Texture* playerTexture;
 
 	fPoint position;
+	fPoint startingPosition;
 	iPoint positionPixelPerfect;
 
 	Collider* playerCollider = nullptr;

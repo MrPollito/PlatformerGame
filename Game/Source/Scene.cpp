@@ -31,6 +31,7 @@ bool Scene::Awake()
 	pig2 = nullptr;
 	coin = nullptr;
 	heart = nullptr;
+	bat1 = nullptr;
 
 	return ret;
 }
@@ -43,6 +44,7 @@ bool Scene::Start()
 	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER, 0, 0, NOTYPE);
 	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
 	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
+	bat1 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 0, 0, NOTYPE);
 	pig2->position.x = pig1->position.x - 20;
 	coin = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 200, 1400, COIN);
 	heart = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 230, 1400, HEART);

@@ -18,6 +18,9 @@
 
 #include "SDL/include/SDL.h"
 
+struct Collider;
+class Module;
+
 enum PigEnemyStatus
 {
 	PIGENEMY_IDLE,
@@ -27,9 +30,6 @@ enum PigEnemyStatus
 	PIGENEMY_HIT,
 	PIGENEMY_UP
 };
-
-struct Collider;
-class Module;
 
 class PigEnemy : public Entity
 {
@@ -104,6 +104,84 @@ public:
 	Animation hitLeft;
 
 	PigEnemyStatus action = PIGENEMY_IDLE;
+};
+
+enum BatEnemyStatus
+{
+	BATENEMY_IDLE,
+	BATENEMY_MOVE,
+	BATENEMY_DEATH
+};
+
+class BatEnemy : public Entity
+{
+public:
+
+	BatEnemy();
+
+	// Called each loop iteration
+	bool Update(float dt);
+
+	// Called each loop iteration
+	bool Draw(float dt);
+
+	// Called before quitting
+	bool CleanUp();
+
+	// Collisions
+	bool OnCollision(Collider* c1, Collider* c2);
+
+	// Extra functions
+	bool ResetStates();
+	bool DisableBatEnemy();
+
+	// Variables
+
+	Collider* batEnemyCol;
+	SDL_Texture* enemyTexture;
+	SDL_Rect r;
+
+	fPoint position;
+	fPoint velocity;
+	iPoint initialPos;
+	iPoint positionPixelPerfect;
+
+	bool isHit;
+	bool dedRight;
+	bool dedLeft;
+	bool isDying = false;
+	bool dead = false;
+	bool onGround;
+	bool leftColliding;
+	bool rightColliding;
+	bool jumping;
+
+	int life;
+	int lifeConfig;
+	int gravity;
+	int deathLimit;
+	int damageFx;
+	int damage;
+	int chaseDistance;
+
+	float speed;
+	float attackTimer;
+
+	// Pathfinding variables
+	int pathSteps = 0;
+	iPoint nextPos;
+	SString texPath;
+
+	// Animation stuff
+	Animation* currentAnimation = &idleLeft;
+	Animation idleLeft;
+	Animation idleRight;
+	Animation deathRight;
+	Animation deathLeft;
+	Animation moveRight;
+	Animation moveLeft;
+
+	BatEnemyStatus action = BATENEMY_IDLE;
 };
 
 #endif // __ENEMY_H__

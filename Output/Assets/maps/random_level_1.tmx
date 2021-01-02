@@ -12027,7 +12027,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="3" name="Details" width="80" height="50" locked="1">
+ <layer id="3" name="Details" width="80" height="50">
   <properties>
    <property name="Draw" type="int" value="1"/>
    <property name="Navigation" type="int" value="0"/>
@@ -12797,7 +12797,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="404"/>
+   <tile/>
    <tile/>
    <tile/>
    <tile/>
@@ -12877,7 +12877,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="373"/>
+   <tile/>
    <tile/>
    <tile/>
    <tile gid="205"/>
@@ -16035,7 +16035,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="6" name="Navigation" width="80" height="50">
+ <layer id="6" name="Navigation" width="80" height="50" visible="0">
   <properties>
    <property name="Draw" type="int" value="0"/>
    <property name="Navigation" type="int" value="1"/>

@@ -9,8 +9,8 @@ enum class EntityType
 {
     PLAYER,
     PIG_ENEMY,
+    BAT_ENEMY,
     ITEM,
-    MAP,
     UNKNOWN
 };
 

@@ -50,6 +50,7 @@ Entity* EntityManager::CreateEntity(EntityType type, int x, int y, ItemType item
 	{
 	case EntityType::PLAYER: ret = new Player();  break;
 	case EntityType::PIG_ENEMY: ret = new PigEnemy();  break;
+	case EntityType::BAT_ENEMY: ret = new BatEnemy();  break;
 	case EntityType::ITEM: ret = new Item(x,y,itemType);  break;
 	default: break;
 	}
