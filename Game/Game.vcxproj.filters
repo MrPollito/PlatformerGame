@@ -30,9 +30,6 @@
     <ClCompile Include="Source\Player.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PigEnemy.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Render.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -112,9 +109,6 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PigEnemy.h">
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="Source\Render.h">

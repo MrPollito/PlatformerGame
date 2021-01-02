@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Player.h"
+#include "Enemy.h"
 
 #include <map>
 
@@ -49,6 +50,10 @@ public:
 	uchar* data = NULL;
 
 	Player* player;
+	PigEnemy* pig1;
+	PigEnemy* pig2;
+
+	ListItem<Entity*>* enemies;
 
 private:
 	SDL_Texture* img;

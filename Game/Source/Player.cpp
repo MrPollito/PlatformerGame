@@ -8,7 +8,9 @@
 #include "Collisions.h"
 #include "Log.h" 
 #include "Player.h"
-#include "PigEnemy.h"
+#include "Entity.h"
+#include "Enemy.h"
+#include "EntityManager.h"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -401,14 +403,14 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	{
 		if (c1 == attackCollider && c2->type == COLLIDER_ENEMY)
 		{
-			app->pigEnemy->isHit = true;
-			app->pigEnemy->life--;
+			app->scene->pig1->isHit = true;
+			app->scene->pig1->life--;
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
-			if (app->pigEnemy->isDying == false)
+			if (app->scene->pig1->isDying == false)
 			{
-				Hit(app->pigEnemy->damage);
+				Hit(app->scene->pig1->damage);
 			}
 		}
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)

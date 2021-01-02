@@ -9,7 +9,6 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "Log.h"
-#include "PigEnemy.h"
 #include "Pathfinding.h"
 #include "EntityManager.h"
 
@@ -28,6 +27,8 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 	player = nullptr;
+	pig1 = nullptr;
+	pig2 = nullptr;
 
 	return ret;
 }
@@ -37,8 +38,10 @@ bool Scene::Start()
 {
 	// Load game entities
 
-	player = new Player();
 	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER);
+	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY);
+	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY);
+	pig2->position.x = pig1->position.x - 20;
 
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
@@ -50,8 +53,6 @@ bool Scene::Start()
 
 		RELEASE_ARRAY(data);
 	}
-
-	app->pigEnemy->EnablePigEnemy();
 
 	return true;
 }

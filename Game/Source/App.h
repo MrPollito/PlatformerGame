@@ -18,7 +18,6 @@ class Scene;
 class Map;
 class Collisions;
 class PathFinding;
-class PigEnemy;
 class EntityManager;
 
 class App
@@ -94,7 +93,6 @@ public:
 	PathFinding* pathfinding;
 	Map* map;
 	Collisions* collisions;
-	PigEnemy* pigEnemy;
 	EntityManager* entityManager;
 
 private:

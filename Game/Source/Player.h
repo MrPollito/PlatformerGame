@@ -12,6 +12,7 @@
 #include "Textures.h"
 #include "Map.h"
 
+
 #include "Point.h"
 #include "SString.h"
 #include "Log.h"
@@ -34,8 +35,10 @@ enum PlayerAction
 	PLAYER_ATTACK_LEFT,
 	PLAYER_DEATH
 };
+
 struct Collider;
 class Module;
+
 class Player : public Entity
 {
 public:
@@ -118,8 +121,6 @@ public:
 	bool onGround;
 	bool leftColliding;
 	bool rightColliding;
-
-	friend class PigEnemy;
 
 };
 

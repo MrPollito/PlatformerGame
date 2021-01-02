@@ -10,8 +10,9 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "Pathfinding.h"
-#include "PigEnemy.h"
 #include "EntityManager.h"
+#include "Entity.h"
+#include "Enemy.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -35,7 +36,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audio = new Audio();
 	scene = new Scene();
 	map = new Map();
-	pigEnemy = new PigEnemy();
 	pathfinding = new PathFinding();
 	collisions = new Collisions();
 	entityManager = new EntityManager();
@@ -50,7 +50,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);
-	AddModule(pigEnemy);
 	AddModule(collisions);
 	AddModule(entityManager);
 

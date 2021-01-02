@@ -50,7 +50,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	{
 		// L13: Create the corresponding type entity
 	case EntityType::PLAYER: ret = new Player();  break;
-		//case EntityType::ENEMY: ret = new Enemy();  break;
+	case EntityType::PIG_ENEMY: ret = new PigEnemy();  break;
 		//case EntityType::ITEM: ret = new Item();  break;
 	default: break;
 	}
