@@ -22,43 +22,72 @@ Collisions::Collisions()
 	matrix[COLLIDER_GROUND][COLLIDER_END] = false;
 	matrix[COLLIDER_GROUND][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_GROUND][COLLIDER_PLAYER_ATTACK] = false;
-	matrix[COLLIDER_GROUND][COLLIDER_ITEM] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_HEART] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_COIN] = false;
+	matrix[COLLIDER_GROUND][COLLIDER_CHECKPOINT] = false;
 
 	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER] = false;
 	matrix[COLLIDER_PLAYER][COLLIDER_GROUND] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_END] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_PLAYER][COLLIDER_PLAYER_ATTACK] = false;
-	matrix[COLLIDER_PLAYER][COLLIDER_ITEM] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_HEART] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_COIN] = true;
+	matrix[COLLIDER_PLAYER][COLLIDER_CHECKPOINT] = true;
 
 	matrix[COLLIDER_END][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_END][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_END][COLLIDER_END] = false;
 	matrix[COLLIDER_END][COLLIDER_ENEMY] = false;
 	matrix[COLLIDER_END][COLLIDER_PLAYER_ATTACK] = false;
-	matrix[COLLIDER_END][COLLIDER_ITEM] = false;
+	matrix[COLLIDER_END][COLLIDER_HEART] = false;
+	matrix[COLLIDER_END][COLLIDER_COIN] = false;
+	matrix[COLLIDER_END][COLLIDER_CHECKPOINT] = false;
 
 	matrix[COLLIDER_ENEMY][COLLIDER_PLAYER] = true;
 	matrix[COLLIDER_ENEMY][COLLIDER_ENEMY] = false;
 	matrix[COLLIDER_ENEMY][COLLIDER_GROUND] = true;
 	matrix[COLLIDER_ENEMY][COLLIDER_END] = false;
 	matrix[COLLIDER_ENEMY][COLLIDER_PLAYER_ATTACK] = true;
-	matrix[COLLIDER_ENEMY][COLLIDER_ITEM] = false;
+	matrix[COLLIDER_ENEMY][COLLIDER_HEART] = false;
+	matrix[COLLIDER_ENEMY][COLLIDER_COIN] = false;
+	matrix[COLLIDER_ENEMY][COLLIDER_CHECKPOINT] = false;
 
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_PLAYER] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_ENEMY] = true;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_GROUND] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_PLAYER_ATTACK] = false;
 	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_END] = false;
-	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_ITEM] = false;
+	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_HEART] = false;
+	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_COIN] = false;
+	matrix[COLLIDER_PLAYER_ATTACK][COLLIDER_CHECKPOINT] = false;
 
-	matrix[COLLIDER_ITEM][COLLIDER_PLAYER] = true;
-	matrix[COLLIDER_ITEM][COLLIDER_ENEMY] = false;
-	matrix[COLLIDER_ITEM][COLLIDER_GROUND] = false;
-	matrix[COLLIDER_ITEM][COLLIDER_PLAYER_ATTACK] = false;
-	matrix[COLLIDER_ITEM][COLLIDER_END] = false;
-	matrix[COLLIDER_ITEM][COLLIDER_ITEM] = false;
+	matrix[COLLIDER_HEART][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_HEART][COLLIDER_ENEMY] = false;
+	matrix[COLLIDER_HEART][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_HEART][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_HEART][COLLIDER_END] = false;
+	matrix[COLLIDER_HEART][COLLIDER_COIN] = false;
+	matrix[COLLIDER_HEART][COLLIDER_HEART] = false;
+	matrix[COLLIDER_HEART][COLLIDER_CHECKPOINT] = false;
 
+	matrix[COLLIDER_COIN][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_COIN][COLLIDER_ENEMY] = false;
+	matrix[COLLIDER_COIN][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_COIN][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_COIN][COLLIDER_END] = false;
+	matrix[COLLIDER_COIN][COLLIDER_HEART] = false;
+	matrix[COLLIDER_COIN][COLLIDER_COIN] = false;
+	matrix[COLLIDER_COIN][COLLIDER_CHECKPOINT] = false;
+
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_PLAYER] = true;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_ENEMY] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_GROUND] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_PLAYER_ATTACK] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_END] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_HEART] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_COIN] = false;
+	matrix[COLLIDER_CHECKPOINT][COLLIDER_CHECKPOINT] = false;
 }
 
 // Destructor
@@ -176,8 +205,14 @@ void Collisions::DebugDraw()
 		case COLLIDER_PLAYER_ATTACK: // black
 			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 0, alpha);
 			break;
-		case COLLIDER_ITEM: // cyan
+		case COLLIDER_COIN: // cyan
 			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 255, alpha);
+			break;
+		case COLLIDER_HEART: // magenta
+			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 255, alpha);
+			break;
+		case COLLIDER_CHECKPOINT: // magenta
+			app->render->DrawRectangle(colliders[i]->rect, 100, 255, 200, alpha);
 			break;
 		}
 	}

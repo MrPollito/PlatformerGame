@@ -34,11 +34,22 @@ public:
     {
         return true;
     }
+    
+    virtual bool Load(pugi::xml_node& file)
+    {
+        return true;
+    }
+
+    virtual bool Save(pugi::xml_node& file)
+    {
+        return true;
+    }
 
 public:
 
     EntityType type;
     bool active = true;
+    bool deleted = false;
     SString name;
 };
 

@@ -24,6 +24,9 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	bool Load(pugi::xml_node& file);
+	bool Save(pugi::xml_node& file);
+
 	// Additional methods
 	Entity* CreateEntity(EntityType type, int x, int y, ItemType itemType);
 	void DestroyEntity(Entity* entity);
@@ -39,6 +42,8 @@ public:
 	float accumulatedTime = 0.0f;
 	float updateMsCycle = 0.0f;
 	bool doLogic = false;
+	int pigIds = 0;
+	int batIds = 0;
 };
 
 #endif // __ENTITYMANAGER_H__

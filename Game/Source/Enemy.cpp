@@ -17,15 +17,16 @@
 #define DEFAULT_PATH_LENGTH 50
 
 // PIG ENEMY FUNCTIONS ------------------------------------------------------------------------------
-PigEnemy::PigEnemy() : Entity(EntityType::PIG_ENEMY)
+PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PIG_ENEMY)
 {
 	LOG("Creating pigEnemy");
 	name.Create("pigEnemy");
 
-	position.x = 500.0f;
-	position.y = 1550.0f;
+	position.x = startingX;
+	position.y = startingY;
 	life = 20;
 	dead = false;
+	id = iD;
 
 	damage = 1;
 	speed = 1.0f;
@@ -47,8 +48,7 @@ PigEnemy::PigEnemy() : Entity(EntityType::PIG_ENEMY)
 
 	r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
 	if (pigEnemyCol == nullptr) pigEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, nullptr, this);
-
-
+	
 	action = PIGENEMY_IDLE;
 	
 
@@ -112,7 +112,7 @@ PigEnemy::PigEnemy() : Entity(EntityType::PIG_ENEMY)
 	upLeft.PushBack({ 0,140,34,28 });
 	upRight.speed = 0.1f;
 	upLeft.speed = 0.1f;
-
+	
 }
 
 bool PigEnemy::Update(float dt)
@@ -125,7 +125,6 @@ bool PigEnemy::Update(float dt)
 		{
 			if ((position.DistanceTo(app->scene->player->position) < 200) && (app->scene->player->godMode == false) && (app->scene->player->life > 0))
 			{
-
 				action = PIGENEMY_MOVE;
 			}
 			else
@@ -239,6 +238,7 @@ bool PigEnemy::Update(float dt)
 		if (deathRight.Finished() || deathLeft.Finished())
 		{
 			dead = true;
+			app->scene->enemiesRemaining--;
 			DisablePigEnemy();
 		}
 		break;
@@ -325,8 +325,6 @@ bool PigEnemy::OnCollision(Collider* c1, Collider* c2)
 		isHit = true;
 		life--;
 	}
-	if (app->scene->player->godMode == false)
-	{
 		if (c1 == pigEnemyCol && c2->type == COLLIDER_GROUND)
 		{
 			if (velocity.y != 0)
@@ -341,8 +339,62 @@ bool PigEnemy::OnCollision(Collider* c1, Collider* c2)
 		{
 			onGround = false;
 		}
-	}
+	
 	return ret;
+}
+
+bool PigEnemy::Load(pugi::xml_node& file)
+{
+	bool ret = true;
+	
+		ListItem<Entity*>* enti = app->entityManager->entities.start;
+		pugi::xml_node enemy = file.child("pigValues");
+		while (enti != NULL)
+		{
+			if (enti->data->name == "pigEnemy")
+			{
+				for (int i = 0; i < (id - 1); i++)
+				{
+					enemy = enemy.next_sibling("pigValues");
+				}
+
+				position.x = enemy.attribute("position_x").as_float();
+				position.y = enemy.attribute("position_y").as_float();
+				life = enemy.attribute("life").as_int();
+
+				if (life > 0)
+				{
+					positionPixelPerfect.x = position.x;
+					positionPixelPerfect.y = position.y;
+
+					r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
+					pigEnemyCol->SetPos(position.x + 20, position.y + 39);
+					return ret;
+				}
+				else
+				{
+					return ret;
+				}
+			}
+			else
+			{
+				enti = enti->next;
+			}
+		}
+	
+	return ret;
+}
+
+bool PigEnemy::Save(pugi::xml_node& file)
+{
+	pugi::xml_node enemy = file.append_child("pigValues");
+
+	enemy.append_attribute("id").set_value(id);
+	enemy.append_attribute("position_x").set_value(r.x);
+	enemy.append_attribute("position_y").set_value(r.y);
+	enemy.append_attribute("life").set_value(life);
+
+	return true;
 }
 
 bool PigEnemy::EnablePigEnemy() //Enable function for changing scene
@@ -359,6 +411,7 @@ bool PigEnemy::DisablePigEnemy() //Disable function for changing scene
 		pigEnemyCol->toDelete = true;
 		pigEnemyCol = nullptr;
 	}
+
 	return true;
 }
 
@@ -416,16 +469,17 @@ bool PigEnemy::PigJump()
 
 
 // BAT ENEMY FUNCTIONS ------------------------------------------------------------------------------
-BatEnemy::BatEnemy() : Entity(EntityType::BAT_ENEMY)
+BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BAT_ENEMY)
 {
 	LOG("Creating batEnemy");
 	name.Create("batEnemy");
 
-	position.x = 400.0f;
-	position.y = 1400.0f;
+	position.x = startingX;
+	position.y = startingY;
 	life = 20;
 	dead = false;
 	chaseDistance = 200;
+	id = iD;
 
 	damage = 1;
 	speed = 1.0f;
@@ -443,7 +497,7 @@ BatEnemy::BatEnemy() : Entity(EntityType::BAT_ENEMY)
 
 	enemyTexture = app->tex->Load("Assets/textures/Bat_animations.png");
 
-	r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
+	r = { positionPixelPerfect.x, positionPixelPerfect.y, 25, 25 };
 	if (batEnemyCol == nullptr) batEnemyCol = app->collisions->AddCollider(r, COLLIDER_ENEMY, nullptr, this);
 
 
@@ -454,39 +508,39 @@ BatEnemy::BatEnemy() : Entity(EntityType::BAT_ENEMY)
 	// IDLE ----------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
-		idleLeft.PushBack({ (17 * i),34,17,17 });
+		idleLeft.PushBack({ (24 * i),40,24,20 });
 	}
 	idleLeft.speed = 0.25f;
 
 	for (int i = 0; i < 5; i++)
 	{
-		idleRight.PushBack({ (17 * i),0,17,17 });
+		idleRight.PushBack({ (24 * i),0,24,20 });
 	}
 	idleRight.speed = 0.25f;
 
 	// MOVEMENT --------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
-		moveLeft.PushBack({ (17 * i),34,17,17 });
+		moveLeft.PushBack({ (24 * i),40,24,20 });
 	}
 	moveLeft.speed = 0.25f;
 
 	for (int i = 0; i < 5; i++)
 	{
-		moveRight.PushBack({ (17 * i),0,17,17 });
+		moveRight.PushBack({ (24 * i),0,24,20 });
 	}
 	moveRight.speed = 0.25f;
 
 	// DEATH ----------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
-		deathLeft.PushBack({ (17 * i),17,17,17 });
+		deathLeft.PushBack({ (24 * i),20,24,20 });
 	}
 	deathLeft.speed = 0.25f;
 
 	for (int i = 0; i < 5; i++)
 	{
-		deathRight.PushBack({ (17 * i),51,17,17 });
+		deathRight.PushBack({ (24 * i),60,24,20 });
 	}
 	deathRight.speed = 0.25f;
 }
@@ -500,7 +554,7 @@ bool BatEnemy::Update(float dt)
 		
 		if ((position.DistanceTo(app->scene->player->position) < chaseDistance) && (app->scene->player->godMode == false) && (app->scene->player->life > 0))
 		{
-			chaseDistance += 200;
+			chaseDistance = 400;
 			action = BATENEMY_MOVE;
 		}
 		else
@@ -606,6 +660,7 @@ bool BatEnemy::Update(float dt)
 		if (deathRight.Finished() || deathLeft.Finished())
 		{
 			dead = true;
+			app->scene->enemiesRemaining--;
 			DisableBatEnemy();
 		}
 		break;
@@ -683,6 +738,60 @@ bool BatEnemy::OnCollision(Collider* c1, Collider* c2)
 		life--;
 	}
 	return ret;
+}
+
+bool BatEnemy::Load(pugi::xml_node& file)
+{
+	bool ret = true;
+
+	ListItem<Entity*>* enti = app->entityManager->entities.start;
+	pugi::xml_node enemy = file.child("batValues");
+	while (enti != NULL)
+	{
+		if (enti->data->name == "batEnemy")
+		{
+			for (int i = 0; i < (id - 1); i++)
+			{
+				enemy = enemy.next_sibling("batValues");
+			}
+
+			position.x = enemy.attribute("position_x").as_float();
+			position.y = enemy.attribute("position_y").as_float();
+			life = enemy.attribute("life").as_int();
+
+			if (life > 0)
+			{
+				positionPixelPerfect.x = position.x;
+				positionPixelPerfect.y = position.y;
+
+				r = { positionPixelPerfect.x, positionPixelPerfect.y, 20, 20 };
+				batEnemyCol->SetPos(position.x + 20, position.y + 39);
+				return ret;
+			}
+			else
+			{
+				return ret;
+			}
+		}
+		else
+		{
+			enti = enti->next;
+		}
+	}
+
+	return ret;
+
+	return true;
+}
+
+bool BatEnemy::Save(pugi::xml_node& file)
+{
+	pugi::xml_node enemy = file.append_child("batValues");
+	enemy.append_attribute("position_x").set_value(r.x);
+	enemy.append_attribute("position_y").set_value(r.y);
+	enemy.append_attribute("life").set_value(life);
+
+	return true;
 }
 
 bool BatEnemy::ResetStates() //Reset all states before checking input

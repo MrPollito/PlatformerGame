@@ -26,30 +26,16 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
-	player = nullptr;
-	pig1 = nullptr;
-	pig2 = nullptr;
-	coin = nullptr;
-	heart = nullptr;
-	bat1 = nullptr;
 
 	return ret;
+
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
-	// Load game entities
-
-	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER, 0, 0, NOTYPE);
-	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
-	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 0, 0, NOTYPE);
-	bat1 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 0, 0, NOTYPE);
-	pig2->position.x = pig1->position.x - 20;
-	coin = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 200, 1400, COIN);
-	heart = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 230, 1400, HEART);
-
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
 	{
 		int w, h;
@@ -59,6 +45,46 @@ bool Scene::Start()
 
 		RELEASE_ARRAY(data);
 	}
+
+	// Load game entities
+	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER, 0, 0, NOTYPE);
+
+	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 400, 1550, NOTYPE);
+	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 260, 1080, NOTYPE);
+	pig3 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1050, 1080, NOTYPE);
+	pig4 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1100, 1080, NOTYPE);
+	pig5 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1150, 1080, NOTYPE);
+	pig6 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1200, 1080, NOTYPE);
+	pig7 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1115, 440, NOTYPE);
+	pig8 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1711, 512, NOTYPE);
+	
+	bat1 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 350, 1430, NOTYPE);
+	bat2 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 128, 990, NOTYPE);
+	bat3 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 696, 350, NOTYPE);
+	bat4 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1928, 350, NOTYPE);
+	bat5 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1072, 1030, NOTYPE);
+	bat6 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1140, 1030, NOTYPE);
+
+	coin1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 70, 1350, COIN);
+	coin2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 390, 1350, COIN);
+	coin3 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 190, 940, COIN);
+	coin4 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 240, 940, COIN);
+	coin5 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 290, 940, COIN);
+	coin6 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 340, 940, COIN);
+	coin7 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 645, 334, COIN);
+	coin8 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 645, 294, COIN);
+	coin9 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 681, 294, COIN);
+	coin10 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1128, 390, COIN);
+	coin11 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1384, 550, COIN);
+	coin12 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1704, 360, COIN);
+
+	heart1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 552, 1320, HEART);
+	heart2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1351, 1000, HEART);
+	heart3 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 2010, 304, HEART);
+	heart4 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 675, 672, HEART);
+
+	checkPoint1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1460, 322, CHECKPOINT);
+	checkPoint2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 2140, 1058, CHECKPOINT);
 
 	return true;
 }
@@ -73,7 +99,6 @@ bool Scene::PreUpdate()
 bool Scene::Update(float dt)
 {
 
-	// L02: TODO 3: Request Load / Save when pressing L/S
 	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadRequest("savegame.xml");
 
@@ -86,54 +111,44 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
 		app->audio->Volume(0);
 
-	// L08: TODO 6: Make the camera movement independent of framerate
-	/*if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= 200.0f * dt;
-
-	if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += 200.0f * dt;
-
-	if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x -= 200.0f * dt;
-
-	if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 200.0f * dt;*/
 
 	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
 		LOG("Debug Mode");
 		app->debug = !app->debug;
 	}
+	if (app->input->GetKey(SDL_SCANCODE_T) == KEY_DOWN)
+	{
+		LOG("Stop game"); // Breakpoint here
+	}
 
 	//Start from level 1
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		LOG("Starting from first level");
-		player->position.x = 50.0f;
-		player->position.y = 1500.0f;
-		app->render->camera.x = 50;
-		app->render->camera.y = -1050;
+		player->RespawnPlayer();
+		if (player->godMode == true)
+		{
+			player->godMode = false;
+		}
+		player->lives = 3;
+		player->money = 0;
+		ResetEntities();
 	}
 
 	//Restart level
 	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 	{
 		LOG("Restarting level");
-		player->position.x = 50.0f;
-		player->position.y = 1500.0f;
-		app->render->camera.x = 50;
-		app->render->camera.y = -1050;
+		player->RespawnPlayer();
+		if (player->godMode == true)
+		{
+			player->godMode = false;
+		}
+		player->lives = 3;
+		player->money = 0;
+		ResetEntities();
 	}
-
-	//app->render->DrawTexture(img, 380, 100);
-
-	// L03: DONE 7: Set the window title with map/tileset info
-	/*SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d",
-		app->map->mapData.width, app->map->mapData.height,
-		app->map->mapData.tileWidth, app->map->mapData.tileHeight,
-		app->map->mapData.tilesets.count());*/
-
-		//app->win->SetTitle(title.GetString());
 
 	app->map->Draw();
 	return true;
@@ -164,9 +179,7 @@ bool Scene::PostUpdate()
 
 	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
 
-	//Player centered camera
-	//app->render->camera.x = -app->player->position.x+400;
-	//app->render->camera.y = -app->player->position.y+400;
+	
 
 	return ret;
 }
@@ -200,3 +213,78 @@ bool Scene::MovePlayer(iPoint pos)
 	return true;
 }
 
+void Scene::ResetEntities()
+{
+	enemiesRemaining = 14;
+	app->entityManager->batIds = 0;
+	app->entityManager->pigIds = 0;
+
+	app->entityManager->DestroyEntity(pig1);
+	app->entityManager->DestroyEntity(pig2);
+	app->entityManager->DestroyEntity(pig3);
+	app->entityManager->DestroyEntity(pig4);
+	app->entityManager->DestroyEntity(pig5);
+	app->entityManager->DestroyEntity(pig6);
+	app->entityManager->DestroyEntity(pig7);
+	app->entityManager->DestroyEntity(pig8);
+
+	app->entityManager->DestroyEntity(bat1);
+	app->entityManager->DestroyEntity(bat2);
+	app->entityManager->DestroyEntity(bat3);
+	app->entityManager->DestroyEntity(bat4);
+	app->entityManager->DestroyEntity(bat5);
+	app->entityManager->DestroyEntity(bat6);
+
+	app->entityManager->DestroyEntity(coin1);
+	app->entityManager->DestroyEntity(coin2);
+	app->entityManager->DestroyEntity(coin3);
+	app->entityManager->DestroyEntity(coin4);
+	app->entityManager->DestroyEntity(coin5);
+	app->entityManager->DestroyEntity(coin6);
+	app->entityManager->DestroyEntity(coin7);
+	app->entityManager->DestroyEntity(coin8);
+	app->entityManager->DestroyEntity(coin9);
+	app->entityManager->DestroyEntity(coin10);
+	app->entityManager->DestroyEntity(coin11);
+	app->entityManager->DestroyEntity(coin12);
+
+	app->entityManager->DestroyEntity(heart1);
+	app->entityManager->DestroyEntity(heart2);
+	app->entityManager->DestroyEntity(heart3);
+	app->entityManager->DestroyEntity(heart4);
+
+	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 400, 1550, NOTYPE);
+	pig2 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 260, 1080, NOTYPE);
+	pig3 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1050, 1080, NOTYPE);
+	pig4 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1100, 1080, NOTYPE);
+	pig5 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1150, 1080, NOTYPE);
+	pig6 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1200, 1080, NOTYPE);
+	pig7 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1115, 440, NOTYPE);
+	pig8 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 1711, 512, NOTYPE);
+
+	bat1 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 350, 1430, NOTYPE);
+	bat2 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 128, 990, NOTYPE);
+	bat3 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 696, 350, NOTYPE);
+	bat4 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1928, 350, NOTYPE);
+	bat5 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1072, 1030, NOTYPE);
+	bat6 = (BatEnemy*)app->entityManager->CreateEntity(EntityType::BAT_ENEMY, 1140, 1030, NOTYPE);
+
+	coin1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 70, 1350, COIN);
+	coin2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 390, 1350, COIN);
+	coin3 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 190, 940, COIN);
+	coin4 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 240, 940, COIN);
+	coin5 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 290, 940, COIN);
+	coin6 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 340, 940, COIN);
+	coin7 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 645, 334, COIN);
+	coin8 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 645, 294, COIN);
+	coin9 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 681, 294, COIN);
+	coin10 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1128, 390, COIN);
+	coin11 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1384, 550, COIN);
+	coin12 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1704, 360, COIN);
+
+	heart1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 552, 1320, HEART);
+	heart2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1351, 1000, HEART);
+	heart3 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 2010, 304, HEART);
+	heart4 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 675, 672, HEART);
+
+}

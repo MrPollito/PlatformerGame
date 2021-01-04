@@ -34,7 +34,7 @@ enum PigEnemyStatus
 class PigEnemy : public Entity
 {
 public:
-	PigEnemy();
+	PigEnemy(int iD, int startingX, int startingY);
 
 	// Called each loop iteration
 	bool Update(float dt);
@@ -49,6 +49,9 @@ public:
 
 	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
+
+	bool Load(pugi::xml_node& file);
+	bool Save(pugi::xml_node& file);
 
 	// Extra functions
 	bool PigJump();
@@ -74,6 +77,8 @@ public:
 	bool leftColliding;
 	bool rightColliding;
 	bool jumping;
+
+	int id = 0;
 
 	int life;
 	int lifeConfig;
@@ -117,7 +122,7 @@ class BatEnemy : public Entity
 {
 public:
 
-	BatEnemy();
+	BatEnemy(int iD, int startingX, int startingY);
 
 	// Called each loop iteration
 	bool Update(float dt);
@@ -130,6 +135,9 @@ public:
 
 	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
+
+	bool Load(pugi::xml_node& file);
+	bool Save(pugi::xml_node& file);
 
 	// Extra functions
 	bool ResetStates();
@@ -163,6 +171,7 @@ public:
 	int damageFx;
 	int damage;
 	int chaseDistance;
+	int id = 0;
 
 	float speed;
 	float attackTimer;

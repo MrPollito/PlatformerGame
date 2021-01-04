@@ -19,6 +19,7 @@ enum ItemType
 {
     HEART,
     COIN,
+	CHECKPOINT,
 	NOTYPE
 };
 
@@ -51,9 +52,13 @@ public:
 	Animation* currentAnimation;
 	Animation idleCoin;
 	Animation idleHeart;
+	Animation checkON;
+	Animation checkOFF;
 
 	bool active;
 	ItemType type;
+
+	bool checked;
 
 };
 

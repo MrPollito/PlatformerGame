@@ -9,12 +9,25 @@
 	<pathfinding />
 	<scene />
 	<map />
-	<player>
-		<position position_x="236" position_y="1444" />
-	</player>
-	<pigEnemy />
 	<collisions />
+	<entitymanager>
+		<playerValues position_x="56" position_y="1504" lives="3" life="100" money="0" />
+		<pigValues id="1" position_x="400" position_y="1550" life="20" />
+		<pigValues id="2" position_x="260" position_y="1102" life="20" />
+		<pigValues id="3" position_x="1050" position_y="1102" life="20" />
+		<pigValues id="4" position_x="1100" position_y="1102" life="20" />
+		<pigValues id="5" position_x="1150" position_y="1102" life="20" />
+		<pigValues id="6" position_x="1200" position_y="1102" life="20" />
+		<pigValues id="7" position_x="1115" position_y="462" life="20" />
+		<pigValues id="8" position_x="1711" position_y="558" life="20" />
+		<batValues position_x="350" position_y="1430" life="20" />
+		<batValues position_x="128" position_y="990" life="20" />
+		<batValues position_x="696" position_y="350" life="20" />
+		<batValues position_x="1928" position_y="350" life="20" />
+		<batValues position_x="1072" position_y="1030" life="20" />
+		<batValues position_x="1140" position_y="1030" life="20" />
+	</entitymanager>
 	<renderer>
-		<camera x="50" y="-970" />
+		<camera x="50" y="-1050" />
 	</renderer>
 </save_state>

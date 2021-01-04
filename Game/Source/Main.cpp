@@ -101,14 +101,14 @@ int main(int argc, char* args[])
 
 			// Exit with errors and shame ---------------------------------------
 		case FAIL:
-			LOG("Exiting with errors :(");
+			LOG("Exiting with errors >:c");
 			result = EXIT_FAILURE;
 			state = EXIT;
 			break;
 		}
 	}
 
-	LOG("... Bye! :)\n");
+	LOG("... Bye! :D\n");
 
 	// Dump memory leaks
 	return result;

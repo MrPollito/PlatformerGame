@@ -1,3 +1,5 @@
+#include "Player.h"
+
 #include "App.h"
 #include "Textures.h"
 #include "Input.h"
@@ -6,34 +8,22 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Log.h" 
-#include "Player.h"
 #include "Entity.h"
 #include "Enemy.h"
 #include "EntityManager.h"
 
+#include "Log.h" 
+
+#define PLAYER_STARTING_POS_X 56.0f
+#define PLAYER_STARTING_POS_Y 1485.0f
+
 Player::Player() : Entity(EntityType::PLAYER)
 {
+	LOG("Creating player");
 	name.Create("player");
-	flipTexture = false;
-	godMode = false;
-	playerJumping = false;
-	gravity = 0.5f;
-	speed = 4.0f;
-	life = 100;
-	attColliderActive = false;
-	attColliderTimer = 0;
-	facingRight = true;
-	attacking = false;
-	attackCounter = 0;
-	lives = 3;
-	money = 0;
 
-	startingPosition.x = 56.0f;
-	startingPosition.y = 1485.0f;
-
-	position.x = startingPosition.x;
-	position.y = startingPosition.y;
+	position.x = PLAYER_STARTING_POS_X;
+	position.y = PLAYER_STARTING_POS_Y;
 
 	positionPixelPerfect.x = round(position.x);
 	positionPixelPerfect.y = round(position.y);
@@ -41,24 +31,27 @@ Player::Player() : Entity(EntityType::PLAYER)
 	r.x = positionPixelPerfect.x;
 	r.y = positionPixelPerfect.y;
 
-	LOG("Creating player colliders");
 	rCollider = { positionPixelPerfect.x, positionPixelPerfect.y, 18, 22 };
 	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, nullptr, this);
 	colPlayerWalls = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 14, 26 }, COLLIDER_PLAYER, nullptr, this);
+	playerHead = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 6, 14 }, COLLIDER_PLAYER, nullptr, this);
 
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
 
-	idleRight.Reset();
-	idleLeft.Reset();
-	runRight.Reset();
-	runLeft.Reset();
-	jumpRight.Reset();
-	jumpLeft.Reset();
-	hitRight.Reset();
-	hitLeft.Reset();
-	attackRight.Reset();
-	attackLeft.Reset();
-	death.Reset();
+	lives = 3;
+	life = 100;
+	speed = 4.0f;
+	money = 0;
+
+	attColliderActive = false;
+	attColliderTimer = 0;
+	flipTexture = false;
+	facingRight = true;
+	attacking = false;
+	attackCounter = 0;
+	gravity = 0.5f;
+	playerJumping = false;
+	godMode = false;
 
 	// Define Player animations
 	for (int i = 0; i < 11; i++)
@@ -115,6 +108,17 @@ Player::Player() : Entity(EntityType::PLAYER)
 	attackLeft.speed = 0.3f;
 	attackLeft.loop = false;
 
+	idleRight.Reset();
+	idleLeft.Reset();
+	runRight.Reset();
+	runLeft.Reset();
+	jumpRight.Reset();
+	jumpLeft.Reset();
+	hitRight.Reset();
+	hitLeft.Reset();
+	attackRight.Reset();
+	attackLeft.Reset();
+	death.Reset();
 }
 
 bool Player::Update(float dt)
@@ -135,15 +139,18 @@ bool Player::Update(float dt)
 
 	if (positionPixelPerfect.y > 5000 || life <= 0)
 	{
-		if (!dead)
+		dead = true;
+		if (lives > 0)
 		{
-			ResetPlayer();
-			velocity.x = 0;
-			death.Reset();
 			deathTimer = 2.0f;
 			action = PLAYER_DEATH;
-
-			dead = true;
+		}
+		else
+		{
+			lives = 3;
+			deathTimer = 2.0f;
+			action = PLAYER_DEATH;
+		// GAME OVER, change scene
 		}
 	}
 
@@ -154,8 +161,13 @@ bool Player::Update(float dt)
 		action = PLAYER_IDLE_RIGHT;
 		godMode = !godMode;
 	}
+	if (app->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+	{
+		LOG("KILLING PLAYER");
+		life = 0;
+	}
 
-	if (!godMode)
+	if (!godMode && dead == false)
 	{
 		if (onGround)
 		{
@@ -241,6 +253,7 @@ bool Player::Update(float dt)
 		}
 		if (currentAnimation == &hitRight) action = PLAYER_HIT_RIGHT;
 		if (currentAnimation == &hitLeft) action = PLAYER_HIT_LEFT;
+
 		if (app->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
 		{
 			attacking = true;
@@ -348,6 +361,23 @@ bool Player::Update(float dt)
 		currentAnimation = &attackRight;
 		AttackCollider(facingRight);
 		break;
+	case PLAYER_DEATH:
+		if (facingRight == true)
+		{
+			currentAnimation = &deathRight;
+		}
+		else
+		{
+			currentAnimation = &deathLeft;
+		}
+		if (deathLeft.Finished() || deathRight.Finished())
+		{
+			ResetPlayer();
+			RespawnPlayer();
+			app->scene->ResetEntities();
+		}
+		
+		break;
 	default:
 		break;
 	}
@@ -362,6 +392,7 @@ bool Player::Update(float dt)
 	//Collider position
 	playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
 	colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
+	playerHead->SetPos(positionPixelPerfect.x +26, positionPixelPerfect.y+25);
 
 	//Function to draw the player
 	ret = Draw(dt);
@@ -421,19 +452,29 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 				Hit(app->scene->pig1->damage);
 			}
 		}
+
+		if (c1 == playerHead && c2->type == COLLIDER_GROUND)
+		{
+			velocity.y = 0;
+			position.y = c2->rect.y - 4;
+			positionPixelPerfect.y = round(position.y);
+			r.y = positionPixelPerfect.y;
+		}
+	
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
-			if (c2->rect.y > c1->rect.y) // + c1->rect.h
-			{
-				position.y = c2->rect.y - c2->rect.h * 2;
-				velocity.y = 0;
-				onGround = true;
-			}
-			else if (c2->rect.y + c2->rect.h < c1->rect.y + 15)
-			{
-				velocity.y = 0;
-				position.y = c2->rect.y;
-			}
+				if (c2->rect.y > c1->rect.y) // + c1->rect.h
+				{
+					position.y = c2->rect.y - c2->rect.h * 2;
+					velocity.y = 0;
+					onGround = true;
+				}
+				else if (c2->rect.y + c2->rect.h < c1->rect.y + 15)
+				{
+					velocity.y = 0;
+					position.y = c2->rect.y;
+				}
+			
 			ret = true;
 		}
 		if (c1 == colPlayerWalls && c2->type == COLLIDER_GROUND)
@@ -465,7 +506,58 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	return ret;
 }
 
-//Resets player movement 
+bool Player::CleanUp()
+{
+	bool ret = false;
+	LOG("Unloading player");
+	ret = app->tex->UnLoad(playerTexture);
+	if (playerCollider != nullptr)
+	{
+		playerCollider->toDelete = true;
+		playerCollider = nullptr;
+	}
+	if (colPlayerWalls != nullptr)
+	{
+		colPlayerWalls->toDelete = true;
+		colPlayerWalls = nullptr;
+	}
+	return ret;
+}
+
+bool Player::Load(pugi::xml_node& file)
+{
+	position.x = file.child("playerValues").attribute("position_x").as_float();
+	position.y = file.child("playerValues").attribute("position_y").as_float();
+	lives = file.child("playerValues").attribute("lives").as_int();
+	life = file.child("playerValues").attribute("life").as_int();
+	money = file.child("playerValues").attribute("money").as_int();
+	
+	playerCollider->SetPos(position.x + 20, position.y + 39);
+	colPlayerWalls->SetPos(position.x + 22, position.y + 38);
+
+	r.x = position.x;
+	r.y = position.y;
+
+	onGround = false;
+	rightColliding = false;
+	leftColliding = false;
+
+	return true;
+}
+
+bool Player::Save(pugi::xml_node& file)
+{
+	pugi::xml_node player = file.append_child("playerValues");
+	player.append_attribute("position_x").set_value(r.x);
+	player.append_attribute("position_y").set_value(r.y);
+	player.append_attribute("lives").set_value(lives);
+	player.append_attribute("life").set_value(life);
+	player.append_attribute("money").set_value(money);
+
+	return true;
+}
+
+//Resets player movement  
 bool Player::ResetPlayer()
 {
 	velocity.x = 0;
@@ -474,8 +566,7 @@ bool Player::ResetPlayer()
 	doubleJump = true;
 
 	return true;
-}
-
+} 
 // Attack function
 void Player::AttackCollider(bool facing)
 {
@@ -528,26 +619,30 @@ void Player::Hit(int damage)
 		currentAnimation = &hitLeft;
 	}
 }
-// Unload assets
-bool Player::CleanUp()
-{
-	bool ret = false;
-	LOG("Unloading player");
-	ret = app->tex->UnLoad(playerTexture);
-	if (playerCollider != nullptr)
-	{
-		playerCollider->toDelete = true;
-		playerCollider = nullptr;
-	}
-	if (colPlayerWalls != nullptr)
-	{
-		colPlayerWalls->toDelete = true;
-		colPlayerWalls = nullptr;
-	}
-	return ret;
-}
 
 void Player::SetTexture(SDL_Texture* tex)
 {
 	playerTexture = tex;
+}
+
+void Player::RespawnPlayer()
+{
+	idleRight.Reset();
+	idleLeft.Reset();
+	runRight.Reset();
+	runLeft.Reset();
+	jumpRight.Reset();
+	jumpLeft.Reset();
+	hitRight.Reset();
+	hitLeft.Reset();
+	attackRight.Reset();
+	attackLeft.Reset();
+	death.Reset();
+	dead = false;
+	lives--;
+	life = 100;
+	position.x = PLAYER_STARTING_POS_X;
+	position.y = PLAYER_STARTING_POS_Y;
+	facingRight = true;
+	action = PLAYER_IDLE_RIGHT;
 }

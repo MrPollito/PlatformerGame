@@ -48,17 +48,20 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
+	bool Draw(float dt);
+
 	// Called before quitting
 	bool CleanUp();
+
+	bool Load(pugi::xml_node&);
+	bool Save(pugi::xml_node&);
 
 	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool ResetPlayer();
+	void RespawnPlayer();
 	void AttackCollider(bool facing);
-
-	bool Draw(float dt);
-
 	void Hit(int damage);
 	void SetTexture(SDL_Texture* tex);
 
@@ -69,12 +72,12 @@ public:
 	SDL_Texture* playerTexture;
 
 	fPoint position;
-	fPoint startingPosition;
 	iPoint positionPixelPerfect;
 
 	Collider* playerCollider = nullptr;
-	Collider* colPlayerWalls;
+	Collider* colPlayerWalls = nullptr;
 	Collider* attackCollider = nullptr;
+	Collider* playerHead = nullptr;
 
 	bool godMode;
 	float gravity;

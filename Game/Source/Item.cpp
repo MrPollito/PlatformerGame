@@ -16,8 +16,20 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	rCollider.h = 18;
 	r.x = position.x;
 	r.y = position.y;
-
-	collider = app->collisions->AddCollider(rCollider, COLLIDER_ITEM, nullptr, this);
+	
+	if (type == ItemType::HEART)
+	{
+		collider = app->collisions->AddCollider(rCollider, COLLIDER_HEART, nullptr, this);
+	}
+	if (type == ItemType::COIN)
+	{
+		collider = app->collisions->AddCollider(rCollider, COLLIDER_COIN, nullptr, this);
+	}
+	if (type == ItemType::CHECKPOINT)
+	{
+		collider = app->collisions->AddCollider({rCollider.x,rCollider.y-20,18,80}, COLLIDER_CHECKPOINT, nullptr, this);
+	}
+	
 	itemTexture = app->tex->Load("Assets/textures/Items.png");
 
 	for (int i = 0; i < 5; i++)
@@ -32,6 +44,9 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	}
 	idleCoin.speed = 0.2f;
 
+	checkOFF.PushBack({ 0, 40, 20, 62 });
+	checkON.PushBack({ 20, 40, 20, 62 });
+
 	if (type == ItemType::HEART)
 	{
 		currentAnimation = &idleHeart;
@@ -39,6 +54,10 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	else if (type == ItemType::COIN)
 	{
 		currentAnimation = &idleCoin;
+	}
+	else if (type == ItemType::CHECKPOINT)
+	{
+		currentAnimation = &checkOFF;
 	}
 }
 
@@ -77,17 +96,22 @@ bool Item::OnCollision(Collider* c1, Collider* c2)
 		{
 			if (active)
 			{
-				if (type == ItemType::HEART)
+				if (collider->type == ColliderType::COLLIDER_HEART)
 				{
 					app->scene->player->lives++;
 					active = false;
 					ret = CleanUp();
 				}
-				else if (type == ItemType::COIN)
+				else if (collider->type == ColliderType::COLLIDER_COIN)
 				{
 					app->scene->player->money++;
 					active = false;
 					ret = CleanUp();
+				}
+				else if (collider->type == ColliderType::COLLIDER_CHECKPOINT)
+				{
+					currentAnimation = &checkON;
+					checked = true;
 				}
 			}
 		}
