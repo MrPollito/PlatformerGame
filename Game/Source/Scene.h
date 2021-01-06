@@ -94,6 +94,7 @@ public:
 
 private:
 	SDL_Texture* img;
+	SDL_Texture* lifesTex;
 };
 
 #endif // __SCENE_H__

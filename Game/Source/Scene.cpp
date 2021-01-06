@@ -35,6 +35,7 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	lifesTex = app->tex->Load("Assets/Textures/heart.png");
 
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
 	{
@@ -151,6 +152,13 @@ bool Scene::Update(float dt)
 	}
 
 	app->map->Draw();
+
+	//HUD life
+	for (int i = 0; i < player->lives; i++)
+	{
+		app->render->DrawTexture(lifesTex, app->render->camera.x * -1 + (36 * i + 10), (app->render->camera.y * -1)+10);
+	}
+
 	return true;
 }
 

@@ -54,6 +54,15 @@
     <ClCompile Include="Source\Enemy.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GuiButton.cpp">
+      <Filter>GuiControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GuiCheckBox.cpp">
+      <Filter>GuiControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GuiSlider.cpp">
+      <Filter>GuiControl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -138,6 +147,21 @@
     <ClInclude Include="Source\Enemy.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GuiCheckBox.h">
+      <Filter>GuiControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiControl.h">
+      <Filter>GuiControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiSlider.h">
+      <Filter>GuiControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiButton.h">
+      <Filter>GuiControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
@@ -157,6 +181,9 @@
     </Filter>
     <Filter Include="Scenes">
       <UniqueIdentifier>{c0a30eff-ffcc-4a56-9fc0-5cbdc3c537e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GuiControl">
+      <UniqueIdentifier>{841a3116-7b76-4869-9e66-039fe228176c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
