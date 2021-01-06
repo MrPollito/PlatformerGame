@@ -246,6 +246,8 @@ bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
 
+	app->tex->UnLoad(lifesTex);
+
 	return true;
 }
 
