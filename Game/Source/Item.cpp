@@ -16,6 +16,7 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	rCollider.h = 18;
 	r.x = position.x;
 	r.y = position.y;
+	checked = false;
 	
 	if (type == ItemType::HEART)
 	{
@@ -27,7 +28,7 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	}
 	if (type == ItemType::CHECKPOINT)
 	{
-		collider = app->collisions->AddCollider({rCollider.x,rCollider.y-20,18,80}, COLLIDER_CHECKPOINT, nullptr, this);
+		collider = app->collisions->AddCollider({rCollider.x,rCollider.y,18,80}, COLLIDER_CHECKPOINT, nullptr, this);
 	}
 	
 	itemTexture = app->tex->Load("Assets/textures/Items.png");
@@ -90,7 +91,7 @@ bool Item::Draw(float dt)
 bool Item::OnCollision(Collider* c1, Collider* c2)
 {
 	bool ret = false;
-	if (active)
+	if (active && app->scene->player->godMode == false)
 	{
 		if (c1 == collider && c2->type == COLLIDER_PLAYER)
 		{

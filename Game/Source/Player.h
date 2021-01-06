@@ -60,7 +60,7 @@ public:
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool ResetPlayer();
-	void RespawnPlayer();
+	void RespawnPlayer(int key);
 	void AttackCollider(bool facing);
 	void Hit(int damage);
 	void SetTexture(SDL_Texture* tex);
@@ -108,7 +108,6 @@ public:
 	Animation hitLeft;
 	Animation attackRight;
 	Animation attackLeft;
-	Animation death;
 	Animation deathLeft;
 	Animation deathRight;
 
@@ -117,6 +116,8 @@ public:
 	//Physics physics;
 	fPoint velocity;
 
+	bool checkpoint1;
+	bool checkpoint2;
 
 	bool invert;
 	bool flipTexture;

@@ -52,6 +52,8 @@ Player::Player() : Entity(EntityType::PLAYER)
 	gravity = 0.5f;
 	playerJumping = false;
 	godMode = false;
+	checkpoint1 = false;
+	checkpoint2 = false;
 
 	// Define Player animations
 	for (int i = 0; i < 11; i++)
@@ -108,17 +110,17 @@ Player::Player() : Entity(EntityType::PLAYER)
 	attackLeft.speed = 0.3f;
 	attackLeft.loop = false;
 
-	idleRight.Reset();
-	idleLeft.Reset();
-	runRight.Reset();
-	runLeft.Reset();
-	jumpRight.Reset();
-	jumpLeft.Reset();
-	hitRight.Reset();
-	hitLeft.Reset();
-	attackRight.Reset();
-	attackLeft.Reset();
-	death.Reset();
+	for (int i = 0; i < 5; i++)
+	{
+		deathRight.PushBack({ (45 * i),480,45,32 });
+	}
+	deathRight.speed = 0.07f;
+
+	for (int i = 0; i < 5; i++)
+	{
+		deathLeft.PushBack({ (45 * i),512,45,32 });
+	}
+	deathLeft.speed = 0.07f;
 }
 
 bool Player::Update(float dt)
@@ -373,7 +375,7 @@ bool Player::Update(float dt)
 		if (deathLeft.Finished() || deathRight.Finished())
 		{
 			ResetPlayer();
-			RespawnPlayer();
+			RespawnPlayer(0);
 			app->scene->ResetEntities();
 		}
 		
@@ -625,7 +627,7 @@ void Player::SetTexture(SDL_Texture* tex)
 	playerTexture = tex;
 }
 
-void Player::RespawnPlayer()
+void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting point, 2 checkpoint 1, 3 checkpoint 2
 {
 	idleRight.Reset();
 	idleLeft.Reset();
@@ -637,12 +639,62 @@ void Player::RespawnPlayer()
 	hitLeft.Reset();
 	attackRight.Reset();
 	attackLeft.Reset();
-	death.Reset();
+	deathRight.Reset();
+	deathRight.loops = 0;
+	deathLeft.Reset();
+	deathLeft.loops = 0;
 	dead = false;
 	lives--;
 	life = 100;
-	position.x = PLAYER_STARTING_POS_X;
-	position.y = PLAYER_STARTING_POS_Y;
 	facingRight = true;
 	action = PLAYER_IDLE_RIGHT;
+
+	switch(key)
+	{
+	case 0:
+		if (checkpoint1 == false && checkpoint2 == false)
+		{
+			app->render->camera.x = 50;
+			app->render->camera.y = -1050;
+			position.x = PLAYER_STARTING_POS_X;
+			position.y = PLAYER_STARTING_POS_Y;
+		}
+		else if (checkpoint1 == true && checkpoint2 == false)
+		{
+			app->render->camera.x = -950;
+			app->render->camera.y = 0;
+			position.x = 1460;
+			position.y = 322;
+		}
+		else
+		{
+			app->render->camera.x = -1350;
+			app->render->camera.y = -700;
+			position.x = 2140;
+			position.y = 1058;
+		}
+		break;
+	case 1:
+		app->render->camera.x = 50;
+		app->render->camera.y = -1050;
+		position.x = PLAYER_STARTING_POS_X;
+		position.y = PLAYER_STARTING_POS_Y;
+		break;
+
+	case 2:
+		app->render->camera.x = -950;
+		app->render->camera.y = 0;
+		position.x = 1460;
+		position.y = 322;
+		break;
+
+	case 3:
+		app->render->camera.x = -1350;
+		app->render->camera.y = -700;
+		position.x = 2140;
+		position.y = 1058;
+		break;
+	default:
+		break;
+	}
 }

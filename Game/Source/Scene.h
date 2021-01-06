@@ -52,6 +52,7 @@ public:
 	uchar* data = NULL;
 
 	int enemiesRemaining = 14;
+	int f7teleports;
 	// All the entities 
 	Player* player = nullptr;
 

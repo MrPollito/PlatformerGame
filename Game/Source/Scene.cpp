@@ -26,6 +26,7 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
+	f7teleports = 1;
 
 	return ret;
 
@@ -112,6 +113,44 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
 		app->audio->Volume(0);
 
+	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		LOG("Teleporting player to location %d",f7teleports);
+		switch (f7teleports)
+		{
+		case 0:
+			player->ResetPlayer();
+			player->RespawnPlayer(1);
+			ResetEntities();
+			app->render->camera.x = 50;
+			app->render->camera.y = -1050;
+			break;
+		case 1:
+			player->ResetPlayer();
+			player->RespawnPlayer(2);
+			ResetEntities();
+			app->render->camera.x = -950;
+			app->render->camera.y = 0;
+			break;
+		case 2:
+			player->ResetPlayer();
+			player->RespawnPlayer(3);
+			ResetEntities();
+			app->render->camera.x = -1350;
+			app->render->camera.y = -700;
+			break;
+		default:
+			break;
+		}
+		if (f7teleports >= 2)
+		{
+			f7teleports = 0;
+		}
+		else
+		{
+			f7teleports++;
+		}
+	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
@@ -127,7 +166,7 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		LOG("Starting from first level");
-		player->RespawnPlayer();
+		player->RespawnPlayer(1);
 		if (player->godMode == true)
 		{
 			player->godMode = false;
@@ -141,7 +180,7 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 	{
 		LOG("Restarting level");
-		player->RespawnPlayer();
+		player->RespawnPlayer(1);
 		if (player->godMode == true)
 		{
 			player->godMode = false;
@@ -150,7 +189,17 @@ bool Scene::Update(float dt)
 		player->money = 0;
 		ResetEntities();
 	}
-
+	
+	if (checkPoint1->checked == true)
+	{
+		player->checkpoint1 = true;
+	}
+	
+	if (checkPoint2->checked == true)
+	{
+		player->checkpoint2 = true;
+	}
+	
 	app->map->Draw();
 
 	//HUD life
