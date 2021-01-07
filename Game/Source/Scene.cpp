@@ -35,7 +35,8 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	//app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	//app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
+
 	lifesTex = app->tex->Load("Assets/Textures/heart.png");
 
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
@@ -221,13 +222,13 @@ bool Scene::PostUpdate()
 	//Player border
 	if (player->dead == false)
 	{
-		if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 3; }
+		if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
 
-		if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 3; }
+		if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
 
-		if ((app->render->camera.y + player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 3; }
+		if ((app->render->camera.y + player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
 
-		if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 3; }
+		if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
 
 		// Map movement
 
