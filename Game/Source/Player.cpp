@@ -31,6 +31,11 @@ Player::Player() : Entity(EntityType::PLAYER)
 	r.x = positionPixelPerfect.x;
 	r.y = positionPixelPerfect.y;
 
+	l.x = positionPixelPerfect.x;
+	l.y = positionPixelPerfect.y;
+	l.h = 4;
+	l.w = 22;
+
 	rCollider = { positionPixelPerfect.x, positionPixelPerfect.y, 18, 22 };
 	playerCollider = app->collisions->AddCollider(rCollider, COLLIDER_PLAYER, nullptr, this);
 	colPlayerWalls = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 14, 26 }, COLLIDER_PLAYER, nullptr, this);
@@ -42,6 +47,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 	life = 100;
 	speed = 4.0f;
 	money = 0;
+	dead = false;
 
 	attColliderActive = false;
 	attColliderTimer = 0;
@@ -121,6 +127,14 @@ Player::Player() : Entity(EntityType::PLAYER)
 		deathLeft.PushBack({ (45 * i),512,45,32 });
 	}
 	deathLeft.speed = 0.07f;
+
+	// Life Bar Animations
+
+	barFull.PushBack({ 280,500,22,4 });
+	bar3.PushBack({ 280,504,22,4 });
+	barHalf.PushBack({ 280,508,22,4 });
+	bar1.PushBack({ 280,512,22,4 });
+	barEmpty.PushBack({ 280,16,22,4 });
 }
 
 bool Player::Update(float dt)
@@ -152,7 +166,7 @@ bool Player::Update(float dt)
 			lives = 3;
 			deathTimer = 2.0f;
 			action = PLAYER_DEATH;
-		// GAME OVER, change scene
+			// GAME OVER, change scene
 		}
 	}
 
@@ -192,7 +206,6 @@ bool Player::Update(float dt)
 			{
 				action = PLAYER_IDLE_LEFT;
 			}
-
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
@@ -237,6 +250,7 @@ bool Player::Update(float dt)
 				attacking = false;
 			}
 		}
+
 		if (!onGround)
 		{
 			velocity.y += gravity;
@@ -291,8 +305,8 @@ bool Player::Update(float dt)
 		{
 			position.y += 4;
 		}
-		
-}
+
+	}
 
 	//Player Actions
 	switch (action)
@@ -378,7 +392,7 @@ bool Player::Update(float dt)
 			RespawnPlayer(0);
 			app->scene->ResetEntities();
 		}
-		
+
 		break;
 	default:
 		break;
@@ -388,15 +402,18 @@ bool Player::Update(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
-	positionPixelPerfect.x = round(position.x);
-	positionPixelPerfect.y = round(position.y);
-
+	if (dead == false)
+	{
+		positionPixelPerfect.x = round(position.x);
+		positionPixelPerfect.y = round(position.y);
+	}
 	//Collider position
 	playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
 	colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
-	playerHead->SetPos(positionPixelPerfect.x +26, positionPixelPerfect.y+25);
+	playerHead->SetPos(positionPixelPerfect.x + 26, positionPixelPerfect.y + 25);
 
 	//Function to draw the player
+	UpdateLifeBar();
 	ret = Draw(dt);
 	onGround = false;
 	rightColliding = false;
@@ -409,6 +426,7 @@ bool Player::Update(float dt)
 		attackLeft.Reset();
 		attackCounter = 0;
 	}
+
 	return true;
 }
 
@@ -416,6 +434,8 @@ bool Player::Draw(float dt)
 {
 	bool ret = false;
 	r = currentAnimation->GetCurrentFrame(dt);
+	l = currentLifeBar->GetCurrentFrame(dt);
+
 	if (playerTexture != nullptr)
 	{
 		if (currentAnimation != &attackLeft && currentAnimation != &attackRight)
@@ -426,18 +446,22 @@ bool Player::Draw(float dt)
 		{
 			if (currentAnimation == &attackLeft)
 			{
-				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x-13, positionPixelPerfect.y+4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x - 13, positionPixelPerfect.y + 4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
 			}
 			else
 			{
-				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x + 4, positionPixelPerfect.y+4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
+				ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x + 4, positionPixelPerfect.y + 4, &r, flipTexture, speed, 1, INT_MAX, INT_MAX);
 			}
 		}
+		ret = app->render->DrawTexture(playerTexture, positionPixelPerfect.x + 20, positionPixelPerfect.y + 28, &l, flipTexture, speed, 1, INT_MAX, INT_MAX);
 	}
 	else LOG("Player.h: No available graphics to draw.");
 
 	r.x = position.x;
 	r.y = position.y;
+	l.x = position.x;
+	l.y = position.y;
+
 	return ret;
 }
 
@@ -446,7 +470,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	bool ret = false;
 	if (!godMode)
 	{
-	
+
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
 			if (app->scene->pig1->isDying == false)
@@ -462,21 +486,21 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 			positionPixelPerfect.y = round(position.y);
 			r.y = positionPixelPerfect.y;
 		}
-	
+
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
-				if (c2->rect.y > c1->rect.y) // + c1->rect.h
-				{
-					position.y = c2->rect.y - c2->rect.h * 2;
-					velocity.y = 0;
-					onGround = true;
-				}
-				else if (c2->rect.y + c2->rect.h < c1->rect.y + 15)
-				{
-					velocity.y = 0;
-					position.y = c2->rect.y;
-				}
-			
+			if (c2->rect.y > c1->rect.y) // + c1->rect.h
+			{
+				position.y = c2->rect.y - c2->rect.h * 2;
+				velocity.y = 0;
+				onGround = true;
+			}
+			else if (c2->rect.y + c2->rect.h < c1->rect.y + 15)
+			{
+				velocity.y = 0;
+				position.y = c2->rect.y;
+			}
+
 			ret = true;
 		}
 		if (c1 == colPlayerWalls && c2->type == COLLIDER_GROUND)
@@ -533,7 +557,7 @@ bool Player::Load(pugi::xml_node& file)
 	lives = file.child("playerValues").attribute("lives").as_int();
 	life = file.child("playerValues").attribute("life").as_int();
 	money = file.child("playerValues").attribute("money").as_int();
-	
+
 	playerCollider->SetPos(position.x + 20, position.y + 39);
 	colPlayerWalls->SetPos(position.x + 22, position.y + 38);
 
@@ -568,7 +592,7 @@ bool Player::ResetPlayer()
 	doubleJump = true;
 
 	return true;
-} 
+}
 // Attack function
 void Player::AttackCollider(bool facing)
 {
@@ -644,16 +668,16 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 	deathLeft.Reset();
 	deathLeft.loops = 0;
 	dead = false;
-	lives--;
 	life = 100;
 	facingRight = true;
 	action = PLAYER_IDLE_RIGHT;
 
-	switch(key)
+	switch (key)
 	{
 	case 0:
 		if (checkpoint1 == false && checkpoint2 == false)
 		{
+			lives--;
 			app->render->camera.x = 50;
 			app->render->camera.y = -1050;
 			position.x = PLAYER_STARTING_POS_X;
@@ -661,6 +685,7 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		}
 		else if (checkpoint1 == true && checkpoint2 == false)
 		{
+			lives--;
 			app->render->camera.x = -950;
 			app->render->camera.y = 0;
 			position.x = 1460;
@@ -668,6 +693,7 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		}
 		else
 		{
+			lives--;
 			app->render->camera.x = -1350;
 			app->render->camera.y = -700;
 			position.x = 2140;
@@ -696,5 +722,29 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		break;
 	default:
 		break;
+	}
+}
+
+void Player::UpdateLifeBar()
+{
+	if ((life >= 0 && life < 25) || life < 0)
+	{
+		currentLifeBar = &barEmpty;
+	}
+	else if (life >= 25 && life < 50)
+	{
+		currentLifeBar = &bar1;
+	}
+	else if (life >= 50 && life < 75)
+	{
+		currentLifeBar = &barHalf;
+	}
+	else if (life >= 75 && life < 100)
+	{
+		currentLifeBar = &bar3;
+	}
+	else if (life == 100)
+	{
+		currentLifeBar = &barFull;
 	}
 }

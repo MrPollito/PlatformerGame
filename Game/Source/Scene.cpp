@@ -219,23 +219,26 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	//Player border
-	if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
+	if (player->dead == false)
+	{
+		if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 3; }
 
-	if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 2; }
+		if ((player->r.w + app->render->camera.x + player->r.x) > (app->render->camera.w - app->map->mapData.tileWidth * 15)) { app->render->camera.x -= 3; }
 
-	if ((app->render->camera.y + player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 2; }
+		if ((app->render->camera.y + player->r.y) < (app->map->mapData.tileHeight * 8)) { app->render->camera.y += 3; }
 
-	if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
+		if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 3; }
 
-	// Map movement
-	if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
+		// Map movement
 
-	if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 2; }
+		if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
 
-	if (app->render->camera.y >= 0) { app->render->camera.y -= 2; }
+		if ((app->render->camera.w - app->render->camera.x) > (app->map->mapData.width * app->map->mapData.tileWidth)) { app->render->camera.x += 2; }
 
-	if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
+		if (app->render->camera.y >= 0) { app->render->camera.y -= 2; }
 
+		if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
+	}
 	
 
 	return ret;

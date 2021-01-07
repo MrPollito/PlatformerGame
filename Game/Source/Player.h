@@ -64,9 +64,11 @@ public:
 	void AttackCollider(bool facing);
 	void Hit(int damage);
 	void SetTexture(SDL_Texture* tex);
+	void UpdateLifeBar();
 
 	SDL_Rect rCollider;
-	SDL_Rect r;
+	SDL_Rect r; // for player
+	SDL_Rect l; // for life bar
 	SDL_Rect attCollider;
 
 	SDL_Texture* playerTexture;
@@ -110,6 +112,13 @@ public:
 	Animation attackLeft;
 	Animation deathLeft;
 	Animation deathRight;
+
+	Animation* currentLifeBar;
+	Animation barEmpty;
+	Animation bar1;
+	Animation barHalf;
+	Animation bar3;
+	Animation barFull;
 
 	PlayerAction action;
 
