@@ -11,6 +11,7 @@
 #include "Entity.h"
 #include "Enemy.h"
 #include "EntityManager.h"
+#include "Menu.h"
 
 #include "Log.h" 
 
@@ -42,12 +43,16 @@ Player::Player() : Entity(EntityType::PLAYER)
 	playerHead = app->collisions->AddCollider({ positionPixelPerfect.x, positionPixelPerfect.y, 6, 14 }, COLLIDER_PLAYER, nullptr, this);
 
 	playerTexture = app->tex->Load("Assets/textures/Animation_king.png");
+	lifesTexture = app->tex->Load("Assets/Textures/heart.png");
 
 	lives = 3;
 	life = 100;
 	speed = 4.0f;
 	money = 0;
 	dead = false;
+
+	pause = app->tex->Load("Assets/Textures/pause_image.png");
+	pauseCondition = false;
 
 	attColliderActive = false;
 	attColliderTimer = 0;
@@ -141,293 +146,334 @@ bool Player::Update(float dt)
 {
 	bool ret = false;
 
-	if (attColliderActive == true)
+	if (!pauseCondition)
 	{
-		attColliderTimer++;
-	}
-	if (attColliderTimer >= 5 && attackCollider != nullptr)
-	{
-		attackCollider->toDelete = true;
-		attackCollider = nullptr;
-		attColliderActive = false;
-		attColliderTimer = 0;
-	}
 
-	if (positionPixelPerfect.y > 5000 || life <= 0)
-	{
-		dead = true;
-		if (lives > 0)
+		if (attColliderActive == true)
 		{
-			deathTimer = 2.0f;
-			action = PLAYER_DEATH;
+			attColliderTimer++;
+		}
+		if (attColliderTimer >= 5 && attackCollider != nullptr)
+		{
+			attackCollider->toDelete = true;
+			attackCollider = nullptr;
+			attColliderActive = false;
+			attColliderTimer = 0;
+		}
+
+		if (positionPixelPerfect.y > 5000 || life <= 0)
+		{
+			dead = true;
+			if (lives > 0)
+			{
+				deathTimer = 2.0f;
+				action = PLAYER_DEATH;
+			}
+			else
+			{
+				lives = 3;
+				deathTimer = 2.0f;
+				action = PLAYER_DEATH;
+				// GAME OVER, change scene
+			}
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			LOG("GODMODE");
+			ResetPlayer();
+			action = PLAYER_IDLE_RIGHT;
+			godMode = !godMode;
+		}
+		if (app->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+		{
+			LOG("KILLING PLAYER");
+			life = 0;
+		}
+
+		if (!godMode && dead == false)
+		{
+			if (onGround)
+			{
+				ResetPlayer();
+
+				if (facingRight == true && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					action = PLAYER_JUMP_RIGHT;
+				}
+				else if (facingRight == true && attacking == false)
+				{
+					action = PLAYER_IDLE_RIGHT;
+				}
+
+				if (facingRight == false && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					action = PLAYER_JUMP_LEFT;
+				}
+				else if (facingRight == false && attacking == false)
+				{
+					action = PLAYER_IDLE_LEFT;
+				}
+			}
+
+			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			{
+				if (!leftColliding)
+				{
+					action = PLAYER_RUN_LEFT;
+					facingRight = false;
+				}
+				if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					action = PLAYER_JUMP_LEFT;
+					doubleJump = true;
+				}
+				else currentAnimation = &idleLeft;
+			}
+			else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			{
+				if (!rightColliding)
+				{
+					action = PLAYER_RUN_RIGHT;
+					facingRight = true;
+				}
+				if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					action = PLAYER_JUMP_RIGHT;
+					doubleJump = true;
+				}
+				else currentAnimation = &idleRight;
+			}
+			if (app->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
+			{
+				attacking = true;
+				if (facingRight == true)
+				{
+					action = PLAYER_ATTACK_RIGHT;
+					attacking = false;
+				}
+				else if (facingRight == false)
+				{
+					action = PLAYER_ATTACK_LEFT;
+					attacking = false;
+				}
+			}
+
+			if (!onGround)
+			{
+				velocity.y += gravity;
+				if (facingRight == true && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					doubleJump = false;
+					jumpEnable = true;
+					action = PLAYER_JUMP_RIGHT;
+				}
+				if (facingRight == false && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+				{
+					doubleJump = false;
+					jumpEnable = true;
+					action = PLAYER_JUMP_LEFT;
+				}
+			}
+			if (currentAnimation == &hitRight) action = PLAYER_HIT_RIGHT;
+			if (currentAnimation == &hitLeft) action = PLAYER_HIT_LEFT;
+
+			if (app->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
+			{
+				attacking = true;
+				if (facingRight == true)
+				{
+					action = PLAYER_ATTACK_RIGHT;
+					attacking = false;
+				}
+				else if (facingRight == false)
+				{
+					action = PLAYER_ATTACK_LEFT;
+					attacking = false;
+				}
+			}
+
 		}
 		else
-		{
-			lives = 3;
-			deathTimer = 2.0f;
-			action = PLAYER_DEATH;
-			// GAME OVER, change scene
-		}
-	}
-
-	if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-	{
-		LOG("GODMODE");
-		ResetPlayer();
-		action = PLAYER_IDLE_RIGHT;
-		godMode = !godMode;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
-	{
-		LOG("KILLING PLAYER");
-		life = 0;
-	}
-
-	if (!godMode && dead == false)
-	{
-		if (onGround)
-		{
-			ResetPlayer();
-
-			if (facingRight == true && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{   //Godmode 
+			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 			{
-				action = PLAYER_JUMP_RIGHT;
+				position.x -= 4;
 			}
-			else if (facingRight == true && attacking == false)
+			else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			{
+				position.x += 4;
+			}
+
+			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+			{
+				position.y -= 4;
+			}
+			else if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+			{
+				position.y += 4;
+			}
+
+		}
+
+		//Player Actions
+		switch (action)
+		{
+		case PLAYER_IDLE_RIGHT:
+
+			velocity.x = 0;
+			currentAnimation = &idleRight;
+			break;
+		case PLAYER_IDLE_LEFT:
+
+			velocity.x = 0;
+			currentAnimation = &idleLeft;
+			break;
+		case PLAYER_RUN_RIGHT:
+			facingRight = true;
+			velocity.x = speed;
+			if (onGround)currentAnimation = &runRight;
+			else currentAnimation = &jumpRight;
+			break;
+		case PLAYER_RUN_LEFT:
+			facingRight = false;
+			velocity.x = -speed;
+			if (onGround)currentAnimation = &runLeft;
+			else currentAnimation = &jumpLeft;
+			break;
+		case PLAYER_JUMP_RIGHT:
+			if (jumpEnable == true)
+			{
+				facingRight = true;
+				jumpEnable = false;
+				currentAnimation = &jumpRight;
+				velocity.y = -8;
+				jumpRight.Reset();
+			}
+			break;
+		case PLAYER_JUMP_LEFT:
+			if (jumpEnable == true)
+			{
+				facingRight = false;
+				jumpEnable = false;
+				currentAnimation = &jumpLeft;
+				velocity.y = -8;
+				jumpLeft.Reset();
+			}
+			break;
+		case PLAYER_HIT_RIGHT:
+			currentAnimation = &hitRight;
+			if (hitRight.Finished())
 			{
 				action = PLAYER_IDLE_RIGHT;
+				currentAnimation = &jumpRight;
 			}
-
-			if (facingRight == false && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-			{
-				action = PLAYER_JUMP_LEFT;
-			}
-			else if (facingRight == false && attacking == false)
+			break;
+		case PLAYER_HIT_LEFT:
+			currentAnimation = &hitLeft;
+			if (hitLeft.Finished())
 			{
 				action = PLAYER_IDLE_LEFT;
+				currentAnimation = &jumpLeft;
 			}
-		}
-
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			if (!leftColliding)
-			{
-				action = PLAYER_RUN_LEFT;
-				facingRight = false;
-			}
-			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-			{
-				action = PLAYER_JUMP_LEFT;
-				doubleJump = true;
-			}
-			else currentAnimation = &idleLeft;
-		}
-		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			if (!rightColliding)
-			{
-				action = PLAYER_RUN_RIGHT;
-				facingRight = true;
-			}
-			if (onGround && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-			{
-				action = PLAYER_JUMP_RIGHT;
-				doubleJump = true;
-			}
-			else currentAnimation = &idleRight;
-		}
-		if (app->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
-		{
-			attacking = true;
+			break;
+		case PLAYER_ATTACK_LEFT:
+			currentAnimation = &attackLeft;
+			AttackCollider(facingRight);
+			break;
+		case PLAYER_ATTACK_RIGHT:
+			currentAnimation = &attackRight;
+			AttackCollider(facingRight);
+			break;
+		case PLAYER_DEATH:
 			if (facingRight == true)
 			{
-				action = PLAYER_ATTACK_RIGHT;
-				attacking = false;
+				currentAnimation = &deathRight;
 			}
-			else if (facingRight == false)
+			else
 			{
-				action = PLAYER_ATTACK_LEFT;
-				attacking = false;
+				currentAnimation = &deathLeft;
 			}
+			if (deathLeft.Finished() || deathRight.Finished())
+			{
+				ResetPlayer();
+				RespawnPlayer(0);
+				app->scene->ResetEntities();
+			}
+
+			break;
+		default:
+			break;
 		}
 
-		if (!onGround)
+		//Change position from velocity
+		position.x += velocity.x;
+		position.y += velocity.y;
+
+		if (dead == false)
 		{
-			velocity.y += gravity;
-			if (facingRight == true && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-			{
-				doubleJump = false;
-				jumpEnable = true;
-				action = PLAYER_JUMP_RIGHT;
-			}
-			if (facingRight == false && doubleJump && app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-			{
-				doubleJump = false;
-				jumpEnable = true;
-				action = PLAYER_JUMP_LEFT;
-			}
+			positionPixelPerfect.x = round(position.x);
+			positionPixelPerfect.y = round(position.y);
 		}
-		if (currentAnimation == &hitRight) action = PLAYER_HIT_RIGHT;
-		if (currentAnimation == &hitLeft) action = PLAYER_HIT_LEFT;
+		//Collider position
+		playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
+		colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
+		playerHead->SetPos(positionPixelPerfect.x + 26, positionPixelPerfect.y + 25);
 
-		if (app->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
+		//Function to draw the player
+		UpdateLifeBar();
+		ret = Draw(dt);
+		onGround = false;
+		rightColliding = false;
+		leftColliding = false;
+
+		attackCounter++;
+		if (attackCounter >= 30)
 		{
-			attacking = true;
-			if (facingRight == true)
-			{
-				action = PLAYER_ATTACK_RIGHT;
-				attacking = false;
-			}
-			else if (facingRight == false)
-			{
-				action = PLAYER_ATTACK_LEFT;
-				attacking = false;
-			}
+			attackRight.Reset();
+			attackLeft.Reset();
+			attackCounter = 0;
 		}
-
 	}
-	else
-	{   //Godmode 
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			position.x -= 4;
-		}
-		else if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			position.x += 4;
-		}
-
-		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-		{
-			position.y -= 4;
-		}
-		else if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-		{
-			position.y += 4;
-		}
-
-	}
-
-	//Player Actions
-	switch (action)
+	if (pauseCondition)
 	{
-	case PLAYER_IDLE_RIGHT:
-
-		velocity.x = 0;
-		currentAnimation = &idleRight;
-		break;
-	case PLAYER_IDLE_LEFT:
-
-		velocity.x = 0;
-		currentAnimation = &idleLeft;
-		break;
-	case PLAYER_RUN_RIGHT:
-		facingRight = true;
-		velocity.x = speed;
-		if (onGround)currentAnimation = &runRight;
-		else currentAnimation = &jumpRight;
-		break;
-	case PLAYER_RUN_LEFT:
-		facingRight = false;
-		velocity.x = -speed;
-		if (onGround)currentAnimation = &runLeft;
-		else currentAnimation = &jumpLeft;
-		break;
-	case PLAYER_JUMP_RIGHT:
-		if (jumpEnable == true)
-		{
-			facingRight = true;
-			jumpEnable = false;
-			currentAnimation = &jumpRight;
-			velocity.y = -8;
-			jumpRight.Reset();
-		}
-		break;
-	case PLAYER_JUMP_LEFT:
-		if (jumpEnable == true)
-		{
-			facingRight = false;
-			jumpEnable = false;
-			currentAnimation = &jumpLeft;
-			velocity.y = -8;
-			jumpLeft.Reset();
-		}
-		break;
-	case PLAYER_HIT_RIGHT:
-		currentAnimation = &hitRight;
-		if (hitRight.Finished())
-		{
-			action = PLAYER_IDLE_RIGHT;
-			currentAnimation = &jumpRight;
-		}
-		break;
-	case PLAYER_HIT_LEFT:
-		currentAnimation = &hitLeft;
-		if (hitLeft.Finished())
-		{
-			action = PLAYER_IDLE_LEFT;
-			currentAnimation = &jumpLeft;
-		}
-		break;
-	case PLAYER_ATTACK_LEFT:
-		currentAnimation = &attackLeft;
-		AttackCollider(facingRight);
-		break;
-	case PLAYER_ATTACK_RIGHT:
-		currentAnimation = &attackRight;
-		AttackCollider(facingRight);
-		break;
-	case PLAYER_DEATH:
-		if (facingRight == true)
-		{
-			currentAnimation = &deathRight;
-		}
-		else
-		{
-			currentAnimation = &deathLeft;
-		}
-		if (deathLeft.Finished() || deathRight.Finished())
-		{
-			ResetPlayer();
-			RespawnPlayer(0);
-			app->scene->ResetEntities();
-		}
-
-		break;
-	default:
-		break;
+		resumeButton->Update(app->input, dt);
+		settingsButton->Update(app->input, dt);
+		backToTitleButton->Update(app->input, dt);
+		exitButton->Update(app->input, dt);
 	}
-
-	//Change position from velocity
-	position.x += velocity.x;
-	position.y += velocity.y;
-
-	if (dead == false)
-	{
-		positionPixelPerfect.x = round(position.x);
-		positionPixelPerfect.y = round(position.y);
-	}
-	//Collider position
-	playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
-	colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
-	playerHead->SetPos(positionPixelPerfect.x + 26, positionPixelPerfect.y + 25);
-
-	//Function to draw the player
-	UpdateLifeBar();
-	ret = Draw(dt);
-	onGround = false;
-	rightColliding = false;
-	leftColliding = false;
-
-	attackCounter++;
-	if (attackCounter >= 30)
-	{
-		attackRight.Reset();
-		attackLeft.Reset();
-		attackCounter = 0;
-	}
+	if (app->menu->exi)	return false;
 
 	return true;
+}
+
+bool Player::PostUpdate()
+{
+	bool ret = true;
+	SDL_Rect rectPlayer;
+	app->render->DrawTexture(playerTexture, position.x, position.y, &rectPlayer);
+	for (int i = 0; i < lives; i++)
+	{
+		app->render->DrawTexture(lifesTexture, ((-app->render->camera.x + 10) + (i * 32)) / 3, (-app->render->camera.y + 20) / 3, NULL);
+	}
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		app->SaveRequest("savegame.xml");
+		//cameraBckUp = app->render->camera;
+		pauseCondition = !pauseCondition;
+
+	}
+	if (pauseCondition)
+	{
+		app->render->camera.x = 0;
+		app->render->camera.y = 0;
+		app->render->DrawTexture(pause, 0, -20, NULL);
+		resumeButton->Draw(app->render);
+		settingsButton->Draw(app->render);
+		backToTitleButton->Draw(app->render);
+		exitButton->Draw(app->render);
+	}
+	return ret;
 }
 
 bool Player::Draw(float dt)

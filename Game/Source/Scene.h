@@ -11,6 +11,8 @@
 struct SDL_Texture;
 struct SDL_Rect;
 class Entity;
+class GuiControl;
+class GuiButton;
 
 class Scene : public Module
 {
@@ -44,6 +46,8 @@ public:
 
 	bool MovePlayer(iPoint pos);
 	void ResetEntities();
+
+	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	Collider* endCol = nullptr;
 	bool ended;
@@ -93,9 +97,16 @@ public:
 	Item* checkPoint1 = nullptr;
 	Item* checkPoint2 = nullptr;
 
+	GuiButton* resumeButton;
+	GuiButton* settingsButton;
+	GuiButton* backToTitleButton;
+	GuiButton* exitButton;
+
 private:
 	SDL_Texture* img;
 	SDL_Texture* lifesTex;
+
+
 };
 
 #endif // __SCENE_H__

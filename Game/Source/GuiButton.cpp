@@ -4,10 +4,14 @@ GuiButton::GuiButton(uint32 id, SDL_Rect bounds, const char* text) : GuiControl(
 {
 	this->bounds = bounds;
 	this->text = text;
+
+	audio = false;
+	buttonFx = app->audio->LoadFx("Assets/Audio/FX/jump.wav");
 }
 
 GuiButton::~GuiButton()
 {
+
 }
 
 bool GuiButton::Update(Input* input, float dt)
@@ -37,7 +41,7 @@ bool GuiButton::Update(Input* input, float dt)
 		else state = GuiControlState::NORMAL;
 	}
 
-	return true;
+	return false;
 }
 
 bool GuiButton::Draw(Render* render)
@@ -46,99 +50,42 @@ bool GuiButton::Draw(Render* render)
 	switch (state)
 	{
 	case GuiControlState::DISABLED:
-		if (this->style == 1)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 150, 150, 150, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 150, 150, 150, 150);
-		}
-		else if (this->style == 2)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 36, 36, 36, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 0, 0, 0, 150);
-		}
-		else if (this->style == 3)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 77, 15, 15, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 172, 30, 30, 150);
-		}
+		render->DrawRectangle(bounds, 100, 100, 100, 255);
 		break;
 	case GuiControlState::NORMAL:
-		if (this->style == 1)
+		if (textureIdle == NULL)
 		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 25, 25, 25, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
+			render->DrawRectangle(bounds, 100, 100, 100, 255);
 		}
-		else if (this->style == 2)
+		else
 		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 222, 222, 222, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
+			render->DrawTexture(textureIdle, bounds.x, bounds.y, NULL);
 		}
-		else if (this->style == 3)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 0, 125, 60, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-		}
+		audio = false;
 		break;
 	case GuiControlState::FOCUSED:
-		if (this->style == 1)
+		render->DrawTexture(textureFocused, bounds.x, bounds.y, NULL);
+		if (textureIdle == NULL)
 		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 255, 255, 255, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
+			render->DrawRectangle(bounds, 100, 100, 100, 255);
 		}
-		else if (this->style == 2)
+		else
 		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 25, 25, 25, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-		}
-		else if (this->style == 3)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 80, 223, 80, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
+			if (audio == false)
+			{
+				audio = true;
+				app->audio->PlayFx(buttonFx);
+			}
 		}
 		break;
 	case GuiControlState::PRESSED:
-		if (style == 1)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 255, 255, 0, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 255, 255, 0, 100);
-		}
-		else if (style == 2)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 140, 9, 9, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 118, 53, 53, 100);
-		}
-		else if (style == 3)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 15, 202, 195, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 42, 215, 209, 100);
-		}
+		render->DrawTexture(texturePressed, bounds.x, bounds.y, NULL);
 		break;
-	case GuiControlState::SELECTED:
-		if (this->style == 1)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 255, 255, 255, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-		}
-		else if (this->style == 2)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 25, 25, 25, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-		}
-		else if (this->style == 3)
-		{
-			render->DrawRectangle({ (int)(bounds.x + (-render->camera.x)), (int)(bounds.y + (-render->camera.y)), bounds.w, bounds.h }, 80, 223, 80, 255);
-			render->DrawTexture(texture, (int)(bounds.x + (-render->camera.x)) + 5, (int)(bounds.y + (-render->camera.y)) + 5, &section);
-		}
+	case GuiControlState::SELECTED: render->DrawRectangle(bounds, 0, 255, 0, 255);
 		break;
 	default:
 		break;
 	}
 
-	return true;
+	return false;
 }

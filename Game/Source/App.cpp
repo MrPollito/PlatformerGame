@@ -14,6 +14,13 @@
 #include "Entity.h"
 #include "Enemy.h"
 
+#include "FadeToBlack.h"
+#include "Intro.h"
+#include "Menu.h"
+#include "Options.h"
+#include "Logo.h"
+#include "DeathScene.h"
+
 #include "Defs.h"
 #include "Log.h"
 
@@ -34,11 +41,17 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	render = new Render();
 	tex = new Textures();
 	audio = new Audio();
+	menu = new Menu();
+	intro = new Intro();
 	scene = new Scene();
+	options = new Options();
 	map = new Map();
 	pathfinding = new PathFinding();
 	collisions = new Collisions();
 	entityManager = new EntityManager();
+	fade = new FadeToBlack();
+	logo = new Logo();
+	deathScene = new DeathScene();
 
 
 	// Ordered for awake / Start / Update
@@ -47,11 +60,17 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(win);
 	AddModule(tex);
 	AddModule(audio);
+	AddModule(options);
+	AddModule(menu);
+	AddModule(intro);
+	AddModule(logo);
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);
 	AddModule(collisions);
 	AddModule(entityManager);
+	AddModule(deathScene);
+	AddModule(fade);
 
 	// render last to swap buffer
 	AddModule(render);

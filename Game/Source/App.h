@@ -20,6 +20,13 @@ class Collisions;
 class PathFinding;
 class EntityManager;
 
+class FadeToBlack;
+class Intro;
+class Menu;
+class Options;
+class Logo;
+class DeathScene;
+
 class App
 {
 public:
@@ -94,6 +101,12 @@ public:
 	Map* map;
 	Collisions* collisions;
 	EntityManager* entityManager;
+	FadeToBlack* fade;
+	Intro* intro;
+	Menu* menu;
+	Options* options;
+	Logo* logo;
+	DeathScene* deathScene;
 
 private:
 

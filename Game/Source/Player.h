@@ -12,7 +12,6 @@
 #include "Textures.h"
 #include "Map.h"
 
-
 #include "Point.h"
 #include "SString.h"
 #include "Log.h"
@@ -37,6 +36,7 @@ enum PlayerAction
 };
 
 struct Collider;
+class GuiButton;
 class Module;
 
 class Player : public Entity
@@ -47,6 +47,9 @@ public:
 
 	// Called each loop iteration
 	bool Update(float dt);
+
+	// Called before all Updates
+	bool PostUpdate();
 
 	bool Draw(float dt);
 
@@ -72,6 +75,8 @@ public:
 	SDL_Rect attCollider;
 
 	SDL_Texture* playerTexture;
+	SDL_Texture* lifesTexture;
+	SDL_Texture* pause = nullptr;
 
 	fPoint position;
 	iPoint positionPixelPerfect;
@@ -98,6 +103,8 @@ public:
 	bool doubleJump = true;
 	bool attacking = false;
 	int attackCounter = 0;
+
+	bool pauseCondition;
 
 	Animation* currentAnimation;
 	Animation idleRight;
@@ -136,6 +143,11 @@ public:
 	bool onGround;
 	bool leftColliding;
 	bool rightColliding;
+
+	GuiButton* resumeButton;
+	GuiButton* settingsButton;
+	GuiButton* backToTitleButton;
+	GuiButton* exitButton;
 
 };
 

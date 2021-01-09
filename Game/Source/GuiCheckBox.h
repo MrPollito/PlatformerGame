@@ -24,4 +24,3 @@ private:
 };
 
 #endif // __GUICHECKBOX_H__
-

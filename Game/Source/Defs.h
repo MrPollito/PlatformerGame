@@ -10,6 +10,9 @@
 #endif
 #define NULL  0
 
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
 // Deletes a buffer
 #define RELEASE( x ) \
 	{						\
