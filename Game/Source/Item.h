@@ -55,6 +55,11 @@ public:
 	Animation checkON;
 	Animation checkOFF;
 
+	uint pickCoin;
+	uint pickHeart;
+	uint checkpoint;
+	int checkCheck;
+
 	bool active;
 	ItemType type;
 

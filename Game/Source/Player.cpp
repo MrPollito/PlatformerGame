@@ -67,6 +67,13 @@ Player::Player() : Entity(EntityType::PLAYER)
 	godMode = false;
 	checkpoint1 = false;
 	checkpoint2 = false;
+	deathCheck = 0;
+
+	// Audio
+	slashFx = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
+	jumpFx = app->audio->LoadFx("Assets/audio/fx/Jump2.wav");
+	humanDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
+	attackVoice = app->audio->LoadFx("Assets/audio/fx/Melee_Attack.wav");
 
 	// Define Player animations
 	for (int i = 0; i < 11; i++)
@@ -346,6 +353,7 @@ bool Player::Update(float dt)
 		case PLAYER_JUMP_RIGHT:
 			if (jumpEnable == true)
 			{
+				app->audio->PlayFx(jumpFx);
 				facingRight = true;
 				jumpEnable = false;
 				currentAnimation = &jumpRight;
@@ -356,6 +364,7 @@ bool Player::Update(float dt)
 		case PLAYER_JUMP_LEFT:
 			if (jumpEnable == true)
 			{
+				app->audio->PlayFx(jumpFx);
 				facingRight = false;
 				jumpEnable = false;
 				currentAnimation = &jumpLeft;
@@ -380,14 +389,20 @@ bool Player::Update(float dt)
 			}
 			break;
 		case PLAYER_ATTACK_LEFT:
+			app->audio->PlayFx(attackVoice);
+			app->audio->PlayFx(slashFx);
 			currentAnimation = &attackLeft;
 			AttackCollider(facingRight);
 			break;
 		case PLAYER_ATTACK_RIGHT:
+			app->audio->PlayFx(attackVoice);
+			app->audio->PlayFx(slashFx);
 			currentAnimation = &attackRight;
 			AttackCollider(facingRight);
 			break;
 		case PLAYER_DEATH:
+			if (deathCheck == 0) app->audio->PlayFx(humanDeath);
+			deathCheck = 1;
 			if (facingRight == true)
 			{
 				currentAnimation = &deathRight;

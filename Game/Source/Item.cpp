@@ -3,6 +3,7 @@
 #include "Textures.h"
 #include "Animation.h"
 #include "Scene.h"
+#include "Audio.h"
 
 Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 {
@@ -17,7 +18,12 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	r.x = position.x;
 	r.y = position.y;
 	checked = false;
-	
+	checkCheck = 0;
+
+	pickCoin = app->audio->LoadFx("Assets/audio/fx/Coin.wav");
+	pickHeart = app->audio->LoadFx("Assets/audio/fx/Life_Up.wav");
+	checkpoint = app->audio->LoadFx("Assets/audio/fx/Checkpoint.wav");
+
 	if (type == ItemType::HEART)
 	{
 		collider = app->collisions->AddCollider(rCollider, COLLIDER_HEART, nullptr, this);
@@ -99,18 +105,23 @@ bool Item::OnCollision(Collider* c1, Collider* c2)
 			{
 				if (collider->type == ColliderType::COLLIDER_HEART)
 				{
+					app->audio->PlayFx(pickHeart);
 					app->scene->player->lives++;
+					app->scene->player->life = 100;
 					active = false;
 					ret = CleanUp();
 				}
 				else if (collider->type == ColliderType::COLLIDER_COIN)
 				{
+					app->audio->PlayFx(pickCoin);
 					app->scene->player->money++;
 					active = false;
 					ret = CleanUp();
 				}
 				else if (collider->type == ColliderType::COLLIDER_CHECKPOINT)
 				{
+					if(checkCheck == 0) app->audio->PlayFx(checkpoint);
+					checkCheck = 1;
 					currentAnimation = &checkON;
 					checked = true;
 				}

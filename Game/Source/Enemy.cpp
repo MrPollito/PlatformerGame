@@ -36,9 +36,12 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	dedRight = false;
 	dedLeft = false;
 	isDying = false;
+	checkDeath = 0;
 
 	positionPixelPerfect.x = position.x;
 	positionPixelPerfect.y = position.y;
+
+	pigDeath = app->audio->LoadFx("Assets/audio/fx/Pig_Death.wav");
 
 	velocity.SetToZero();
 	onGround = true;
@@ -225,6 +228,8 @@ bool PigEnemy::Update(float dt)
 	}
 
 	case PIGENEMY_DEATH:
+		if(checkDeath == 0) app->audio->PlayFx(pigDeath);
+		checkDeath = 1;
 		if (app->scene->player->position.x < position.x && dedRight == false)
 		{
 			dedLeft = true;
@@ -489,11 +494,14 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 	dedRight = false;
 	dedLeft = false;
 	isDying = false;
+	checkDeath = 0;
 
 	positionPixelPerfect.x = position.x;
 	positionPixelPerfect.y = position.y;
 
 	velocity.SetToZero();
+
+	batDeath = app->audio->LoadFx("Assets/audio/fx/Bat_Death.wav");
 
 	enemyTexture = app->tex->Load("Assets/textures/Bat_animations.png");
 
@@ -536,13 +544,13 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 	{
 		deathLeft.PushBack({ (24 * i),20,24,20 });
 	}
-	deathLeft.speed = 0.25f;
+	deathLeft.speed = 0.5f;
 
 	for (int i = 0; i < 5; i++)
 	{
 		deathRight.PushBack({ (24 * i),60,24,20 });
 	}
-	deathRight.speed = 0.25f;
+	deathRight.speed = 0.5f;
 }
 
 bool BatEnemy::Update(float dt)
@@ -646,7 +654,9 @@ bool BatEnemy::Update(float dt)
 		break;
 	}
 
-	case PIGENEMY_DEATH:
+	case BATENEMY_DEATH:
+		if(checkDeath == 0) app->audio->PlayFx(batDeath);
+		checkDeath = 1;
 		if (app->scene->player->position.x < position.x && dedRight == false)
 		{
 			dedLeft = true;

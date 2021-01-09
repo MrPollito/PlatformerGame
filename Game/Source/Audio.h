@@ -36,7 +36,9 @@ public:
 	unsigned int LoadFx(const char* path);
 
 	// Play a previously loaded WAV
-	bool PlayFx(unsigned int fx, int repeat = 0);
+	bool PlayFx(unsigned int fx, int once = 1, int repeat = 0);
+
+	bool UnloadFx(uint index);
 
 	void Volume(int value);
 

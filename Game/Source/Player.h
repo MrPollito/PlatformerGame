@@ -144,6 +144,13 @@ public:
 	bool leftColliding;
 	bool rightColliding;
 
+// FX
+	uint jumpFx;
+	uint slashFx;
+	uint humanDeath;
+	int deathCheck;
+	uint attackVoice;
+	
 	GuiButton* resumeButton;
 	GuiButton* settingsButton;
 	GuiButton* backToTitleButton;

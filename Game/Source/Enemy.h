@@ -79,6 +79,8 @@ public:
 	bool jumping;
 
 	int id = 0;
+	int checkDeath;
+	uint pigDeath;
 
 	int life;
 	int lifeConfig;
@@ -172,6 +174,9 @@ public:
 	int damage;
 	int chaseDistance;
 	int id = 0;
+
+	int checkDeath;
+	uint batDeath;
 
 	float speed;
 	float attackTimer;
