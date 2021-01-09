@@ -8,7 +8,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Animation.h"
-#include "Intro.h"
+#include "WinScene.h"
 #include "Scene.h"
 #include "FadeToBlack.h"
 
@@ -16,17 +16,17 @@
 #include "Defs.h"
 #include "Log.h"
 
-Intro::Intro() : Module()
+WinScene::WinScene() : Module()
 {
-	name.Create("Intro");
+	name.Create("winscene");
 }
 
-Intro::~Intro()
+WinScene::~WinScene()
 {
 
 }
 
-bool Intro::Awake()
+bool WinScene::Awake()
 {
 	LOG("Loading Screens");
 	bool ret = true;
@@ -35,63 +35,51 @@ bool Intro::Awake()
 }
 
 // Load assets
-bool Intro::Start()
+bool WinScene::Start()
 {
 	LOG("Loading Screens assets");
 
 	bool ret = true;
 
-	score = 000;
-
-	screen = app->tex->Load("Assets/Textures/random_intro.png");
-
-	timer = 0;
-	trans = true;
+	screen = app->tex->Load("Assets/Textures/win_screen.png");
 
 	return ret;
 }
 
-bool Intro::PreUpdate()
+bool WinScene::PreUpdate()
 {
 	return true;
 }
 
-bool Intro::Update(float dt)
+bool WinScene::Update(float dt)
 {
-	timer += dt;
-
-	app->render->camera.x = 0;
-	app->render->camera.y = 0;
-
 	return true;
 }
 
 // Update: draw background
-bool Intro::PostUpdate()
+bool WinScene::PostUpdate()
 {
 	bool ret = true;
-
 	// Draw everything --------------------------------------
-	if (timer > 4 && trans == true)
+	app->render->camera.x = 0;
+	app->render->camera.y = 0;
+	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
-		trans = false;
-		app->fade->Fade(this, (Module*)app->scene, 10);
+		app->scene->player->lives = 3;
+		app->fade->Fade(this, (Module*)app->intro, 60);
 	}
-
-	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	// if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
 	app->render->DrawTexture(screen, 0, 0, NULL);
-
-
 
 	return ret;
 }
 
-bool Intro::CleanUp()
+bool WinScene::CleanUp()
 {
 	if (!active)return true;
 	LOG("Freeing intro");
-	app->intro->active = false;
+	app->winScene->active = false;
 	app->tex->UnLoad(screen);
 	return true;
 }

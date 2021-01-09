@@ -37,6 +37,9 @@ bool Scene::Start()
 {
 	//app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
 
+	app->collisions->active = true;
+	app->map->active = true;
+
 	lifesTex = app->tex->Load("Assets/Textures/heart.png");
 
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
@@ -267,6 +270,13 @@ bool Scene::PostUpdate()
 bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
+
+	if (!active)return true;
+
+	app->map->CleanUp();
+	app->scene->player->CleanUp();
+	app->collisions->CleanUp();
+	app->entityManager->CleanUp();
 
 	app->tex->UnLoad(lifesTex);
 

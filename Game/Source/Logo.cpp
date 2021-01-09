@@ -42,10 +42,6 @@ bool Logo::Start()
 
 	screen = app->tex->Load("Assets/Textures/logo_screen.png");
 
-	app->render->camera.x = 0;
-	app->render->camera.y = 0;
-
-
 	timer = 0;
 	trans = true;
 
@@ -61,6 +57,8 @@ bool Logo::Update(float dt)
 {
 	timer += dt;
 
+	app->render->camera.x = 0;
+	app->render->camera.y = 0;
 	return true;
 }
 
@@ -69,7 +67,7 @@ bool Logo::PostUpdate()
 {
 	bool ret = true;
 	// Draw everything --------------------------------------
-	if (timer > 4 && trans == true)
+	if (timer > 5 && trans == true)
 	{
 		trans = false;
 		app->fade->Fade(this, (Module*)app->intro, 10);

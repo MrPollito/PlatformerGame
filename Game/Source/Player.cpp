@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include "EntityManager.h"
 #include "Menu.h"
+#include "FadeToBlack.h"
+#include "DeathScene.h"
 
 #include "Log.h" 
 
@@ -434,6 +436,14 @@ bool Player::Update(float dt)
 			attackLeft.Reset();
 			attackCounter = 0;
 		}
+
+		if (lives == 0)
+		{
+			if (app->scene->active == true)
+			{
+				app->fade->Fade((Module*)app->scene, (Module*)app->deathScene, 1);
+			}
+		}
 	}
 	if (pauseCondition)
 	{
@@ -581,6 +591,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 bool Player::CleanUp()
 {
 	bool ret = false;
+	active = false;
 	LOG("Unloading player");
 	ret = app->tex->UnLoad(playerTexture);
 	if (playerCollider != nullptr)

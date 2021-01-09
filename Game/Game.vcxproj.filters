@@ -81,6 +81,9 @@
     <ClCompile Include="Source\FadeToBlack.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Source\WinScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -194,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="Source\FadeToBlack.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WinScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

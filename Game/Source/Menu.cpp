@@ -37,7 +37,7 @@ bool Menu::Awake()
 // Load assets
 bool Menu::Start()
 {
-	LOG("Loading Logo assets");
+	LOG("Loading Menu assets");
 
 	bool ret = true;
 
@@ -83,6 +83,9 @@ bool Menu::PreUpdate()
 
 bool Menu::Update(float dt)
 {
+	app->render->camera.x = 0;
+	app->render->camera.y = 0;
+
 	if (creditSceneFlag == false)
 	{
 		play->Update(app->input, dt);
@@ -120,8 +123,6 @@ bool Menu::PostUpdate()
 
 	if (creditSceneFlag == true)
 	{
-		app->render->camera.x = 0;
-		app->render->camera.y = 0;
 		app->render->DrawTexture(creditsScene, 0, 0, NULL);
 
 	}
@@ -129,8 +130,6 @@ bool Menu::PostUpdate()
 	if (!creditSceneFlag)
 
 	{
-		app->render->camera.x = 0;
-		app->render->camera.y = 0;
 		app->render->DrawTexture(screen, 0, 0, NULL);
 
 
@@ -142,9 +141,6 @@ bool Menu::PostUpdate()
 		credits->Draw(app->render);
 		exit->Draw(app->render);
 	}
-
-	app->render->camera.x = 0;
-	app->render->camera.y = 0;
 
 	if (exi == true)
 	{
@@ -175,6 +171,9 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		{
 			//Play
 			app->fade->Fade(this, (Module*)app->scene, 20);
+	/*		app->render->camera.x = 50;
+			app->render->camera.y = -1050;*/
+
 		}
 		else if (control->id == 2)
 		{

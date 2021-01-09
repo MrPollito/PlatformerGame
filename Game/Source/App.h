@@ -26,6 +26,7 @@ class Menu;
 class Options;
 class Logo;
 class DeathScene;
+class WinScene;
 
 class App
 {
@@ -107,6 +108,7 @@ public:
 	Options* options;
 	Logo* logo;
 	DeathScene* deathScene;
+	WinScene* winScene;
 
 private:
 

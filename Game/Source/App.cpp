@@ -20,6 +20,7 @@
 #include "Options.h"
 #include "Logo.h"
 #include "DeathScene.h"
+#include "WinScene.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -52,7 +53,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	fade = new FadeToBlack();
 	logo = new Logo();
 	deathScene = new DeathScene();
-
+	winScene = new WinScene();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -60,20 +61,32 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(win);
 	AddModule(tex);
 	AddModule(audio);
-	AddModule(options);
 	AddModule(menu);
 	AddModule(intro);
 	AddModule(logo);
+
+
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);
-	AddModule(collisions);
+	AddModule(options);
 	AddModule(entityManager);
-	AddModule(deathScene);
 	AddModule(fade);
+	AddModule(deathScene);
+	AddModule(winScene);
+	AddModule(collisions);
 
 	// render last to swap buffer
 	AddModule(render);
+
+	logo->active = false;
+	//intro->active = false;
+	//menu->active = false;
+	/*scene->active = false;*/
+	options->active = false;
+	deathScene->active = false;
+	winScene->active = false;
+	/*entityManager->active = false;*/
 
 	PERF_PEEK(ptimer);
 }
