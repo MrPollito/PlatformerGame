@@ -1496,7 +1496,7 @@
    <tile gid="33"/>
    <tile gid="33"/>
    <tile gid="33"/>
-   <tile gid="33"/>
+   <tile/>
    <tile gid="33"/>
    <tile gid="33"/>
    <tile gid="33"/>
@@ -4011,7 +4011,7 @@
    <tile gid="33"/>
   </data>
  </layer>
- <layer id="1" name="Base" width="80" height="50" locked="1">
+ <layer id="1" name="Base" width="80" height="50">
   <properties>
    <property name="Draw" type="int" value="1"/>
    <property name="Navigation" type="int" value="0"/>
@@ -5504,7 +5504,7 @@
    <tile gid="219"/>
    <tile gid="219"/>
    <tile gid="219"/>
-   <tile gid="315"/>
+   <tile gid="219"/>
    <tile gid="219"/>
    <tile gid="249"/>
    <tile gid="250"/>
@@ -9512,7 +9512,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="54"/>
+   <tile/>
    <tile/>
    <tile gid="51"/>
    <tile gid="52"/>
@@ -21536,7 +21536,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="26"/>
+   <tile/>
    <tile/>
    <tile gid="26"/>
    <tile gid="26"/>
