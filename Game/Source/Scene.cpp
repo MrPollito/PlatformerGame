@@ -35,7 +35,7 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	//app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
+	app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
 
 	app->collisions->active = true;
 	app->map->active = true;

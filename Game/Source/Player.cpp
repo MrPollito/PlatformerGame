@@ -71,7 +71,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 
 	//// Audio
 	slashFx = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
-	jumpFx = app->audio->LoadFx("Assets/audio/fx/Jump2.wav");
+	jumpFx = app->audio->LoadFx("Assets/audio/fx/Jump3.wav");
 	humanDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
 	attackVoice = app->audio->LoadFx("Assets/audio/fx/Melee_Attack.wav");
 
@@ -403,6 +403,10 @@ bool Player::Update(float dt)
 		case PLAYER_DEATH:
 			if (deathCheck == 0) app->audio->PlayFx(humanDeath);
 			deathCheck = 1;
+			app->audio->UnloadFx(slashFx);
+			app->audio->UnloadFx(jumpFx);
+			app->audio->UnloadFx(humanDeath);
+			app->audio->UnloadFx(attackVoice);
 			if (facingRight == true)
 			{
 				currentAnimation = &deathRight;
@@ -608,6 +612,11 @@ bool Player::CleanUp()
 	bool ret = false;
 	active = false;
 	LOG("Unloading player");
+	app->audio->UnloadFx(slashFx);
+	app->audio->UnloadFx(jumpFx);
+	app->audio->UnloadFx(humanDeath);
+	app->audio->UnloadFx(attackVoice);
+
 	ret = app->tex->UnLoad(playerTexture);
 	if (playerCollider != nullptr)
 	{

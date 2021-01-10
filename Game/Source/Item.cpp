@@ -136,6 +136,9 @@ bool Item::CleanUp()
 {
 	bool ret = false;
 	ret = app->tex->UnLoad(itemTexture);
+	app->audio->UnloadFx(pickCoin);
+	app->audio->UnloadFx(pickHeart);
+	app->audio->UnloadFx(checkpoint);
 	if (collider != nullptr)
 	{
 		collider->toDelete = true;

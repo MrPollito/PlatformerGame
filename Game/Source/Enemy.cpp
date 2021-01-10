@@ -429,7 +429,7 @@ bool PigEnemy::ResetStates() //Reset all states before checking input
 
 bool PigEnemy::CleanUp()
 {
-
+	app->audio->UnloadFx(pigDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();
@@ -825,7 +825,7 @@ bool BatEnemy::DisableBatEnemy() //Disable function for changing scene
 
 bool BatEnemy::CleanUp()
 {
-
+	app->audio->UnloadFx(batDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();
