@@ -27,7 +27,7 @@ DeathScene::~DeathScene()
 
 bool DeathScene::Awake()
 {
-	LOG("Loading Screens");
+	LOG("Loading deathscene");
 	bool ret = true;
 
 	return ret;
@@ -35,11 +35,11 @@ bool DeathScene::Awake()
 
 bool DeathScene::Start()
 {
-	LOG("Loading Screens assets");
+	LOG("Loading deathscene assets");
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/random_death_scene.png");
+	screen = app->tex->Load("Assets/Textures/Random_death_scene.png");
 
 	return ret;
 }
@@ -74,7 +74,7 @@ bool DeathScene::PostUpdate()
 bool DeathScene::CleanUp()
 {
 	if (!active)return true;
-	LOG("Freeing intro");
+	LOG("Freeing deathscene");
 	app->deathScene->active = false;
 	return true;
 }

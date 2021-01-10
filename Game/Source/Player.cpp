@@ -53,10 +53,9 @@ Player::Player() : Entity(EntityType::PLAYER)
 	life = 100;
 	speed = 4.0f;
 	money = 0;
-	enemiesKilled = 0;
 	dead = false;
 
-	pause = app->tex->Load("Assets/Textures/random_escape_scene.png");
+	pause = app->tex->Load("Assets/Textures/Random_escape_scene.png");
 	pauseCondition = false;
 
 	attColliderActive = false;
@@ -71,6 +70,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 	checkpoint1 = false;
 	checkpoint2 = false;
 	deathCheck = 0;
+	moneyCount = 0;
 
 	slashFx = app->scene->playerAttack;
 	jumpFx = app->scene->playerJump;
@@ -79,19 +79,19 @@ Player::Player() : Entity(EntityType::PLAYER)
 
 	resumeButton = new GuiButton(9, { 550, 250, 100, 24 }, "RESUME");
 	resumeButton->SetObserver((Scene*)this);
-	resumeButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/resume_button.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_pressed.png"));
+	resumeButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/Resume_button.png"), app->tex->Load("Assets/Textures/Buttons/Resume_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Resume_button_pressed.png"));
 
 	options = new GuiButton(2, { 550, 350, 100, 24 }, "SETTINGS");
 	options->SetObserver((Scene*)this);
-	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/settings_button.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_pressed.png"));
+	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/Settings_button.png"), app->tex->Load("Assets/Textures/Buttons/Settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Settings_button_pressed.png"));
 
 	backToTitleButton = new GuiButton(11, { 525, 450, 100, 24 }, "BACK_TO_TITLE");
 	backToTitleButton->SetObserver((Scene*)this);
-	backToTitleButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/back_to_title_button.png"), app->tex->Load("Assets/Textures/Buttons/back_to_title_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/back_to_title_button_pressed.png"));
+	backToTitleButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/Back_to_title_button.png"), app->tex->Load("Assets/Textures/Buttons/Back_to_title_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Back_to_title_button_pressed.png"));
 
 	exitButton = new GuiButton(4, { 590, 550, 100, 24 }, "EXIT");
 	exitButton->SetObserver((Scene*)this);
-	exitButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit_button.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_pressed.png"));
+	exitButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/Exit_button.png"), app->tex->Load("Assets/Textures/Buttons/Exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Exit_button_pressed.png"));
 
 	for (int i = 0; i < 11; i++)
 	{
@@ -173,10 +173,14 @@ bool Player::Update(float dt)
 	if (!pauseCondition)
 	{
 
-		if (money == 12)
+		if (moneyCount >= 5)
 		{
 			app->winScene->active = true;
+			moneyCount = 0;
 			money = 0;
+			ResetPlayer();
+			RespawnPlayer(0);
+			app->scene->ResetEntities();
 		}
 
 		if (attColliderActive == true)
@@ -479,8 +483,8 @@ bool Player::Update(float dt)
 		app->render->camera.y = 0;
 
 		resumeButton->Update(app->input, dt);
-		options->Update(app->input, dt);
-		backToTitleButton->Update(app->input, dt);
+		//options->Update(app->input, dt);
+		/*backToTitleButton->Update(app->input, dt);*/
 		exitButton->Update(app->input, dt); 
 	
 		resumeButton->Draw(app->render);
@@ -557,8 +561,8 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 
 		if (c1 == playerCollider && c2->type == COLLIDER_COIN)
 		{
-			LOG("Money +1 champion");
-			 money++;
+			moneyCount++;
+			LOG("Money +1, Total coins = %i", moneyCount);
 		}
 
 		if (c1 == playerHead && c2->type == COLLIDER_GROUND)

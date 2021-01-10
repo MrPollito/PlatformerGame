@@ -28,7 +28,6 @@ public:
 
 	SDL_Texture* screen = nullptr;
 
-	uint score = 000;
 
 	float timer;
 	bool trans;

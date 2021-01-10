@@ -18,16 +18,17 @@
 
 Menu::Menu() : Module()
 {
-	name.Create("Menu");
+	name.Create("menu");
 }
 
 Menu::~Menu()
 {
+
 }
 
 bool Menu::Awake()
 {
-	LOG("Loading Menu");
+	LOG("Loading menu");
 	bool ret = true;
 
 	return ret;
@@ -35,37 +36,37 @@ bool Menu::Awake()
 
 bool Menu::Start()
 {
-	LOG("Loading Menu assets");
+	LOG("Loading menu assets");
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/random_menu.png");
+	screen = app->tex->Load("Assets/Textures/Random_menu.png");
 
 	play = new GuiButton(1, { 630, 220, 80, 30 }, "START");
 	play->SetObserver((Scene*)this);
-	play->SetTexture(app->tex->Load("Assets/Textures/Buttons/play_button.png"), app->tex->Load("Assets/Textures/Buttons/play_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/play_button_pressed.png"));
+	play->SetTexture(app->tex->Load("Assets/Textures/Buttons/Play_button.png"), app->tex->Load("Assets/Textures/Buttons/Play_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Play_button_pressed.png"));
 
 	continueButton = new GuiButton(12, { 622, 250, 80, 30 }, "START");
 	continueButton->SetObserver((Scene*)this);
-	continueButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/load_button.png"), app->tex->Load("Assets/Textures/Buttons/load_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/load_button_pressed.png"));
+	continueButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/Load_button.png"), app->tex->Load("Assets/Textures/Buttons/Load_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Load_button_pressed.png"));
 
 	options = new GuiButton(2, { 595, 280, 80, 30 }, "OPTIONS");
 	options->SetObserver((Scene*)this);
-	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/settings_button.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_pressed.png"));
+	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/Settings_button.png"), app->tex->Load("Assets/Textures/Buttons/Settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Settings_button_pressed.png"));
 
 	credits = new GuiButton(13, { 600, 310, 80, 30 }, "OPTIONS");
 	credits->SetObserver((Scene*)this);
-	credits->SetTexture(app->tex->Load("Assets/Textures/Buttons/credits_button.png"), app->tex->Load("Assets/Textures/Buttons/credits_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/credits_button_pressed.png"));
+	credits->SetTexture(app->tex->Load("Assets/Textures/Buttons/Credits_button.png"), app->tex->Load("Assets/Textures/Buttons/Credits_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Credits_button_pressed.png"));
 
 	exit = new GuiButton(4, { 630, 340, 80, 30 }, "EXIT");
 	exit->SetObserver((Scene*)this);
-	exit->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit_button.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_pressed.png"));
+	exit->SetTexture(app->tex->Load("Assets/Textures/Buttons/Exit_button.png"), app->tex->Load("Assets/Textures/Buttons/Exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Exit_button_pressed.png"));
 
 	backButton = new GuiButton(3, { 100, 50, 20, 16 }, "BACK");
 	backButton->SetObserver((Scene*)this);
-	backButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/back_button.png"), app->tex->Load("Assets/Textures/Buttons/back_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/back_button_pressed.png"));
+	backButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/Back_button.png"), app->tex->Load("Assets/Textures/Buttons/Back_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/Back_button_pressed.png"));
 
-	creditsScene = app->tex->Load("Assets/Textures/random_credits2.png");
+	creditsScene = app->tex->Load("Assets/Textures/Random_credits2.png");
 	creditSceneFlag = false;
 	pauseBool = false;
 	fullSc = false;
@@ -144,7 +145,7 @@ bool Menu::PostUpdate()
 bool Menu::CleanUp()
 {
 	if (!active)return true;
-	LOG("Freeing Logo");
+	LOG("Freeing menu");
 	app->menu->active = false;
 	app->tex->UnLoad(screen);
 	return true;

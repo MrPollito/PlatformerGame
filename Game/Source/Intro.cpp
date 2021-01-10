@@ -18,7 +18,7 @@
 
 Intro::Intro() : Module()
 {
-	name.Create("Intro");
+	name.Create("intro");
 }
 
 Intro::~Intro()
@@ -27,7 +27,7 @@ Intro::~Intro()
 
 bool Intro::Awake()
 {
-	LOG("Loading Screens");
+	LOG("Loading intro");
 	bool ret = true;
 
 	return ret;
@@ -35,13 +35,11 @@ bool Intro::Awake()
 
 bool Intro::Start()
 {
-	LOG("Loading Screens assets");
+	LOG("Loading intro assets");
 
 	bool ret = true;
 
-	score = 000;
-
-	screen = app->tex->Load("Assets/Textures/random_intro.png");
+	screen = app->tex->Load("Assets/Textures/Random_intro.png");
 
 	timer = 0;
 	trans = true;

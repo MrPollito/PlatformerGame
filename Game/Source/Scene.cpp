@@ -33,23 +33,24 @@ bool Scene::Awake()
 
 bool Scene::Start()
 {
-	app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
+	app->audio->PlayMusic("Assets/Audio/Music/Main_Theme.ogg");
 
 	app->collisions->active = true;
 	app->map->active = true;
 
-	lifesTex = app->tex->Load("Assets/Textures/heart.png");
-	playerAttack = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
-	playerJump = app->audio->LoadFx("Assets/audio/fx/Jump3.wav");
-	playerDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
-	playerVoice = app->audio->LoadFx("Assets/audio/fx/Melee_Attack.wav");
+	lifesTex = app->tex->Load("Assets/Textures/Heart.png");
+	playerAttack = app->audio->LoadFx("Assets/Audio/Fx/Sword_Slash.wav");
+	playerJump = app->audio->LoadFx("Assets/Audio/Fx/Jump3.wav");
+	playerDeath = app->audio->LoadFx("Assets/Audio/Fx/Hero_Death.wav");
+	playerVoice = app->audio->LoadFx("Assets/Audio/Fx/Melee_Attack.wav");
 
-	pickCoin = app->audio->LoadFx("Assets/audio/fx/Coin.wav");
-	pickHeart = app->audio->LoadFx("Assets/audio/fx/Life_Up.wav");
-	pickCheckpoint = app->audio->LoadFx("Assets/audio/fx/Checkpoint.wav");
+	pickCoin = app->audio->LoadFx("Assets/Audio/Fx/Coin.wav");
+	pickHeart = app->audio->LoadFx("Assets/Audio/Fx/Life_Up.wav");
+	pickCheckpoint = app->audio->LoadFx("Assets/Audio/Fx/Checkpoint.wav");
 
-	batDeath = app->audio->LoadFx("Assets/audio/fx/Bat_Death.wav");
-	pigDeath = app->audio->LoadFx("Assets/audio/fx/Pig_Death.wav");
+	batDeath = app->audio->LoadFx("Assets/Audio/Fx/Bat_Death.wav");
+	pigDeath = app->audio->LoadFx("Assets/Audio/Fx/Pig_Death.wav");
+	enemiesRemaining = 14;
 
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
 	{
@@ -125,6 +126,9 @@ bool Scene::Update(float dt)
 
 	if (app->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
 		app->audio->Volume(0);
+
+	if (app->input->GetKey(SDL_SCANCODE_Z) == KEY_DOWN)
+		app->winScene->active = true;
 
 	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
@@ -283,7 +287,6 @@ bool Scene::MovePlayer(iPoint pos)
 
 void Scene::ResetEntities()
 {
-	enemiesRemaining = 14;
 	app->entityManager->batIds = 0;
 	app->entityManager->pigIds = 0;
 

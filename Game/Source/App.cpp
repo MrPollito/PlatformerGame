@@ -18,7 +18,6 @@
 #include "Intro.h"
 #include "Menu.h"
 #include "Options.h"
-#include "Logo.h"
 #include "DeathScene.h"
 #include "WinScene.h"
 
@@ -46,7 +45,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	collisions = new Collisions();
 	entityManager = new EntityManager();
 	fade = new FadeToBlack();
-	logo = new Logo();
 	deathScene = new DeathScene();
 	winScene = new WinScene();
 
@@ -56,7 +54,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audio);
 	AddModule(menu);
 	AddModule(intro);
-	AddModule(logo);
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);
@@ -69,7 +66,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	AddModule(render);
 
-	logo->active = false;
 	options->active = false;
 	deathScene->active = false;
 	winScene->active = false;

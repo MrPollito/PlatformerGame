@@ -23,7 +23,6 @@ class FadeToBlack;
 class Intro;
 class Menu;
 class Options;
-class Logo;
 class DeathScene;
 class WinScene;
 
@@ -89,7 +88,6 @@ public:
 	Intro* intro;
 	Menu* menu;
 	Options* options;
-	Logo* logo;
 	DeathScene* deathScene;
 	WinScene* winScene;
 

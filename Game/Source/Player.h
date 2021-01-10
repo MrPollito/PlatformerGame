@@ -90,7 +90,8 @@ public:
 	int attColliderTimer;
 	int lives;
 	int money;
-	int enemiesKilled;
+	int deathCheck;
+	int moneyCount;
 
 	int playerSize = 78;
 	float speed;
@@ -132,7 +133,6 @@ public:
 	bool checkpoint1;
 	bool checkpoint2;
 
-	bool invert;
 	bool flipTexture;
 	bool playerJumping;
 	bool facingRight;
@@ -144,7 +144,6 @@ public:
 	uint jumpFx;
 	uint slashFx;
 	uint humanDeath;
-	int deathCheck;
 	uint attackVoice;
 	
 	GuiButton* resumeButton;

@@ -79,7 +79,6 @@ bool Logo::CleanUp()
 {
 	if (!active)return true;
 	LOG("Freeing Logo");
-	app->logo->active = false;
 	app->tex->UnLoad(screen);
 	return true;
 }

@@ -48,8 +48,8 @@ public:
 	int w, h;
 	uchar* data = NULL;
 
-	int enemiesRemaining = 14;
 	int f7teleports;
+	int enemiesRemaining;
 
 	Player* player = nullptr;
 

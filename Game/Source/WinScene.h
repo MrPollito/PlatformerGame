@@ -29,7 +29,6 @@ public:
 public:
 
 	SDL_Texture* screen = nullptr;
-
 };
 
 #endif

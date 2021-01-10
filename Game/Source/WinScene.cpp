@@ -27,7 +27,7 @@ WinScene::~WinScene()
 
 bool WinScene::Awake()
 {
-	LOG("Loading Screens");
+	LOG("Loading winscene");
 	bool ret = true;
 
 	return ret;
@@ -35,11 +35,11 @@ bool WinScene::Awake()
 
 bool WinScene::Start()
 {
-	LOG("Loading Screens assets");
+	LOG("Loading winscene winscene");
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/random_win_scene.png");
+	screen = app->tex->Load("Assets/Textures/Random_win_scene.png");
 
 	return ret;
 }
@@ -74,7 +74,7 @@ bool WinScene::PostUpdate()
 bool WinScene::CleanUp()
 {
 	if (!active)return true;
-	LOG("Freeing WinScene");
+	LOG("Freeing winscene");
 	app->winScene->active = false;
 	return true;
 }
