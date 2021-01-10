@@ -14,6 +14,7 @@ Random Platformer Game is a platform game developed in Development (CITM 2nd Cou
  - Player Movement and attack
  - Items: Heart (+1 lives and full health), Coins (+money) and Checkpoints
  - Audio feedback in-game
+ - Two new enemies: Pigs and Bats
  - Entity system: Player, Enemies and Items
  - Scene management: Win and Loss screens, Logo, Menu, Settings and in-game pause
  - And much, much more!
