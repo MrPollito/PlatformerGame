@@ -31,6 +31,7 @@ Random Platformer Game is a platform game developed in Development (CITM 2nd Cou
  - F3 Start from the beginning of the current level
  - F5 Save game
  - F6 Load game
+ - F7 Travel between checkpoints
  - F10 Godmode
  - F11 Kill player
  - Z Go to Win screen
