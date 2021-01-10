@@ -23,7 +23,6 @@ Intro::Intro() : Module()
 
 Intro::~Intro()
 {
-
 }
 
 bool Intro::Awake()
@@ -34,7 +33,6 @@ bool Intro::Awake()
 	return ret;
 }
 
-// Load assets
 bool Intro::Start()
 {
 	LOG("Loading Screens assets");
@@ -66,23 +64,17 @@ bool Intro::Update(float dt)
 	return true;
 }
 
-// Update: draw background
 bool Intro::PostUpdate()
 {
 	bool ret = true;
 
-	// Draw everything --------------------------------------
 	if (timer > 4 && trans == true)
 	{
 		trans = false;
 		app->fade->Fade(this, (Module*)app->scene, 10);
 	}
 
-	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-
 	app->render->DrawTexture(screen, 0, 0, NULL);
-
-
 
 	return ret;
 }

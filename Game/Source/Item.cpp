@@ -1,4 +1,5 @@
 #include "Item.h"
+
 #include "Collisions.h"
 #include "Textures.h"
 #include "Animation.h"
@@ -87,7 +88,6 @@ bool Item::Draw(float dt)
 
 	if (app->scene->player->pauseCondition == false)
 	{
-	
 		r = currentAnimation->GetCurrentFrame(dt);
 
 		if (itemTexture != nullptr)
@@ -140,6 +140,7 @@ bool Item::OnCollision(Collider* c1, Collider* c2)
 		}
 	}
 	else ret = true;
+
 	return ret;
 }
 
@@ -147,13 +148,12 @@ bool Item::CleanUp()
 {
 	bool ret = false;
 	ret = app->tex->UnLoad(itemTexture);
-	/*app->audio->UnloadFx(pickCoin);
-	app->audio->UnloadFx(pickHeart);
-	app->audio->UnloadFx(checkpoint);*/
+
 	if (collider != nullptr)
 	{
 		collider->toDelete = true;
 		collider = nullptr;
 	}
+
 	return ret;
 }

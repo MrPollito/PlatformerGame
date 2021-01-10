@@ -18,8 +18,6 @@ public:
 
 private:
 
-	// GuiSlider specific properties
-	// Maybe some animation properties for state change?
 	SDL_Rect slider;
 	int value;
 

@@ -11,7 +11,6 @@
 #include "Logo.h"
 #include "FadeToBlack.h"
 
-
 #include "Defs.h"
 #include "Log.h"
 
@@ -33,7 +32,6 @@ bool Logo::Awake()
 	return ret;
 }
 
-// Load assets
 bool Logo::Start()
 {
 	LOG("Loading Logo assets");
@@ -62,18 +60,15 @@ bool Logo::Update(float dt)
 	return true;
 }
 
-// Update: draw background
 bool Logo::PostUpdate()
 {
 	bool ret = true;
-	// Draw everything --------------------------------------
 	if (timer > 5 && trans == true)
 	{
 		trans = false;
 		app->fade->Fade(this, (Module*)app->intro, 10);
 
 	}
-	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
 	app->render->DrawTexture(screen, 0, 0, NULL);
 

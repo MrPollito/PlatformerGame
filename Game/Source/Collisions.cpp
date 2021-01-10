@@ -90,13 +90,11 @@ Collisions::Collisions()
 	matrix[COLLIDER_CHECKPOINT][COLLIDER_CHECKPOINT] = false;
 }
 
-// Destructor
 Collisions::~Collisions()
 {}
 
 bool Collisions::PreUpdate()
 {
-	// Remove all colliders scheduled for deletion
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
 		if (colliders[i] != nullptr && colliders[i]->toDelete == true)
@@ -111,7 +109,6 @@ bool Collisions::PreUpdate()
 
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
-		// skip empty colliders
 		if (colliders[i] == nullptr)
 		{
 			continue;
@@ -119,10 +116,8 @@ bool Collisions::PreUpdate()
 
 		c1 = colliders[i];
 
-		// avoid checking collisions already checked
 		for (uint k = i + 1; k < MAX_COLLIDERS; ++k)
 		{
-			// skip empty colliders
 			if (colliders[k] == nullptr)
 			{
 				continue;
@@ -161,14 +156,12 @@ bool Collisions::PreUpdate()
 						c2->callbackEn->OnCollision(c2, c1);
 				}
 			}
-
 		}
 	}
 
 	return true;
 }
 
-// Called before render is available
 bool Collisions::Update(float dt)
 {
 
@@ -218,7 +211,6 @@ void Collisions::DebugDraw()
 	}
 }
 
-// Called before quitting
 bool Collisions::CleanUp()
 {
 	LOG("Freeing all colliders");
@@ -251,8 +243,6 @@ Collider* Collisions::AddCollider(SDL_Rect rect, ColliderType type, Module* call
 
 	return ret;
 }
-
-// -----------------------------------------------------
 
 bool Collider::CheckCollision(const SDL_Rect& r) const
 {

@@ -7,7 +7,6 @@
 #include "Render.h"
 #include "Animation.h"
 #include "Physics.h"
-#include "Point.h"
 #include "Collisions.h"
 #include "Textures.h"
 #include "Map.h"

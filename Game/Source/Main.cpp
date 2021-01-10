@@ -3,15 +3,9 @@
 #include "Defs.h"
 #include "Log.h"
 
-// NOTE: SDL redefines main function
 #include "SDL/include/SDL.h"
 
-// NOTE: Library linkage is configured in Linker Options
-//#pragma comment(lib, "../Game/Source/External/SDL/libx86/SDL2.lib")
-//#pragma comment(lib, "../Game/Source/External/SDL/libx86/SDL2main.lib")
-
 #include <stdlib.h>
-
 
 enum MainState
 {
@@ -37,8 +31,6 @@ int main(int argc, char* args[])
 	{
 		switch (state)
 		{
-
-			// Allocate the engine --------------------------------------------
 		case CREATE:
 			LOG("CREATION PHASE ===============================");
 
@@ -51,7 +43,6 @@ int main(int argc, char* args[])
 
 			break;
 
-			// Awake all modules -----------------------------------------------
 		case AWAKE:
 			LOG("AWAKE PHASE ===============================");
 			if (app->Awake() == true)
@@ -64,7 +55,6 @@ int main(int argc, char* args[])
 
 			break;
 
-			// Call all modules before first frame  ----------------------------
 		case START:
 			LOG("START PHASE ===============================");
 			if (app->Start() == true)
@@ -79,13 +69,11 @@ int main(int argc, char* args[])
 			}
 			break;
 
-			// Loop all modules until we are asked to leave ---------------------
 		case LOOP:
 			if (app->Update() == false)
 				state = CLEAN;
 			break;
 
-			// Cleanup allocated memory -----------------------------------------
 		case CLEAN:
 			LOG("CLEANUP PHASE ===============================");
 			if (app->CleanUp() == true)
@@ -99,7 +87,6 @@ int main(int argc, char* args[])
 
 			break;
 
-			// Exit with errors and shame ---------------------------------------
 		case FAIL:
 			LOG("Exiting with errors >:c");
 			result = EXIT_FAILURE;
@@ -110,6 +97,5 @@ int main(int argc, char* args[])
 
 	LOG("... Bye! :D\n");
 
-	// Dump memory leaks
 	return result;
 }

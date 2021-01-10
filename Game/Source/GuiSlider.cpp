@@ -20,7 +20,6 @@ bool GuiSlider::Update(Input* input, float dt)
 		int mouseMotionX, mouseMotionY;
 		input->GetMouseMotion(mouseMotionX, mouseMotionY);
 
-		// Check collision between mouse and button bounds
 		if ((mouseX > bounds.x) && (mouseX < (bounds.x + bounds.w)) &&
 			(mouseY > bounds.y) && (mouseY < (bounds.y + bounds.h)))
 		{
@@ -33,10 +32,10 @@ bool GuiSlider::Update(Input* input, float dt)
 
 				if (bounds.x >= 590)
 				{
-					bounds.x = mouseX - (bounds.w / 2);  // Slider
+					bounds.x = mouseX - (bounds.w / 2);
 					if (bounds.x + bounds.w <= 765)
 					{
-						bounds.x = mouseX - (bounds.w / 2);  // Slider
+						bounds.x = mouseX - (bounds.w / 2);
 					}
 					else
 					{
@@ -61,7 +60,7 @@ bool GuiSlider::Update(Input* input, float dt)
 
 bool GuiSlider::Draw(Render* render)
 {
-	// Draw the right button depending on state
+
 	switch (state)
 	{
 	case GuiControlState::DISABLED: render->DrawRectangle(bounds, 100, 100, 100, 255);

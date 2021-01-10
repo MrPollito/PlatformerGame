@@ -23,7 +23,6 @@ Options::Options() : Module()
 
 Options::~Options()
 {
-
 }
 
 bool Options::Awake()
@@ -34,7 +33,6 @@ bool Options::Awake()
 	return ret;
 }
 
-// Load assets
 bool Options::Start()
 {
 	LOG("Loading Options assets");
@@ -83,23 +81,17 @@ bool Options::Update(float dt)
 	return true;
 }
 
-// Update: draw background
 bool Options::PostUpdate()
 {
 	bool ret = true;
 
-	// Draw everything --------------------------------------
 	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		app->fade->Fade(this, (Module*)app->scene, 10);
 
 	}
-	// if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-
-
 
 	app->render->DrawTexture(screen, 0, 0, NULL);
-
 
 	backButton->Draw(app->render);
 	musicVolume->Draw(app->render);

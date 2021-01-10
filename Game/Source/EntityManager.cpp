@@ -18,10 +18,8 @@ EntityManager::EntityManager() : Module()
 	batIds = 0;
 }
 
-// Destructor
 EntityManager::~EntityManager()
 {}
-
 
 bool EntityManager::Start()
 {
@@ -31,7 +29,6 @@ bool EntityManager::Start()
 	return ret;
 }
 
-// Called before render is available
 bool EntityManager::Awake(pugi::xml_node& config)
 {
 	LOG("Loading Entity Manager");
@@ -40,7 +37,6 @@ bool EntityManager::Awake(pugi::xml_node& config)
 	return ret;
 }
 
-// Called before quitting
 bool EntityManager::CleanUp()
 {
 	ListItem<Entity*>* enti = entities.start;
@@ -59,7 +55,11 @@ Entity* EntityManager::CreateEntity(EntityType type, int x, int y, ItemType item
 
 	switch (type)
 	{
-	case EntityType::PLAYER: ret = new Player();  break;
+	case EntityType::PLAYER:
+	{
+		ret = new Player();
+	}
+	break;
 	case EntityType::PIG_ENEMY:
 	{
 		pigIds++;
@@ -72,11 +72,20 @@ Entity* EntityManager::CreateEntity(EntityType type, int x, int y, ItemType item
 		ret = new BatEnemy(batIds,x,y);
 	}
 	break;
-	case EntityType::ITEM: ret = new Item(x,y,itemType);  break;
-	default: break;
+	case EntityType::ITEM:
+	{
+		ret = new Item(x, y, itemType);
+	}
+	break;
+
+	default:
+	break;
 	}
 
-	if (ret != nullptr) entities.Add(ret);
+	if (ret != nullptr)
+	{
+		entities.Add(ret);
+	}
 
 	return ret;
 }
@@ -158,7 +167,6 @@ bool EntityManager::UpdateAll(float dt, bool doLogic)
 {
 	if (doLogic)
 	{
-		//// TODO: Update all entities 
 		ListItem<Entity*>* enti = entities.start;
 		while (enti != NULL)
 		{

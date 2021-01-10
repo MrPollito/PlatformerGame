@@ -72,13 +72,11 @@ Player::Player() : Entity(EntityType::PLAYER)
 	checkpoint2 = false;
 	deathCheck = 0;
 
-	//// Audio
 	slashFx = app->scene->playerAttack;
 	jumpFx = app->scene->playerJump;
 	attackVoice = app->scene->playerVoice;
 	humanDeath = app->scene->playerDeath;
 
-	//Buttons
 	resumeButton = new GuiButton(9, { 550, 250, 100, 24 }, "RESUME");
 	resumeButton->SetObserver((Scene*)this);
 	resumeButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/resume_button.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_pressed.png"));
@@ -95,10 +93,9 @@ Player::Player() : Entity(EntityType::PLAYER)
 	exitButton->SetObserver((Scene*)this);
 	exitButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit_button.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_pressed.png"));
 
-	// Define Player animations
 	for (int i = 0; i < 11; i++)
 	{
-		idleRight.PushBack({ (playerSize * i),30,40,31 }); // playerSize = 78
+		idleRight.PushBack({ (playerSize * i),30,40,31 });
 	}
 
 	idleRight.speed = 0.5f;
@@ -161,8 +158,6 @@ Player::Player() : Entity(EntityType::PLAYER)
 		deathLeft.PushBack({ (45 * i),512,45,32 });
 	}
 	deathLeft.speed = 0.07f;
-
-	// Life Bar Animations
 
 	barFull.PushBack({ 280,500,22,4 });
 	bar3.PushBack({ 280,504,22,4 });
@@ -328,7 +323,7 @@ bool Player::Update(float dt)
 
 		}
 		else
-		{   //Godmode 
+		{
 			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 			{
 				position.x -= 4;
@@ -346,10 +341,8 @@ bool Player::Update(float dt)
 			{
 				position.y += 4;
 			}
-
 		}
 
-		//Player Actions
 		switch (action)
 		{
 		case PLAYER_IDLE_RIGHT:
@@ -427,10 +420,6 @@ bool Player::Update(float dt)
 		case PLAYER_DEATH:
 			if (deathCheck == 0) app->audio->PlayFx(humanDeath);
 			deathCheck = 1;
-			/*app->audio->UnloadFx(slashFx);
-			app->audio->UnloadFx(jumpFx);
-			app->audio->UnloadFx(humanDeath);
-			app->audio->UnloadFx(attackVoice);*/
 			if (facingRight == true)
 			{
 				currentAnimation = &deathRight;
@@ -445,13 +434,12 @@ bool Player::Update(float dt)
 				RespawnPlayer(0);
 				app->scene->ResetEntities();
 			}
-
 			break;
+
 		default:
 			break;
 		}
 
-		//Change position from velocity
 		position.x += velocity.x;
 		position.y += velocity.y;
 
@@ -460,12 +448,10 @@ bool Player::Update(float dt)
 			positionPixelPerfect.x = round(position.x);
 			positionPixelPerfect.y = round(position.y);
 		}
-		//Collider position
 		playerCollider->SetPos(positionPixelPerfect.x + 20, positionPixelPerfect.y + 39);
 		colPlayerWalls->SetPos(positionPixelPerfect.x + 22, positionPixelPerfect.y + 38);
 		playerHead->SetPos(positionPixelPerfect.x + 26, positionPixelPerfect.y + 25);
 
-		//Function to draw the player
 		UpdateLifeBar();
 		ret = Draw(dt);
 		onGround = false;
@@ -561,7 +547,6 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 	bool ret = false;
 	if (!godMode)
 	{
-
 		if (c1 == playerCollider && c2->type == COLLIDER_ENEMY)
 		{
 			if (app->scene->pig1->isDying == false)
@@ -586,7 +571,7 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 
 		if (c1 == playerCollider && c2->type == COLLIDER_GROUND)
 		{
-			if (c2->rect.y > c1->rect.y) // + c1->rect.h
+			if (c2->rect.y > c1->rect.y)
 			{
 				position.y = c2->rect.y - c2->rect.h * 2;
 				velocity.y = 0;
@@ -604,14 +589,12 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 		{
 			if (c2->rect.x > c1->rect.x + c1->rect.w - 5 && c2->rect.y < c1->rect.y + c1->rect.h)
 			{
-				//Collider in the right
 				position.x = c2->rect.x - c2->rect.w - 5;
 				velocity.x = 0;
 				rightColliding = true;
 			}
 			else if (c2->rect.x + c2->rect.w < c1->rect.x + 10 && c2->rect.y < c1->rect.y + c1->rect.h)
 			{
-				//Collider on the left
 				position.x = c2->rect.x + 10;
 				velocity.x = 0;
 				leftColliding = true;
@@ -634,10 +617,6 @@ bool Player::CleanUp()
 	bool ret = false;
 	active = false;
 	LOG("Unloading player");
-	/*app->audio->UnloadFx(slashFx);
-	app->audio->UnloadFx(jumpFx);
-	app->audio->UnloadFx(humanDeath);
-	app->audio->UnloadFx(attackVoice);*/
 
 	ret = app->tex->UnLoad(playerTexture);
 	if (playerCollider != nullptr)
@@ -686,7 +665,6 @@ bool Player::Save(pugi::xml_node& file)
 	return true;
 }
 
-//Resets player movement  
 bool Player::ResetPlayer()
 {
 	velocity.x = 0;
@@ -696,7 +674,7 @@ bool Player::ResetPlayer()
 
 	return true;
 }
-// Attack function
+
 void Player::AttackCollider(bool facing)
 {
 	if (facing == true)
@@ -754,7 +732,7 @@ void Player::SetTexture(SDL_Texture* tex)
 	playerTexture = tex;
 }
 
-void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting point, 2 checkpoint 1, 3 checkpoint 2
+void Player::RespawnPlayer(int key)
 {
 	idleRight.Reset();
 	idleLeft.Reset();
@@ -782,8 +760,8 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		if (checkpoint1 == false && checkpoint2 == false)
 		{
 			lives--;
-			app->render->camera.x = 50;
-			app->render->camera.y = -900;
+			app->render->camera.x = 0;
+			app->render->camera.y = -850;
 			position.x = PLAYER_STARTING_POS_X;
 			position.y = PLAYER_STARTING_POS_Y;
 		}
@@ -805,8 +783,8 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		}
 		break;
 	case 1:
-		app->render->camera.x = 50;
-		app->render->camera.y = -1050;
+		app->render->camera.x = 0;
+		app->render->camera.y = -850;
 		position.x = PLAYER_STARTING_POS_X;
 		position.y = PLAYER_STARTING_POS_Y;
 		break;

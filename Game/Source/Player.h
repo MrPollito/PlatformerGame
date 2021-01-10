@@ -46,21 +46,17 @@ public:
 
 	Player();
 
-	// Called each loop iteration
 	bool Update(float dt);
 
-	// Called before all Updates
 	bool PostUpdate();
 
 	bool Draw(float dt);
 
-	// Called before quitting
 	bool CleanUp();
 
 	bool Load(pugi::xml_node&);
 	bool Save(pugi::xml_node&);
 
-	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool ResetPlayer();
@@ -71,8 +67,8 @@ public:
 	void UpdateLifeBar();
 
 	SDL_Rect rCollider;
-	SDL_Rect r; // for player
-	SDL_Rect l; // for life bar
+	SDL_Rect r;
+	SDL_Rect l;
 	SDL_Rect attCollider;
 
 	SDL_Texture* playerTexture;
@@ -131,7 +127,6 @@ public:
 
 	PlayerAction action;
 
-	//Physics physics;
 	fPoint velocity;
 
 	bool checkpoint1;
@@ -146,7 +141,6 @@ public:
 	bool leftColliding;
 	bool rightColliding;
 
-// FX
 	uint jumpFx;
 	uint slashFx;
 	uint humanDeath;

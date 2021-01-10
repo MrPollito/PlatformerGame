@@ -16,10 +16,6 @@ public:
 	bool Update(Input* input, float dt);
 	bool Draw(Render* render);
 
-private:
-
-	// GuiCheckBox specific properties
-	// Maybe some animation properties for state change?
 	bool checked;
 };
 

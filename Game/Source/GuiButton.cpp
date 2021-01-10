@@ -11,7 +11,6 @@ GuiButton::GuiButton(uint32 id, SDL_Rect bounds, const char* text) : GuiControl(
 
 GuiButton::~GuiButton()
 {
-
 }
 
 bool GuiButton::Update(Input* input, float dt)
@@ -21,7 +20,6 @@ bool GuiButton::Update(Input* input, float dt)
 		int mouseX, mouseY;
 		input->GetMousePosition(mouseX, mouseY);
 
-		// Check collision between mouse and button bounds
 		if ((mouseX > bounds.x) && (mouseX < (bounds.x + bounds.w)) &&
 			(mouseY > bounds.y) && (mouseY < (bounds.y + bounds.h)))
 		{
@@ -32,7 +30,6 @@ bool GuiButton::Update(Input* input, float dt)
 				state = GuiControlState::PRESSED;
 			}
 
-			// If mouse button pressed -> Generate event!
 			if (input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KeyState::KEY_UP)
 			{
 				NotifyObserver();
@@ -46,7 +43,7 @@ bool GuiButton::Update(Input* input, float dt)
 
 bool GuiButton::Draw(Render* render)
 {
-	// Draw the right button depending on state
+
 	switch (state)
 	{
 	case GuiControlState::DISABLED:

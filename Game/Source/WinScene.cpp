@@ -23,7 +23,6 @@ WinScene::WinScene() : Module()
 
 WinScene::~WinScene()
 {
-
 }
 
 bool WinScene::Awake()
@@ -34,7 +33,6 @@ bool WinScene::Awake()
 	return ret;
 }
 
-// Load assets
 bool WinScene::Start()
 {
 	LOG("Loading Screens assets");
@@ -56,11 +54,10 @@ bool WinScene::Update(float dt)
 	return true;
 }
 
-// Update: draw background
 bool WinScene::PostUpdate()
 {
 	bool ret = true;
-	// Draw everything --------------------------------------
+
 	app->render->camera.x = 0;
 	app->render->camera.y = 0;
 	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -68,7 +65,6 @@ bool WinScene::PostUpdate()
 		app->scene->player->lives = 3;
 		app->fade->Fade(this, (Module*)app->menu, 10);
 	}
-	// if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
 	app->render->DrawTexture(screen, 0, 0, NULL);
 

@@ -14,11 +14,9 @@ Audio::Audio() : Module()
 	name.Create("audio");
 }
 
-// Destructor
 Audio::~Audio()
 {}
 
-// Called before render is available
 bool Audio::Awake(pugi::xml_node& config)
 {
 	LOG("Loading Audio Mixer");
@@ -32,7 +30,6 @@ bool Audio::Awake(pugi::xml_node& config)
 		ret = true;
 	}
 
-	// Load support for the JPG and PNG image formats
 	int flags = MIX_INIT_OGG;
 	int init = Mix_Init(flags);
 
@@ -43,7 +40,6 @@ bool Audio::Awake(pugi::xml_node& config)
 		ret = true;
 	}
 
-	// Initialize SDL_mixer
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
 		LOG("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
@@ -64,11 +60,11 @@ bool Audio::PreUpdate()
 	return true;
 }
 
-//Update called each loop to assign volume value
 bool Audio::Update()
 {
 	return true;
 }
+
 bool Audio::PostUpdate()
 {
 	bool ret = true;
@@ -76,7 +72,6 @@ bool Audio::PostUpdate()
 	return ret;
 }
 
-// Called before quitting
 bool Audio::CleanUp()
 {
 	if (!active)
@@ -102,7 +97,6 @@ bool Audio::CleanUp()
 	return true;
 }
 
-// Play a music file
 bool Audio::PlayMusic(const char* path, float fade_time)
 {
 	bool ret = true;
@@ -121,7 +115,6 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 			Mix_HaltMusic();
 		}
 
-		// this call blocks until fade out is done
 		Mix_FreeMusic(music);
 	}
 
@@ -156,7 +149,6 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 	return ret;
 }
 
-// Load WAV
 unsigned int Audio::LoadFx(const char* path)
 {
 	uint ret = 0;
@@ -181,7 +173,6 @@ unsigned int Audio::LoadFx(const char* path)
 	return ret;
 }
 
-// Play WAV
 bool Audio::PlayFx(unsigned int id, int once, int repeat)
 {
 	int tmp = once;
@@ -261,4 +252,3 @@ bool Audio::Save(pugi::xml_node& node)
 
 	return ret;
 }
-

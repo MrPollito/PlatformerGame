@@ -19,10 +19,6 @@ public:
 	bool Update(Input* input, float dt);
 	bool Draw(Render* render);
 
-private:
-
-	// Gui Button specific properties
-	// Maybe some animation properties for state change?
 };
 
 #endif // __GUIBUTTON_H__

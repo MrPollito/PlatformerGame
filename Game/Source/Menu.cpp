@@ -23,7 +23,6 @@ Menu::Menu() : Module()
 
 Menu::~Menu()
 {
-
 }
 
 bool Menu::Awake()
@@ -34,7 +33,6 @@ bool Menu::Awake()
 	return ret;
 }
 
-// Load assets
 bool Menu::Start()
 {
 	LOG("Loading Menu assets");
@@ -100,7 +98,7 @@ bool Menu::Update(float dt)
 
 
 	}
-	if (app->render->camera.y == -1000) //-2400
+	if (app->render->camera.y == -1000)
 	{
 		creditSceneFlag = false;
 	}
@@ -108,18 +106,15 @@ bool Menu::Update(float dt)
 	return true;
 }
 
-// Update: draw background
 bool Menu::PostUpdate()
 {
 	bool ret = true;
 
-	// Draw everything --------------------------------------
 	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		app->fade->Fade(this, (Module*)app->scene, 10);
 
 	}
-	// if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
 	if (creditSceneFlag == true)
 	{
@@ -128,13 +123,9 @@ bool Menu::PostUpdate()
 	}
 
 	if (!creditSceneFlag)
-
 	{
 		app->render->DrawTexture(screen, 0, 0, NULL);
 
-
-		// start->Draw(app->render);
-		// SDL_Rect rectPlayer = playerData.currentAnim->GetCurrentFrame();
 		play->Draw(app->render);
 		continueButton->Draw(app->render);
 		options->Draw(app->render);
@@ -161,29 +152,21 @@ bool Menu::CleanUp()
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
-
-
 	switch (control->type)
 	{
 	case GuiControlType::BUTTON:
 	{
 		if (control->id == 1)
 		{
-			//Play
 			app->fade->Fade(this, (Module*)app->scene, 20);
-			/*		app->render->camera.x = 50;
-					app->render->camera.y = -1050;*/
-
 		}
 		else if (control->id == 2)
 		{
-			//Options
 			if (app->scene->player->pauseCondition)    app->fade->Fade((Module*)app->scene, (Module*)app->options, 10);
 			else app->fade->Fade(this, (Module*)app->options, 10);
 		}
 		else if (control->id == 3)
 		{
-			//Back
 			if (app->scene->player->pauseCondition == false)
 			{
 				app->fade->Fade((Module*)app->options, (Module*)app->menu, 10);
@@ -195,37 +178,27 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		}
 		else if (control->id == 11)
 		{
-			//Back to title
 			if (app->scene) app->fade->Fade((Module*)app->scene, (Module*)app->menu, 10);
 
 		}
 		else if (control->id == 4)
 		{
-			//Exit
 			app->menu->exi = true;
 		}
 		else if (control->id == 8)
 		{
-			//Vsync
 			if (app->menu->vsync == true)
 			{
 
 				app->menu->vsync = false;
 			}
-			else
-			{
-
-			}
 		}
 		else if (control->id == 9)
 		{
-			//resume
 			app->scene->player->pauseCondition = false;
-
 		}
 		else if (control->id == 12)
 		{
-			//LoadGame
 			app->LoadRequest("savegame.xml");
 		}
 		else if (control->id == 13)
@@ -238,41 +211,30 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	{
 		if (control->id == 5)
 		{
-			//Volume
 			if (control->bounds.x == 143 || control->bounds.x == 156.5f || control->bounds.x == 170 || control->bounds.x == 183.5f || control->bounds.x == 197 || control->bounds.x == 210.5f || control->bounds.x == 224 || control->bounds.x == 237.5f || control->bounds.x == 251 || control->bounds.x == 264.5f || control->bounds.x == 278)
 			{
 				app->menu->volumMusic = ((control->bounds.x - 143) / 13.5) * 10;
-				/*	app->audio->Volume(app->menu->volumMusic + 10, '0');*/
-
-
 			}
 
 		}
 		else if (control->id == 6)
 		{
-			//FxVolume
 			if (control->bounds.x == 143 || control->bounds.x == 156.5f || control->bounds.x == 170 || control->bounds.x == 183.5f || control->bounds.x == 197 || control->bounds.x == 210.5f || control->bounds.x == 224 || control->bounds.x == 237.5f || control->bounds.x == 251 || control->bounds.x == 264.5f || control->bounds.x == 278)
 			{
 				if (control->bounds.x == 143)
 				{
-					/*	app->audio->Volume(0, '1');*/
 				}
 				else
 				{
 					app->menu->volumMusic = ((control->bounds.x - 143) / 13.5) * 10;
-					/*app->audio->Volume(app->menu->volumMusic + 10, '1');*/
 				}
-
 			}
-
 		}
-
 	}
 	case GuiControlType::CHECKBOX:
 	{
 		if (control->id == 7)
 		{
-			//FullScreen
 			if (app->menu->fullSc == false)
 			{
 				SDL_SetWindowFullscreen(app->win->window, SDL_WINDOW_FULLSCREEN);
@@ -284,7 +246,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			}
 		}
 	}
-	default: break;
+	default:
+	break;
 	}
 
 	return true;

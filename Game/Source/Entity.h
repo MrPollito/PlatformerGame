@@ -1,9 +1,10 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include "Collisions.h"
+
 #include "Point.h"
 #include "SString.h"
-#include "Collisions.h"
 
 enum class EntityType
 {

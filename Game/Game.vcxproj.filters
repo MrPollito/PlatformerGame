@@ -83,9 +83,7 @@
     <ClCompile Include="Source\WinScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\App.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />

@@ -85,24 +85,19 @@ public:
 	GuiControlType type;
 	GuiControlState state;
 
-	SString text;           // Control text (if required)
-	SDL_Rect bounds;        // Position and size
-	SDL_Color color;        // Tint color
+	SString text;
+	SDL_Rect bounds;
+	SDL_Color color;
 
 	SDL_Texture* textureIdle;
-	SDL_Texture* textureFocused;   // Texture atlas reference
+	SDL_Texture* textureFocused;
 	SDL_Texture* texturePressed;
-	SDL_Rect section;       // Texture atlas base section
+	SDL_Rect section;
 
-	//Font font;              // Text font
-
-	Scene* observer;        // Observer module (it should probably be an array/list)
-
-	//Audio
+	Scene* observer;
 
 	uint buttonFx = 0;
 	bool audio;
-
 };
 
 #endif // __GUICONTROL_H__

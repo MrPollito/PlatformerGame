@@ -36,28 +36,22 @@ class PigEnemy : public Entity
 public:
 	PigEnemy(int iD, int startingX, int startingY);
 
-	// Called each loop iteration
 	bool Update(float dt);
 
-	// Called each loop iteration
 	bool Draw(float dt);
 
-	// Called before quitting
 	bool CleanUp();
 	bool DisablePigEnemy();
 	bool EnablePigEnemy();
 
-	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool Load(pugi::xml_node& file);
 	bool Save(pugi::xml_node& file);
 
-	// Extra functions
 	bool PigJump();
 	bool ResetStates();
 
-	// Variables
 
 	Collider* pigEnemyCol;
 	SDL_Texture* enemyTexture;
@@ -92,12 +86,10 @@ public:
 	float speed;
 	float attackTimer;
 
-	// Pathfinding variables
 	int pathSteps = 0;
 	iPoint nextPos;
 	SString texPath;
 
-	// Animation stuff
 	Animation* currentAnimation = &idleLeft;
 	Animation idleLeft;
 	Animation idleRight;
@@ -126,26 +118,20 @@ public:
 
 	BatEnemy(int iD, int startingX, int startingY);
 
-	// Called each loop iteration
 	bool Update(float dt);
 
-	// Called each loop iteration
 	bool Draw(float dt);
 
-	// Called before quitting
 	bool CleanUp();
 
-	// Collisions
 	bool OnCollision(Collider* c1, Collider* c2);
 
 	bool Load(pugi::xml_node& file);
 	bool Save(pugi::xml_node& file);
 
-	// Extra functions
 	bool ResetStates();
 	bool DisableBatEnemy();
 
-	// Variables
 
 	Collider* batEnemyCol;
 	SDL_Texture* enemyTexture;
@@ -181,12 +167,10 @@ public:
 	float speed;
 	float attackTimer;
 
-	// Pathfinding variables
 	int pathSteps = 0;
 	iPoint nextPos;
 	SString texPath;
 
-	// Animation stuff
 	Animation* currentAnimation = &idleLeft;
 	Animation idleLeft;
 	Animation idleRight;

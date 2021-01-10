@@ -14,10 +14,8 @@ public:
 
 	Audio();
 
-	// Destructor
 	virtual ~Audio();
 
-	// Called before render is available
 	bool Awake(pugi::xml_node&);
 
 	bool PreUpdate();
@@ -26,24 +24,20 @@ public:
 
 	bool PostUpdate();
 
-	// Called before quitting
 	bool CleanUp();
 
-	// Play a music file
 	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
 
-	// Load a WAV in memory
 	unsigned int LoadFx(const char* path);
 
-	// Play a previously loaded WAV
 	bool PlayFx(unsigned int fx, int once = 1, int repeat = 0);
 
 	bool UnloadFx(uint index);
 
 	void Volume(int value);
 
-	//Audio Load/Save 
 	bool Load(pugi::xml_node&);
+
 	bool Save(pugi::xml_node&);
 
 private:

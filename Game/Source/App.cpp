@@ -28,11 +28,6 @@
 #include <iostream>
 #include <sstream>
 
-// L07: TODO 3: Measure the amount of ms that takes to execute:
-// App constructor, Awake, Start and CleanUp
-// LOG the result
-
-// Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
 	PERF_START(ptimer);
@@ -55,8 +50,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	deathScene = new DeathScene();
 	winScene = new WinScene();
 
-	// Ordered for awake / Start / Update
-	// Reverse order of CleanUp
 	AddModule(input);
 	AddModule(win);
 	AddModule(tex);
@@ -74,25 +67,18 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(winScene);
 	AddModule(collisions);
 
-	// render last to swap buffer
 	AddModule(render);
 
 	logo->active = false;
-	//intro->active = false;
-	//menu->active = false;
-	/*scene->active = false;*/
 	options->active = false;
 	deathScene->active = false;
 	winScene->active = false;
-	/*entityManager->active = false;*/
 
 	PERF_PEEK(ptimer);
 }
 
-// Destructor
 App::~App()
 {
-	// release modules
 	ListItem<Module*>* item = modules.end;
 
 	while (item != NULL)
@@ -112,12 +98,10 @@ void App::AddModule(Module* module)
 	modules.Add(module);
 }
 
-// Called before render is available
 bool App::Awake()
 {
 	PERF_START(ptimer);
 
-	// TODO 3: Load config.xml file using load_file() method from the xml_document class.
 	bool ret = LoadConfig();
 
 	if (config.empty() == false)
@@ -125,12 +109,10 @@ bool App::Awake()
 		ret = true;
 		configApp = config.child("app");
 
-		// TODO 4: Read the title from the config file
 		title.Create(configApp.child("title").child_value());
 		win->SetTitle(title.GetString());
 		organization.Create(configApp.child("organization").child_value());
 
-		// L08: TODO 1: Read from config file your framerate cap
 		int cap = configApp.attribute("framerate_cap").as_int(-1);
 
 		if (cap > 0) cappedMs = 1000 / cap;
@@ -143,10 +125,6 @@ bool App::Awake()
 
 		while (item != NULL && ret == true)
 		{
-			// TODO 5: Add a new argument to the Awake method to receive a pointer to an xml node.
-			// If the section with the module name exists in config.xml, fill the pointer with the valid xml_node
-			// that can be used to read all variables for that module.
-			// Send nullptr if the node does not exist in config.xml
 			ret = item->data->Awake(config.child(item->data->name.GetString()));
 			item = item->next;
 		}
@@ -157,7 +135,6 @@ bool App::Awake()
 	return ret;
 }
 
-// Called before the first frame
 bool App::Start()
 {
 	PERF_START(ptimer);
@@ -177,7 +154,6 @@ bool App::Start()
 	return ret;
 }
 
-// Called each loop iteration
 bool App::Update()
 {
 	bool ret = true;
@@ -199,7 +175,6 @@ bool App::Update()
 	return ret;
 }
 
-// TODO 3: Load config from XML file
 bool App::LoadConfig()
 {
 	bool ret = true;
@@ -220,30 +195,19 @@ bool App::LoadConfig()
 	return ret;
 }
 
-// ---------------------------------------------
 void App::PrepareUpdate()
 {
 	frameCount++;
 	lastSecFrameCount++;
 
-	// L08: TODO 4: Calculate the dt: differential time since last frame
 	dt = frameTime.ReadSec();
 	frameTime.Start();
 }
 
-// ---------------------------------------------
 void App::FinishUpdate()
 {
-	// L02: TODO 1: This is a good place to call Load / Save methods
 	if (loadRequest == true) LoadGame();
 	if (saveRequest == true) SaveGame();
-
-	// L07: TODO 4: Now calculate:
-	// Amount of frames since startup
-	// Amount of time since game start (use a low resolution timer)
-	// Average FPS for the whole game life
-	// Amount of ms took the last update
-	// Amount of frames during the last second
 
 	float averageFps = 0.0f;
 	float secondsSinceStartup = 0.0f;
@@ -261,16 +225,12 @@ void App::FinishUpdate()
 
 	app->win->SetTitle(title);
 
-	// L08: TODO 2: Use SDL_Delay to make sure you get your capped framerate
 	if (lastFrameMs < (1000 / cappedFrames))
 	{
-		// L08: TODO 3: Measure accurately the amount of time SDL_Delay() actually waits compared to what was expected
-		// Capped frames
 		SDL_Delay((1000 / cappedFrames) - lastFrameMs);
 	}
 }
 
-// Call modules before each loop iteration
 bool App::PreUpdate()
 {
 	bool ret = true;
@@ -292,7 +252,6 @@ bool App::PreUpdate()
 	return ret;
 }
 
-// Call modules on each loop iteration
 bool App::DoUpdate()
 {
 	bool ret = true;
@@ -308,15 +267,12 @@ bool App::DoUpdate()
 			continue;
 		}
 
-		// L08: TODO 5: Send dt as an argument to all updates, you need
-		// to update module parent class and all modules that use update
 		ret = item->data->Update(dt);
 	}
 
 	return ret;
 }
 
-// Call modules after each loop iteration
 bool App::PostUpdate()
 {
 	bool ret = true;
@@ -337,7 +293,6 @@ bool App::PostUpdate()
 	return ret;
 }
 
-// Called before quitting
 bool App::CleanUp()
 {
 	bool ret = true;
@@ -353,13 +308,11 @@ bool App::CleanUp()
 	return ret;
 }
 
-// ---------------------------------------
 int App::GetArgc() const
 {
 	return argc;
 }
 
-// ---------------------------------------
 const char* App::GetArgv(int index) const
 {
 	if (index < argc)
@@ -368,13 +321,11 @@ const char* App::GetArgv(int index) const
 		return NULL;
 }
 
-// ---------------------------------------
 const char* App::GetTitle() const
 {
 	return title.GetString();
 }
 
-// ---------------------------------------
 const char* App::GetOrganization() const
 {
 	return organization.GetString();
@@ -394,9 +345,6 @@ void App::SaveRequest(const char* filename)
 		loadFileName.Create(filename);
 	}
 }
-
-// L02: TODO 5: Create a method to actually load an xml file
-// then call all the modules to load themselves
 
 bool App::LoadGame()
 {
@@ -421,8 +369,6 @@ bool App::LoadGame()
 	return ret;
 }
 
-
-// L02: TODO 7: Implement the xml save method for current state
 bool App::SaveGame()const
 {
 	bool ret = true;

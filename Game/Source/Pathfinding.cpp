@@ -9,13 +9,11 @@ PathFinding::PathFinding() : Module(), map(NULL), lastPath(DEFAULT_PATH_LENGTH),
 	name.Create("pathfinding");
 }
 
-// Destructor
 PathFinding::~PathFinding()
 {
 	RELEASE_ARRAY(map);
 }
 
-// Called before quitting
 bool PathFinding::CleanUp()
 {
 	LOG("Freeing pathfinding library");
@@ -26,7 +24,6 @@ bool PathFinding::CleanUp()
 	return true;
 }
 
-// Sets up the walkability map
 void PathFinding::SetMap(uint width, uint height, uchar* data)
 {
 	this->width = width;
@@ -37,21 +34,18 @@ void PathFinding::SetMap(uint width, uint height, uchar* data)
 	memcpy(map, data, width * height);
 }
 
-// Utility: return true if pos is inside the map boundaries
 bool PathFinding::CheckBoundaries(const iPoint& pos) const
 {
 	return (pos.x >= 0 && pos.x <= (int)width &&
 		pos.y >= 0 && pos.y <= (int)height);
 }
 
-// Utility: returns true is the tile is walkable
 bool PathFinding::IsWalkable(const iPoint& pos) const
 {
 	uchar t = GetTileAt(pos);
 	return t != INVALID_WALK_CODE;
 }
 
-// Utility: return the walkability value of a tile
 uchar PathFinding::GetTileAt(const iPoint& pos) const
 {
 	if (CheckBoundaries(pos))
@@ -60,15 +54,11 @@ uchar PathFinding::GetTileAt(const iPoint& pos) const
 	return INVALID_WALK_CODE;
 }
 
-// To request all tiles involved in the last generated path
 const DynArray<iPoint>* PathFinding::GetLastPath() const
 {
 	return &lastPath;
 }
 
-// PathList ------------------------------------------------------------------------
-// Looks for a node in this list and returns it's list node or NULL
-// ---------------------------------------------------------------------------------
 ListItem<PathNode>* PathList::Find(const iPoint& point) const
 {
 	ListItem<PathNode>* item = list.start;
@@ -81,9 +71,6 @@ ListItem<PathNode>* PathList::Find(const iPoint& point) const
 	return NULL;
 }
 
-// PathList ------------------------------------------------------------------------
-// Returns the Pathnode with lowest score in this list or NULL if empty
-// ---------------------------------------------------------------------------------
 ListItem<PathNode>* PathList::GetNodeLowestScore() const
 {
 	ListItem<PathNode>* ret = NULL;
@@ -102,9 +89,6 @@ ListItem<PathNode>* PathList::GetNodeLowestScore() const
 	return ret;
 }
 
-// PathNode -------------------------------------------------------------------------
-// Convenient constructors
-// ----------------------------------------------------------------------------------
 PathNode::PathNode() : g(-1), h(-1), pos(-1, -1), parent(NULL)
 {}
 
@@ -114,9 +98,6 @@ PathNode::PathNode(int g, int h, const iPoint& pos, const PathNode* parent) : g(
 PathNode::PathNode(const PathNode& node) : g(node.g), h(node.h), pos(node.pos), parent(node.parent)
 {}
 
-// PathNode -------------------------------------------------------------------------
-// Fills a list (PathList) of all valid adjacent pathnodes
-// ----------------------------------------------------------------------------------
 uint PathNode::FindWalkableAdjacents(PathList& listToFill) const
 {
 	iPoint cell;
@@ -145,17 +126,11 @@ uint PathNode::FindWalkableAdjacents(PathList& listToFill) const
 	return listToFill.list.Count();
 }
 
-// PathNode -------------------------------------------------------------------------
-// Calculates this tile score
-// ----------------------------------------------------------------------------------
 int PathNode::Score() const
 {
 	return g + h;
 }
 
-// PathNode -------------------------------------------------------------------------
-// Calculate the F for a specific destination tile
-// ----------------------------------------------------------------------------------
 int PathNode::CalculateF(const iPoint& destination)
 {
 	g = parent->g + 1;
@@ -164,36 +139,26 @@ int PathNode::CalculateF(const iPoint& destination)
 	return g + h;
 }
 
-// ----------------------------------------------------------------------------------
-// Actual A* algorithm: return number of steps in the creation of the path or -1 ----
-// ----------------------------------------------------------------------------------
 int PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
 {
-	// L12b: TODO 1: if origin or destination are not walkable, return -1
 	if (IsWalkable(origin) == false || IsWalkable(destination) == false)
 	{
 		return -1;
 	}
-	// L12b: TODO 2: Create two lists: open, close
 	lastPath.Clear();
 
 	PathList open;
 	PathList closed;
-	// Add the origin tile to open
 	open.list.Add(PathNode(0, origin.DistanceTo(destination), origin, NULL));
-	// Iterate while we have tile in the open list
 	PathNode* currentNode;
 
 	while (open.GetNodeLowestScore() != NULL)
 	{
 		currentNode = new PathNode(open.GetNodeLowestScore()->data);
-		// L12b: TODO 3: Move the lowest score cell from open list to the closed list
 		closed.list.Add(*currentNode);
 		open.list.Del(open.Find(currentNode->pos));
-		// L12b: TODO 4: If we just added the destination, we are done!
 		if (currentNode->pos == destination)
 		{
-			// Backtrack to create the final path
 			const PathNode* iterator = currentNode;
 
 			for (iterator; iterator->pos != origin; iterator = iterator->parent)
@@ -202,18 +167,14 @@ int PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
 			}
 			lastPath.PushBack(origin);
 
-			// Use the Pathnode::parent and Flip() the path when you are finish
 			lastPath.Flip();
 			return 0;
 		}
 
-		// L12b: TODO 5: Fill a list of all adjancent nodes
 		PathList adjacentList;
 		uint limit = currentNode->FindWalkableAdjacents(adjacentList);
-		// L12b: TODO 6: Iterate adjancent nodes:
-		// ignore nodes in the closed list
+
 		for (uint i = 0; i < limit; i++) {
-			// If it is NOT found, calculate its F and add it to the open list
 			if ((closed.Find(adjacentList.list[i].pos)) == NULL)
 			{
 				if ((open.Find(adjacentList.list[i].pos)) == NULL)
@@ -221,10 +182,9 @@ int PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
 					adjacentList.list[i].CalculateF(destination);
 					open.list.Add(adjacentList.list[i]);
 				}
-				// If it is already in the open list, check if it is a better path (compare G)
+
 				else {
 					if (adjacentList.list[i].g < open.Find(adjacentList.list[i].pos)->data.g) {
-						// If it is a better path, Update the parent
 						adjacentList.list[i].CalculateF(destination);
 						open.list.Del(open.Find(adjacentList.list[i].pos));
 						open.list.Add(adjacentList.list[i]);

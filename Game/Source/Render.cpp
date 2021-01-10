@@ -18,11 +18,9 @@ Render::Render() : Module()
 	background.a = 0;
 }
 
-// Destructor
 Render::~Render()
 {}
 
-// Called before render is available
 bool Render::Awake(pugi::xml_node& config)
 {
 	LOG("Create SDL rendering context");
@@ -54,16 +52,13 @@ bool Render::Awake(pugi::xml_node& config)
 	return ret;
 }
 
-// Called before the first frame
 bool Render::Start()
 {
 	LOG("render start");
-	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
 	return true;
 }
 
-// Called each loop iteration
 bool Render::PreUpdate()
 {
 	SDL_RenderClear(renderer);
@@ -82,7 +77,6 @@ bool Render::PostUpdate()
 	return true;
 }
 
-// Called before quitting
 bool Render::CleanUp()
 {
 	LOG("Destroying SDL render");
@@ -90,8 +84,6 @@ bool Render::CleanUp()
 	return true;
 }
 
-// L02: TODO 6: Implement a method to load the state
-// for now load camera's x and y
 bool Render::Load(pugi::xml_node& load)
 {
 	camera.x = load.child("camera").attribute("x").as_int();
@@ -99,8 +91,7 @@ bool Render::Load(pugi::xml_node& load)
 
 	return true;
 }
-// L02: TODO 8: Create a method to save the state of the renderer
-// using append_child and append_attribute
+
 bool Render::Save(pugi::xml_node& saveNode)
 {
 	pugi::xml_node cam = saveNode.append_child("camera");
@@ -110,6 +101,7 @@ bool Render::Save(pugi::xml_node& saveNode)
 
 	return true;
 }
+
 void Render::SetBackgroundColor(SDL_Color color)
 {
 	background = color;
@@ -125,7 +117,6 @@ void Render::ResetViewPort()
 	SDL_RenderSetViewport(renderer, &viewport);
 }
 
-// Blit to screen
 bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, bool flipTexture, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;

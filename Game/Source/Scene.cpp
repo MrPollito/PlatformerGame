@@ -18,11 +18,9 @@ Scene::Scene() : Module()
 	name.Create("scene");
 }
 
-// Destructor
 Scene::~Scene()
 {}
 
-// Called before render is available
 bool Scene::Awake()
 {
 	LOG("Loading Scene");
@@ -33,7 +31,6 @@ bool Scene::Awake()
 
 }
 
-// Called before the first frame
 bool Scene::Start()
 {
 	app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
@@ -64,7 +61,6 @@ bool Scene::Start()
 		RELEASE_ARRAY(data);
 	}
 
-	// Load game entities
 	player = (Player*)app->entityManager->CreateEntity(EntityType::PLAYER, 0, 0, NOTYPE);
 
 	pig1 = (PigEnemy*)app->entityManager->CreateEntity(EntityType::PIG_ENEMY, 400, 1550, NOTYPE);
@@ -110,13 +106,11 @@ bool Scene::Start()
 	return true;
 }
 
-// Called each loop iteration
 bool Scene::PreUpdate()
 {
 	return true;
 }
 
-// Called each loop iteration
 bool Scene::Update(float dt)
 {
 
@@ -176,19 +170,7 @@ bool Scene::Update(float dt)
 		LOG("Debug Mode");
 		app->debug = !app->debug;
 	}
-	if (app->input->GetKey(SDL_SCANCODE_T) == KEY_DOWN)
-	{
-		LOG("Stop game"); // Breakpoint here
-	}
 
-	if (app->input->GetKey(SDL_SCANCODE_Z) == KEY_DOWN)
-	{
-		app->winScene->active = true;
-	}
-
-
-
-	//Start from level 1
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		LOG("Starting from first level");
@@ -202,7 +184,6 @@ bool Scene::Update(float dt)
 		ResetEntities();
 	}
 
-	//Restart level
 	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 	{
 		LOG("Restarting level");
@@ -228,7 +209,6 @@ bool Scene::Update(float dt)
 
 	app->map->Draw();
 
-	//HUD life
 	for (int i = 0; i < player->lives; i++)
 	{
 		app->render->DrawTexture(lifesTex, app->render->camera.x * -1 + (36 * i + 10), (app->render->camera.y * -1) + 10);
@@ -237,32 +217,10 @@ bool Scene::Update(float dt)
 	return true;
 }
 
-// Called each loop iteration
 bool Scene::PostUpdate()
 {
 	bool ret = true;
-	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	//	ret = false;
 
-	//Player border
-	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	//{
-	//	app->SaveRequest("savegame.xml");
-	//	//cameraBckUp = app->render->camera;
-	//	app->scene->player->pauseCondition = !app->scene->player->pauseCondition;
-
-	//}
-	//if (app->scene->player->pauseCondition)
-	//{
-	//	app->render->camera.x = 0;
-	//	app->render->camera.y = 0;
-	//	app->render->DrawTexture(app->scene->player->pause, 0, -20, NULL);
-	//	resumeButton->Draw(app->render);
-	//	settingsButton->Draw(app->render);
-	//	backToTitleButton->Draw(app->render);
-	//	exitButton->Draw(app->render);
-	
-	//}
 	if (player->dead == false)
 	{
 		if ((app->render->camera.x + player->r.x) < (app->map->mapData.tileWidth * 15)) { app->render->camera.x += 2; }
@@ -273,7 +231,6 @@ bool Scene::PostUpdate()
 
 		if ((player->r.h + app->render->camera.y + player->r.y) > (app->render->camera.h - app->map->mapData.tileHeight * 8)) { app->render->camera.y -= 2; }
 
-		// Map movement
 
 		if (app->render->camera.x >= 0) { app->render->camera.x -= 2; }
 
@@ -284,11 +241,9 @@ bool Scene::PostUpdate()
 		if ((app->render->camera.h - app->render->camera.y) > (app->map->mapData.height * app->map->mapData.tileHeight)) { app->render->camera.y += 2; }
 	}
 
-
 	return ret;
 }
 
-// Called before quitting
 bool Scene::CleanUp()
 {
 	LOG("Freeing scene");

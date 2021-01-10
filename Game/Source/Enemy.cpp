@@ -8,15 +8,15 @@
 #include "Scene.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Log.h" 
 #include "Player.h"
 #include "EntityManager.h"
 
 #include "Pathfinding.h"
+#include "Log.h" 
 
 #define DEFAULT_PATH_LENGTH 50
 
-// PIG ENEMY FUNCTIONS ------------------------------------------------------------------------------
+
 PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PIG_ENEMY)
 {
 	LOG("Creating pigEnemy");
@@ -54,9 +54,6 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	
 	action = PIGENEMY_IDLE;
 	
-
-	// Animations
-	// IDLE ----------------------------------------------
 	for (int i = 0; i < 11; i++)
 	{
 		idleLeft.PushBack({ (34 * i),168,34,28 });
@@ -69,7 +66,6 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	}
 	idleRight.speed = 0.25f;
 
-	// MOVEMENT --------------------------------------------
 	for (int i = 0; i < 6; i++)
 	{
 		moveLeft.PushBack({ (34 * i),0,34,28 });
@@ -82,7 +78,6 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	}
 	moveRight.speed = 0.2f;
 
-	// DEATH ----------------------------------------------
 	for (int i = 0; i < 4; i++)
 	{
 		deathLeft.PushBack({ (34 * i),56,34,28 });
@@ -97,7 +92,6 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	deathRight.speed = 0.03f;
 	deathRight.loop = false;
 
-	// HIT ------------------------------------------------
 	for (int i = 0; i < 2; i++)
 	{
 		hitLeft.PushBack({ (34 * i),224,34,28 });
@@ -110,12 +104,10 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	}
 	hitRight.speed = 0.1f;
 
-	// JUMPING ------------------------------------------------
 	upRight.PushBack({ 34,140,34,28 });
 	upLeft.PushBack({ 0,140,34,28 });
 	upRight.speed = 0.1f;
 	upLeft.speed = 0.1f;
-	
 }
 
 bool PigEnemy::Update(float dt)
@@ -179,21 +171,17 @@ bool PigEnemy::Update(float dt)
 	case PIGENEMY_MOVE:
 	{
 		iPoint origin = positionPixelPerfect;
-		// Target is player position
+		
 		iPoint playerPos = app->scene->player->positionPixelPerfect;
 
-
-		// Convert World position to map position
 		origin = app->map->WorldToMap(positionPixelPerfect.x + 20, positionPixelPerfect.y);
 		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
 
-		// Create new path
 		app->pathfinding->CreatePath(origin, playerPos);
 		const DynArray<iPoint>* path = app->pathfinding->GetLastPath();
 
 		if (path->At(1) != NULL)
 		{
-			// Move Enemy to Player
 			if (path->At(1)->x < origin.x)
 			{
 				currentAnimation = &moveLeft;
@@ -213,8 +201,6 @@ bool PigEnemy::Update(float dt)
 				}
 			}
 		}
-
-		// Draw path
 		if (app->debug)
 		{
 			for (uint i = 0; i < path->Count(); ++i)
@@ -287,18 +273,15 @@ bool PigEnemy::Update(float dt)
 			moveRight.Reset();
 		}
 
-		//Change position from velocity
 		position.x += (velocity.x * dt * 60);
 		position.y += (velocity.y * dt * 60);
 
 		positionPixelPerfect.x = round(position.x);
 		positionPixelPerfect.y = round(position.y);
 
-		//Collider position
 		pigEnemyCol->SetPos(positionPixelPerfect.x, positionPixelPerfect.y);
 		r.x = positionPixelPerfect.x; r.y = positionPixelPerfect.y;
 
-		//Function to draw the player
 		ret = Draw(dt);
 		onGround = false;
 	}
@@ -406,12 +389,12 @@ bool PigEnemy::Save(pugi::xml_node& file)
 	return true;
 }
 
-bool PigEnemy::EnablePigEnemy() //Enable function for changing scene
+bool PigEnemy::EnablePigEnemy()
 {
 	return true;
 }
 
-bool PigEnemy::DisablePigEnemy() //Disable function for changing scene
+bool PigEnemy::DisablePigEnemy()
 {
 	LOG("Disabling pigEnemy");
 	active = false;
@@ -424,7 +407,7 @@ bool PigEnemy::DisablePigEnemy() //Disable function for changing scene
 	return true;
 }
 
-bool PigEnemy::ResetStates() //Reset all states before checking input
+bool PigEnemy::ResetStates()
 {
 	velocity.SetToZero();
 
@@ -433,7 +416,6 @@ bool PigEnemy::ResetStates() //Reset all states before checking input
 
 bool PigEnemy::CleanUp()
 {
-	//app->audio->UnloadFx(pigDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();
@@ -477,7 +459,6 @@ bool PigEnemy::PigJump()
 }
 
 
-// BAT ENEMY FUNCTIONS ------------------------------------------------------------------------------
 BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BAT_ENEMY)
 {
 	LOG("Creating batEnemy");
@@ -515,9 +496,6 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 
 	action = BATENEMY_IDLE;
 
-
-	// Animations
-	// IDLE ----------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
 		idleLeft.PushBack({ (24 * i),40,24,20 });
@@ -530,7 +508,6 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 	}
 	idleRight.speed = 0.25f;
 
-	// MOVEMENT --------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
 		moveLeft.PushBack({ (24 * i),40,24,20 });
@@ -543,7 +520,6 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 	}
 	moveRight.speed = 0.25f;
 
-	// DEATH ----------------------------------------------
 	for (int i = 0; i < 5; i++)
 	{
 		deathLeft.PushBack({ (24 * i),20,24,20 });
@@ -585,7 +561,6 @@ bool BatEnemy::Update(float dt)
 
 	else action = BATENEMY_IDLE;
 
-	//Status
 	switch (action)
 	{
 	case BATENEMY_IDLE:
@@ -609,20 +584,17 @@ bool BatEnemy::Update(float dt)
 	case BATENEMY_MOVE:
 	{
 		iPoint origin = positionPixelPerfect;
-		// Target is player position
+	
 		iPoint playerPos = app->scene->player->positionPixelPerfect;
 
-		// Convert World position to map position
 		origin = app->map->WorldToMap(positionPixelPerfect.x + 20, positionPixelPerfect.y);
 		playerPos = app->map->WorldToMap(playerPos.x + 32, playerPos.y + 32);
 
-		// Create new path
 		app->pathfinding->CreatePath(origin, playerPos);
 		const DynArray<iPoint>* path = app->pathfinding->GetLastPath();
 
 		if (path->At(1) != NULL)
 		{
-			// Move Enemy to Player
 			if (path->At(1)->x < origin.x)
 			{
 				currentAnimation = &moveLeft;
@@ -645,7 +617,6 @@ bool BatEnemy::Update(float dt)
 			}
 		}
 
-		// Draw path
 		if (app->debug)
 		{
 			for (uint i = 0; i < path->Count(); ++i)
@@ -695,18 +666,15 @@ bool BatEnemy::Update(float dt)
 			moveRight.Reset();
 		}
 
-		//Change position from velocity
 		position.x += (velocity.x * dt * 60);
 		position.y += (velocity.y * dt * 60);
 
 		positionPixelPerfect.x = round(position.x);
 		positionPixelPerfect.y = round(position.y);
 
-		//Collider position
 		batEnemyCol->SetPos(positionPixelPerfect.x, positionPixelPerfect.y);
 		r.x = positionPixelPerfect.x; r.y = positionPixelPerfect.y;
 
-		//Function to draw the player
 		ret = Draw(dt);
 		onGround = false;
 	}
@@ -812,14 +780,14 @@ bool BatEnemy::Save(pugi::xml_node& file)
 	return true;
 }
 
-bool BatEnemy::ResetStates() //Reset all states before checking input
+bool BatEnemy::ResetStates()
 {
 	velocity.SetToZero();
 
 	return true;
 }
 
-bool BatEnemy::DisableBatEnemy() //Disable function for changing scene
+bool BatEnemy::DisableBatEnemy()
 {
 	LOG("Disabling batEnemy");
 	active = false;
@@ -833,7 +801,6 @@ bool BatEnemy::DisableBatEnemy() //Disable function for changing scene
 
 bool BatEnemy::CleanUp()
 {
-	//app->audio->UnloadFx(batDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();
