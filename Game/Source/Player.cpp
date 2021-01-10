@@ -69,7 +69,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 	checkpoint2 = false;
 	deathCheck = 0;
 
-	// Audio
+	//// Audio
 	slashFx = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
 	jumpFx = app->audio->LoadFx("Assets/audio/fx/Jump2.wav");
 	humanDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
@@ -454,10 +454,10 @@ bool Player::Update(float dt)
 
 		if (lives == 0)
 		{
-			if (app->scene->active == true)
+			/*if (app->scene->active == true)
 			{
 				app->fade->Fade((Module*)app->scene, (Module*)app->deathScene, 1);
-			}
+			}*/
 		}
 	}
 	if (pauseCondition)
