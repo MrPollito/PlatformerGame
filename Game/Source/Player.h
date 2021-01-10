@@ -37,6 +37,7 @@ enum PlayerAction
 
 struct Collider;
 class GuiButton;
+class GuiCheckBox;
 class Module;
 
 class Player : public Entity
@@ -93,6 +94,7 @@ public:
 	int attColliderTimer;
 	int lives;
 	int money;
+	int enemiesKilled;
 
 	int playerSize = 78;
 	float speed;
@@ -152,7 +154,7 @@ public:
 	uint attackVoice;
 	
 	GuiButton* resumeButton;
-	GuiButton* settingsButton;
+	GuiButton* options;
 	GuiButton* backToTitleButton;
 	GuiButton* exitButton;
 

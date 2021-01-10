@@ -11,6 +11,7 @@
 #include "Log.h"
 #include "Pathfinding.h"
 #include "EntityManager.h"
+#include "WinScene.h"
 
 Scene::Scene() : Module()
 {
@@ -103,6 +104,9 @@ bool Scene::Start()
 	checkPoint1 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 1460, 322, CHECKPOINT);
 	checkPoint2 = (Item*)app->entityManager->CreateEntity(EntityType::ITEM, 2140, 1058, CHECKPOINT);
 
+	app->render->camera.x = 0;
+	app->render->camera.y = -1000;
+
 	return true;
 }
 
@@ -177,6 +181,13 @@ bool Scene::Update(float dt)
 		LOG("Stop game"); // Breakpoint here
 	}
 
+	if (app->input->GetKey(SDL_SCANCODE_Z) == KEY_DOWN)
+	{
+		app->winScene->active = true;
+	}
+
+
+
 	//Start from level 1
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
@@ -250,7 +261,7 @@ bool Scene::PostUpdate()
 	//	settingsButton->Draw(app->render);
 	//	backToTitleButton->Draw(app->render);
 	//	exitButton->Draw(app->render);
-
+	
 	//}
 	if (player->dead == false)
 	{

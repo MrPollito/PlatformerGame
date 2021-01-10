@@ -41,7 +41,7 @@ bool DeathScene::Start()
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/death_screen.png");
+	screen = app->tex->Load("Assets/Textures/random_death_scene.png");
 
 	return ret;
 }
@@ -66,7 +66,7 @@ bool DeathScene::PostUpdate()
 	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		app->scene->player->lives = 3;
-		app->fade->Fade(this, (Module*)app->intro, 1);
+		app->fade->Fade(this, (Module*)app->menu, 1);
 	}
 	//if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
@@ -80,6 +80,5 @@ bool DeathScene::CleanUp()
 	if (!active)return true;
 	LOG("Freeing intro");
 	app->deathScene->active = false;
-	app->tex->UnLoad(screen);
 	return true;
 }

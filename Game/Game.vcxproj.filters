@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\App.cpp" />
     <ClCompile Include="Source\Log.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -83,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="Source\WinScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\App.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

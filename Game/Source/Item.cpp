@@ -19,6 +19,7 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	r.x = position.x;
 	r.y = position.y;
 	checked = false;
+	coinTaken = false;
 	checkCheck = 0;
 
 	pickCoin = app->scene->pickCoin;
@@ -83,15 +84,20 @@ bool Item::Update(float dt)
 bool Item::Draw(float dt)
 {
 	bool ret = false;
-	r = currentAnimation->GetCurrentFrame(dt);
 
-	if (itemTexture != nullptr)
+	if (app->scene->player->pauseCondition == false)
 	{
+	
+		r = currentAnimation->GetCurrentFrame(dt);
+
+		if (itemTexture != nullptr)
+		{
 			ret = app->render->DrawTexture(itemTexture, position.x, position.y, &r, false, 1, 1, INT_MAX, INT_MAX);
+		}
+		r.x = position.x;
+		r.y = position.y;
 	}
 
-	r.x = position.x;
-	r.y = position.y;
 	return ret;
 }
 
@@ -114,8 +120,12 @@ bool Item::OnCollision(Collider* c1, Collider* c2)
 				}
 				else if (collider->type == ColliderType::COLLIDER_COIN)
 				{
-					app->audio->PlayFx(pickCoin);
-					app->scene->player->money++;
+					if (coinTaken == false)
+					{
+						app->audio->PlayFx(pickCoin);
+						app->scene->player->money++;
+						coinTaken = true;
+					}
 					active = false;
 					ret = CleanUp();
 				}

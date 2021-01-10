@@ -14,6 +14,8 @@
 #include "Menu.h"
 #include "FadeToBlack.h"
 #include "DeathScene.h"
+#include "WinScene.h"
+#include "DeathScene.h"
 
 #include "Log.h" 
 
@@ -51,9 +53,10 @@ Player::Player() : Entity(EntityType::PLAYER)
 	life = 100;
 	speed = 4.0f;
 	money = 0;
+	enemiesKilled = 0;
 	dead = false;
 
-	pause = app->tex->Load("Assets/Textures/pause_image.png");
+	pause = app->tex->Load("Assets/Textures/random_escape_scene.png");
 	pauseCondition = false;
 
 	attColliderActive = false;
@@ -74,6 +77,23 @@ Player::Player() : Entity(EntityType::PLAYER)
 	jumpFx = app->scene->playerJump;
 	attackVoice = app->scene->playerVoice;
 	humanDeath = app->scene->playerDeath;
+
+	//Buttons
+	resumeButton = new GuiButton(9, { 550, 250, 100, 24 }, "RESUME");
+	resumeButton->SetObserver((Scene*)this);
+	resumeButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/resume_button.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/resume_button_pressed.png"));
+
+	options = new GuiButton(2, { 550, 350, 100, 24 }, "SETTINGS");
+	options->SetObserver((Scene*)this);
+	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/settings_button.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_pressed.png"));
+
+	backToTitleButton = new GuiButton(11, { 525, 450, 100, 24 }, "BACK_TO_TITLE");
+	backToTitleButton->SetObserver((Scene*)this);
+	backToTitleButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/back_to_title_button.png"), app->tex->Load("Assets/Textures/Buttons/back_to_title_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/back_to_title_button_pressed.png"));
+
+	exitButton = new GuiButton(4, { 590, 550, 100, 24 }, "EXIT");
+	exitButton->SetObserver((Scene*)this);
+	exitButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit_button.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_pressed.png"));
 
 	// Define Player animations
 	for (int i = 0; i < 11; i++)
@@ -158,6 +178,11 @@ bool Player::Update(float dt)
 	if (!pauseCondition)
 	{
 
+		if (money == 12)
+		{
+			app->winScene->active = true;
+		}
+
 		if (attColliderActive == true)
 		{
 			attColliderTimer++;
@@ -173,17 +198,14 @@ bool Player::Update(float dt)
 		if (positionPixelPerfect.y > 5000 || life <= 0)
 		{
 			dead = true;
-			if (lives > 0)
+			if (lives > 1)
 			{
 				deathTimer = 2.0f;
 				action = PLAYER_DEATH;
 			}
 			else
 			{
-				lives = 3;
-				deathTimer = 2.0f;
-				action = PLAYER_DEATH;
-				// GAME OVER, change scene
+				app->deathScene->active = true;
 			}
 		}
 
@@ -456,21 +478,29 @@ bool Player::Update(float dt)
 			attackCounter = 0;
 		}
 
-		if (lives == 0)
-		{
-			/*if (app->scene->active == true)
-			{
-				app->fade->Fade((Module*)app->scene, (Module*)app->deathScene, 1);
-			}*/
-		}
+	}
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		pauseCondition = !pauseCondition;
+
 	}
 	if (pauseCondition)
 	{
+		app->render->DrawTexture(pause, 0, 0, NULL);
+		app->render->camera.x = 0;
+		app->render->camera.y = 0;
+
 		resumeButton->Update(app->input, dt);
-		settingsButton->Update(app->input, dt);
+		options->Update(app->input, dt);
 		backToTitleButton->Update(app->input, dt);
-		exitButton->Update(app->input, dt);
+		exitButton->Update(app->input, dt); 
+	
+		resumeButton->Draw(app->render);
+		options->Draw(app->render);
+		backToTitleButton->Draw(app->render);
+		exitButton->Draw(app->render);
 	}
+
 	if (app->menu->exi)	return false;
 
 	return true;
@@ -485,23 +515,7 @@ bool Player::PostUpdate()
 	{
 		app->render->DrawTexture(lifesTexture, ((-app->render->camera.x + 10) + (i * 32)) / 3, (-app->render->camera.y + 20) / 3, NULL);
 	}
-	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	{
-		app->SaveRequest("savegame.xml");
-		//cameraBckUp = app->render->camera;
-		pauseCondition = !pauseCondition;
 
-	}
-	if (pauseCondition)
-	{
-		app->render->camera.x = 0;
-		app->render->camera.y = 0;
-		app->render->DrawTexture(pause, 0, -20, NULL);
-		resumeButton->Draw(app->render);
-		settingsButton->Draw(app->render);
-		backToTitleButton->Draw(app->render);
-		exitButton->Draw(app->render);
-	}
 	return ret;
 }
 
@@ -552,6 +566,12 @@ bool Player::OnCollision(Collider* c1, Collider* c2)
 			{
 				Hit(app->scene->pig1->damage);
 			}
+		}
+
+		if (c1 == playerCollider && c2->type == COLLIDER_COIN)
+		{
+			LOG("Money +1 champion");
+			 money++;
 		}
 
 		if (c1 == playerHead && c2->type == COLLIDER_GROUND)

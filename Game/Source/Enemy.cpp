@@ -310,15 +310,19 @@ bool PigEnemy::Update(float dt)
 bool PigEnemy::Draw(float dt)
 {
 	bool ret = false;
-	r = currentAnimation->GetCurrentFrame(dt);
-	if (enemyTexture != nullptr)
+	if (app->scene->player->pauseCondition == false)
 	{
-		ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
-	}
-	else LOG("No available graphics to draw.");
+		r = currentAnimation->GetCurrentFrame(dt);
+		if (enemyTexture != nullptr)
+		{
+			ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
+		}
+		else LOG("No available graphics to draw.");
 
-	r.x = positionPixelPerfect.x;
-	r.y = positionPixelPerfect.y;
+		r.x = positionPixelPerfect.x;
+		r.y = positionPixelPerfect.y;
+	}
+
 	return ret;
 }
 
@@ -714,15 +718,19 @@ bool BatEnemy::Update(float dt)
 bool BatEnemy::Draw(float dt)
 {
 	bool ret = false;
-	r = currentAnimation->GetCurrentFrame(dt);
-	if (enemyTexture != nullptr)
+	if (app->scene->player->pauseCondition == false)
 	{
-		ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
-	}
-	else LOG("No available graphics to draw.");
+		r = currentAnimation->GetCurrentFrame(dt);
+		if (enemyTexture != nullptr)
+		{
+			ret = app->render->DrawTexture(enemyTexture, positionPixelPerfect.x, positionPixelPerfect.y, &r, false, 1.0f, 0.0f, INT_MAX, INT_MAX);
+		}
+		else LOG("No available graphics to draw.");
 
-	r.x = positionPixelPerfect.x;
-	r.y = positionPixelPerfect.y;
+		r.x = positionPixelPerfect.x;
+		r.y = positionPixelPerfect.y;
+	}
+
 	return ret;
 }
 

@@ -41,7 +41,7 @@ bool WinScene::Start()
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/win_screen.png");
+	screen = app->tex->Load("Assets/Textures/random_win_scene.png");
 
 	return ret;
 }
@@ -66,7 +66,7 @@ bool WinScene::PostUpdate()
 	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		app->scene->player->lives = 3;
-		app->fade->Fade(this, (Module*)app->intro, 60);
+		app->fade->Fade(this, (Module*)app->menu, 10);
 	}
 	// if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 
@@ -78,8 +78,7 @@ bool WinScene::PostUpdate()
 bool WinScene::CleanUp()
 {
 	if (!active)return true;
-	LOG("Freeing intro");
+	LOG("Freeing WinScene");
 	app->winScene->active = false;
-	app->tex->UnLoad(screen);
 	return true;
 }

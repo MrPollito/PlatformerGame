@@ -64,6 +64,7 @@ public:
 	ItemType type;
 
 	bool checked;
+	bool coinTaken;
 
 };
 
