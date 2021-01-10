@@ -4,6 +4,7 @@
 #include "Animation.h"
 #include "Scene.h"
 #include "Audio.h"
+#include "EntityManager.h"
 
 Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 {
@@ -20,9 +21,9 @@ Item::Item(int x, int y, ItemType type) : Entity(EntityType::ITEM)
 	checked = false;
 	checkCheck = 0;
 
-	pickCoin = app->audio->LoadFx("Assets/audio/fx/Coin.wav");
-	pickHeart = app->audio->LoadFx("Assets/audio/fx/Life_Up.wav");
-	checkpoint = app->audio->LoadFx("Assets/audio/fx/Checkpoint.wav");
+	pickCoin = app->scene->pickCoin;
+	pickHeart = app->scene->pickHeart;
+	checkpoint = app->scene->pickCheckpoint;
 
 	if (type == ItemType::HEART)
 	{
@@ -136,9 +137,9 @@ bool Item::CleanUp()
 {
 	bool ret = false;
 	ret = app->tex->UnLoad(itemTexture);
-	app->audio->UnloadFx(pickCoin);
+	/*app->audio->UnloadFx(pickCoin);
 	app->audio->UnloadFx(pickHeart);
-	app->audio->UnloadFx(checkpoint);
+	app->audio->UnloadFx(checkpoint);*/
 	if (collider != nullptr)
 	{
 		collider->toDelete = true;

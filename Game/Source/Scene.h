@@ -102,6 +102,19 @@ public:
 	GuiButton* backToTitleButton;
 	GuiButton* exitButton;
 
+	uint playerDeath;
+	uint playerVoice;
+	uint playerAttack;
+	uint playerJump;
+
+	uint pickCheckpoint;
+	uint pickCoin;
+	uint pickHeart;
+
+	uint pigDeath;
+	uint batDeath;
+
+
 private:
 	SDL_Texture* img;
 	SDL_Texture* lifesTex;

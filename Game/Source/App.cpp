@@ -64,8 +64,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(menu);
 	AddModule(intro);
 	AddModule(logo);
-
-
 	AddModule(pathfinding);
 	AddModule(scene);
 	AddModule(map);

@@ -41,6 +41,17 @@ bool Scene::Start()
 	app->map->active = true;
 
 	lifesTex = app->tex->Load("Assets/Textures/heart.png");
+	playerAttack = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
+	playerJump = app->audio->LoadFx("Assets/audio/fx/Jump3.wav");
+	playerDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
+	playerVoice = app->audio->LoadFx("Assets/audio/fx/Melee_Attack.wav");
+
+	pickCoin = app->audio->LoadFx("Assets/audio/fx/Coin.wav");
+	pickHeart = app->audio->LoadFx("Assets/audio/fx/Life_Up.wav");
+	pickCheckpoint = app->audio->LoadFx("Assets/audio/fx/Checkpoint.wav");
+
+	batDeath = app->audio->LoadFx("Assets/audio/fx/Bat_Death.wav");
+	pigDeath = app->audio->LoadFx("Assets/audio/fx/Pig_Death.wav");
 
 	if (app->map->Load(app->map->GetLoadingLevel().GetString()) == true);
 	{

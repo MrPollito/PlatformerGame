@@ -41,7 +41,7 @@ PigEnemy::PigEnemy(int iD, int startingX, int startingY) : Entity(EntityType::PI
 	positionPixelPerfect.x = position.x;
 	positionPixelPerfect.y = position.y;
 
-	pigDeath = app->audio->LoadFx("Assets/audio/fx/Pig_Death.wav");
+	pigDeath = app->scene->pigDeath;
 
 	velocity.SetToZero();
 	onGround = true;
@@ -429,7 +429,7 @@ bool PigEnemy::ResetStates() //Reset all states before checking input
 
 bool PigEnemy::CleanUp()
 {
-	app->audio->UnloadFx(pigDeath);
+	//app->audio->UnloadFx(pigDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();
@@ -501,7 +501,7 @@ BatEnemy::BatEnemy(int iD, int startingX, int startingY) : Entity(EntityType::BA
 
 	velocity.SetToZero();
 
-	batDeath = app->audio->LoadFx("Assets/audio/fx/Bat_Death.wav");
+	batDeath = app->scene->batDeath;
 
 	enemyTexture = app->tex->Load("Assets/textures/Bat_animations.png");
 
@@ -825,7 +825,7 @@ bool BatEnemy::DisableBatEnemy() //Disable function for changing scene
 
 bool BatEnemy::CleanUp()
 {
-	app->audio->UnloadFx(batDeath);
+	//app->audio->UnloadFx(batDeath);
 	idleRight.Reset();
 	idleLeft.Reset();
 	moveRight.Reset();

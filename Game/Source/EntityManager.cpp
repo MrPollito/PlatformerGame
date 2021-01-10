@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Scene.h"
 #include "Collisions.h"
+#include "Audio.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -20,6 +21,15 @@ EntityManager::EntityManager() : Module()
 // Destructor
 EntityManager::~EntityManager()
 {}
+
+
+bool EntityManager::Start()
+{
+	LOG("start entityManager");
+	bool ret = true;
+	
+	return ret;
+}
 
 // Called before render is available
 bool EntityManager::Awake(pugi::xml_node& config)

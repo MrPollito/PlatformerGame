@@ -70,10 +70,10 @@ Player::Player() : Entity(EntityType::PLAYER)
 	deathCheck = 0;
 
 	//// Audio
-	slashFx = app->audio->LoadFx("Assets/audio/fx/Sword_Slash.wav");
-	jumpFx = app->audio->LoadFx("Assets/audio/fx/Jump3.wav");
-	humanDeath = app->audio->LoadFx("Assets/audio/fx/Hero_Death.wav");
-	attackVoice = app->audio->LoadFx("Assets/audio/fx/Melee_Attack.wav");
+	slashFx = app->scene->playerAttack;
+	jumpFx = app->scene->playerJump;
+	attackVoice = app->scene->playerVoice;
+	humanDeath = app->scene->playerDeath;
 
 	// Define Player animations
 	for (int i = 0; i < 11; i++)
@@ -403,10 +403,10 @@ bool Player::Update(float dt)
 		case PLAYER_DEATH:
 			if (deathCheck == 0) app->audio->PlayFx(humanDeath);
 			deathCheck = 1;
-			app->audio->UnloadFx(slashFx);
+			/*app->audio->UnloadFx(slashFx);
 			app->audio->UnloadFx(jumpFx);
 			app->audio->UnloadFx(humanDeath);
-			app->audio->UnloadFx(attackVoice);
+			app->audio->UnloadFx(attackVoice);*/
 			if (facingRight == true)
 			{
 				currentAnimation = &deathRight;
@@ -612,10 +612,10 @@ bool Player::CleanUp()
 	bool ret = false;
 	active = false;
 	LOG("Unloading player");
-	app->audio->UnloadFx(slashFx);
+	/*app->audio->UnloadFx(slashFx);
 	app->audio->UnloadFx(jumpFx);
 	app->audio->UnloadFx(humanDeath);
-	app->audio->UnloadFx(attackVoice);
+	app->audio->UnloadFx(attackVoice);*/
 
 	ret = app->tex->UnLoad(playerTexture);
 	if (playerCollider != nullptr)
@@ -750,6 +750,7 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 	deathLeft.loops = 0;
 	dead = false;
 	life = 100;
+	deathCheck = 0;
 	facingRight = true;
 	action = PLAYER_IDLE_RIGHT;
 
@@ -760,7 +761,7 @@ void Player::RespawnPlayer(int key) // 0 is for the normal case, 1 from starting
 		{
 			lives--;
 			app->render->camera.x = 50;
-			app->render->camera.y = -1050;
+			app->render->camera.y = -900;
 			position.x = PLAYER_STARTING_POS_X;
 			position.y = PLAYER_STARTING_POS_Y;
 		}
