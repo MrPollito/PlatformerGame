@@ -181,6 +181,7 @@ bool Player::Update(float dt)
 		if (money == 12)
 		{
 			app->winScene->active = true;
+			money = 0;
 		}
 
 		if (attColliderActive == true)
@@ -202,6 +203,7 @@ bool Player::Update(float dt)
 			{
 				deathTimer = 2.0f;
 				action = PLAYER_DEATH;
+				money = 0;
 			}
 			else
 			{
