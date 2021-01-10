@@ -41,25 +41,24 @@ bool Options::Start()
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/options_screen.png");
+	screen = app->tex->Load("Assets/Textures/random_options.png");
 
 	backButton = new GuiButton(3, { 10, 10, 20, 16 }, "BACK");
 	backButton->SetObserver((Scene*)this);
 	backButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/back_button.png"), app->tex->Load("Assets/Textures/Buttons/back_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/back_button_pressed.png"));
 
-	musicVolume = new GuiSlider(5, { 250, 118, 20, 16 }, "MUSIC_VOLUME");
+	musicVolume = new GuiSlider(5, { 588, 256, 20, 20 }, "MUSIC_VOLUME");
 	musicVolume->SetObserver((Scene*)this);
 
-	fxVolume = new GuiSlider(6, { 250, 157, 20, 16 }, "FX_VOLUME");
+	fxVolume = new GuiSlider(6, { 588, 318, 20, 20 }, "FX_VOLUME");
 	fxVolume->SetObserver((Scene*)this);
 
-	fullscreenButton = new GuiCheckBox(7, { 210, 184, 20, 16 }, "FULLSCREEN");
+	fullscreenButton = new GuiCheckBox(7, { 680, 360, 20, 16 }, "FULLSCREEN");
 	fullscreenButton->SetObserver((Scene*)this);
 	fullscreenButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/fullscreen_button.png"), app->tex->Load("Assets/Textures/Buttons/fullscreen_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/fullscreen_button_pressed.png"));
 
-	vsyncButton = new GuiCheckBox(8, { 210, 206, 20, 16 }, "VSYNC");
+	vsyncButton = new GuiCheckBox(8, { 680, 380, 20, 16 }, "VSYNC");
 	vsyncButton->SetObserver((Scene*)this);
-	//vsyncButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/play.png"), app->tex->Load("Assets/Textures/Buttons/play_focused.png"), app->tex->Load("Assets/Textures/Buttons/play_pressed.png"));
 	vsyncButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/fullscreen_button.png"), app->tex->Load("Assets/Textures/Buttons/fullscreen_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/fullscreen_button_pressed.png"));
 
 	return ret;

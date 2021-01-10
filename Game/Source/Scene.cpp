@@ -35,7 +35,7 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
+	//app->audio->PlayMusic("Assets/audio/music/Main_Theme.ogg");
 
 	app->collisions->active = true;
 	app->map->active = true;
@@ -175,8 +175,6 @@ bool Scene::Update(float dt)
 		{
 			player->godMode = false;
 		}
-		checkPoint1->checkCheck = 0;
-		checkPoint2->checkCheck = 0;
 		player->lives = 3;
 		player->money = 0;
 		ResetEntities();
@@ -191,8 +189,6 @@ bool Scene::Update(float dt)
 		{
 			player->godMode = false;
 		}
-		checkPoint1->checkCheck = 0;
-		checkPoint2->checkCheck = 0;
 		player->lives = 3;
 		player->money = 0;
 		ResetEntities();

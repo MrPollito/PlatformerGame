@@ -41,33 +41,33 @@ bool Menu::Start()
 
 	bool ret = true;
 
-	screen = app->tex->Load("Assets/Textures/title_screen.png");
+	screen = app->tex->Load("Assets/Textures/random_menu.png");
 
-	play = new GuiButton(1, { 170, 75, 80, 20 }, "START");
+	play = new GuiButton(1, { 630, 220, 80, 30 }, "START");
 	play->SetObserver((Scene*)this);
-	play->SetTexture(app->tex->Load("Assets/Textures/Buttons/play.png"), app->tex->Load("Assets/Textures/Buttons/play_focused.png"), app->tex->Load("Assets/Textures/Buttons/play_pressed.png"));
+	play->SetTexture(app->tex->Load("Assets/Textures/Buttons/play_button.png"), app->tex->Load("Assets/Textures/Buttons/play_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/play_button_pressed.png"));
 
-	continueButton = new GuiButton(12, { 170, 105, 80, 20 }, "START");
+	continueButton = new GuiButton(12, { 622, 250, 80, 30 }, "START");
 	continueButton->SetObserver((Scene*)this);
 	continueButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/load_button.png"), app->tex->Load("Assets/Textures/Buttons/load_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/load_button_pressed.png"));
 
-	options = new GuiButton(2, { 170, 135, 80, 20 }, "OPTIONS");
+	options = new GuiButton(2, { 595, 280, 80, 30 }, "OPTIONS");
 	options->SetObserver((Scene*)this);
-	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/settings.png"), app->tex->Load("Assets/Textures/Buttons/settings_focused.png"), app->tex->Load("Assets/Textures/Buttons/settings_pressed.png"));
+	options->SetTexture(app->tex->Load("Assets/Textures/Buttons/settings_button.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/settings_button_pressed.png"));
 
-	credits = new GuiButton(13, { 170, 165, 80, 20 }, "OPTIONS");
+	credits = new GuiButton(13, { 600, 310, 80, 30 }, "OPTIONS");
 	credits->SetObserver((Scene*)this);
 	credits->SetTexture(app->tex->Load("Assets/Textures/Buttons/credits_button.png"), app->tex->Load("Assets/Textures/Buttons/credits_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/credits_button_pressed.png"));
 
-	exit = new GuiButton(4, { 170, 195, 80, 20 }, "EXIT");
+	exit = new GuiButton(4, { 630, 340, 80, 30 }, "EXIT");
 	exit->SetObserver((Scene*)this);
-	exit->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit.png"), app->tex->Load("Assets/Textures/Buttons/exit_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_pressed.png"));
+	exit->SetTexture(app->tex->Load("Assets/Textures/Buttons/exit_button.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/exit_button_pressed.png"));
 
-	backButton = new GuiButton(3, { 10, 10, 20, 16 }, "BACK");
+	backButton = new GuiButton(3, { 100, 50, 20, 16 }, "BACK");
 	backButton->SetObserver((Scene*)this);
 	backButton->SetTexture(app->tex->Load("Assets/Textures/Buttons/back_button.png"), app->tex->Load("Assets/Textures/Buttons/back_button_focused.png"), app->tex->Load("Assets/Textures/Buttons/back_button_pressed.png"));
 
-	creditsScene = app->tex->Load("Assets/Textures/credits_scene.png");
+	creditsScene = app->tex->Load("Assets/Textures/random_credits2.png");
 	creditSceneFlag = false;
 	pauseBool = false;
 	fullSc = false;
@@ -171,8 +171,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		{
 			//Play
 			app->fade->Fade(this, (Module*)app->scene, 20);
-	/*		app->render->camera.x = 50;
-			app->render->camera.y = -1050;*/
+			/*		app->render->camera.x = 50;
+					app->render->camera.y = -1050;*/
 
 		}
 		else if (control->id == 2)
